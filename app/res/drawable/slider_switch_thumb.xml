@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item>
+    <shape
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:shape="oval">
+
+       <padding android:left="0dp" android:right="0dp" />
+        
+	   <solid 
+	       android:color="@color/actionbar_dark_bottom_edge"/>
+
+	   <size 
+	       android:width="30dp"
+	        android:height="30dp"/>
+	</shape>
+</item>
+</layer-list> 

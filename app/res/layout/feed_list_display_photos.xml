@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@drawable/popup_item_background_selector"
+    android:descendantFocusability="blocksDescendants"
+    android:padding="10dp" >
+
+    <TextView
+        style="@style/PopupListItemStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:text="@string/feed_filter_display_photos" />
+
+    <info.guardianproject.bigbuffalo.widgets.CheckableImageView
+        android:id="@+id/chkShowImages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:src="@drawable/checkbox_yes_no_selector" />
+
+</LinearLayout>

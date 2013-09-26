@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"> 
+    <item>
+        <shape>
+            <!-- This makes up the right side border of the menu (because of the right padding below) -->
+    		<solid android:color="#000000"/>
+		</shape>
+    </item>
+    <item android:left="0dp" android:top="0dp"
+        		android:right="1dp" android:bottom="0dp">
+        <shape>
+            <!-- This makes up the background of the menu -->
+    		<solid android:color="@color/grey_light"/>
+		</shape>
+    </item>
+</layer-list> 

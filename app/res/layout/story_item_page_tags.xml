@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    android:id="@+id/svTags"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/grey_light_medium"
+    android:fillViewport="true"
+    android:paddingTop="1px"
+    android:scrollbars="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/llTags"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:background="#ffffff"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+</HorizontalScrollView>

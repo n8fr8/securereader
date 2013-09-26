@@ -1,0 +1,9 @@
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_media_fragment"
+    android:name="info.guardianproject.bigbuffalo.ViewMediaFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout="@layout/view_media_fragment" >
+</fragment>
+

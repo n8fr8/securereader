@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <layer-list xmlns:android="http://schemas.android.com/apk/res/android">  -->
+<!--     <item> -->
+<!--         <shape> -->
+<!--     		<solid android:color="@color/grey_dark"/> -->
+<!-- 		</shape> -->
+<!--     </item> -->
+ 
+<!--     <item> -->
+<!--         <inset -->
+<!--             android:insetBottom="4dp" -->
+<!--             android:insetLeft="-6dp" -->
+<!--             android:insetRight="-6dp" -->
+<!--             android:insetTop="-6dp" > -->
+<!--     		<shape> -->
+<!--     		    <stroke android:width="3dp" android:color="#DDD" /> -->
+<!--     		    <solid android:color="#DDD" /> -->
+<!--     		</shape> -->
+<!--         </inset> -->
+<!--     </item> -->
+
+<!--     <item> -->
+<!--         <inset -->
+<!--             android:insetBottom="3dp" -->
+<!--             android:insetLeft="0dp" -->
+<!--             android:insetRight="0dp" -->
+<!--             android:insetTop="0dp" > -->
+<!--     		<shape> -->
+<!--     		    <solid android:color="#aaa" /> -->
+<!--     		</shape> -->
+<!--         </inset> -->
+<!--     </item> -->
+
+<!--     <item> -->
+<!--         <inset -->
+<!--             android:insetBottom="2dp" -->
+<!--             android:insetLeft="0dp" -->
+<!--             android:insetRight="0dp" -->
+<!--             android:insetTop="0dp" > -->
+<!--     		<shape> -->
+<!--     		    <solid android:color="#DDD" /> -->
+<!--     		</shape> -->
+<!--         </inset> -->
+<!--     </item> -->
+    
+<!--     <item> -->
+<!--         <inset -->
+<!--             android:insetBottom="2dp" -->
+<!--             android:insetLeft="0dp" -->
+<!--             android:insetRight="0dp" -->
+<!--             android:insetTop="0dp" > -->
+<!--         <shape> -->
+<!--     		<solid android:color="@color/grey_light_light"/> -->
+<!-- 		</shape> -->
+<!-- 		</inset> -->
+<!--     </item> -->
+<!-- </layer-list>  -->
+
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android"> 
+    <item>
+        <shape>
+    		<solid android:color="@color/grey_light_light"/>
+		</shape>
+    </item>
+<!--     <item android:bottom="4dp"> -->
+<!--         <shape> -->
+<!--     		<solid android:color="#dddddd"/> -->
+<!-- 		</shape> -->
+<!--     </item> -->
+<!--     <item android:bottom="7dp"> -->
+<!--         <shape> -->
+<!--     		<solid android:color="#bfbfbf"/> -->
+<!-- 		</shape> -->
+<!--     </item> -->
+<!--     <item android:bottom="8dp"> -->
+<!--         <shape> -->
+<!--     		<solid android:color="#aaaaaa"/> -->
+<!-- 		</shape> -->
+<!--     </item> -->
+<!--     <item android:bottom="11dp"> -->
+<!--         <shape> -->
+<!--     		<solid android:color="#efefef"/> -->
+<!-- 		</shape> -->
+<!--     </item> -->
+</layer-list> 

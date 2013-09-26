@@ -1,0 +1,32 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Post activity styles 					       -->
+    <!--                                               -->
+    <!--                                               -->
+
+    <style name="PostSignInHeaderStyle">
+        <item name="font">Roboto-Light</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">#000000</item>
+		<item name="android:textAllCaps">false</item>
+	</style>
+
+    <style name="PostSignInCreateButtonStyle">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">#ffffff</item>
+		<item name="android:textAllCaps">true</item>
+		<item name="android:background">@drawable/button_primary_background_selector</item>
+	</style>
+    
+    <style name="PostAddOperationText">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">#848879</item>
+		<item name="android:textAllCaps">true</item>
+    </style>
+    
+</resources>

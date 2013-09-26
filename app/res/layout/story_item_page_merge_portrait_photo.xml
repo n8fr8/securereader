@@ -1,0 +1,80 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+>
+
+    <TextView
+        android:id="@+id/tvSource"
+        style="@style/StoryItemShortSourceStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_vertical|right"
+        android:padding="4dp"
+        android:text="@string/story_item_short_source"
+        android:textAllCaps="true" />
+
+    <View
+        android:id="@+id/separatorSource"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@id/tvSource"
+        android:background="@color/grey_light_medium"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/tvTime"
+        style="@style/StoryItemShortTimeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/separatorSource"
+        android:gravity="center_vertical"
+        android:padding="4dp"
+        android:text="@string/story_item_short_time" />
+
+    <View
+        android:id="@+id/strut"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@id/tvTime"
+        android:layout_centerHorizontal="true" />
+        
+    <info.guardianproject.bigbuffalo.views.StoryMediaContentView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ivPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tvTime"
+        android:layout_toLeftOf="@id/strut"
+        app:height_inhibitor="0.8125"
+        />
+
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvTitle"
+        style="@style/StoryItemTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/ivPhotos"
+        android:layout_below="@id/tvTime"
+        android:layout_toRightOf="@id/ivPhotos"
+        android:background="#ffffff"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/story_item_short_title" />
+
+    <ViewStub
+        android:id="@+id/viewStubTags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivPhotos"
+        android:inflatedId="@+id/svTags"
+        android:layout="@layout/story_item_page_tags" />
+
+</merge>

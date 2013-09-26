@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="info.guardianproject.bigbuffalo"
+    android:installLocation="preferExternal"
+    android:versionCode="3"
+    android:versionName="1.0.2" >
+
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="15" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <permission
+        android:name="info.guardianproject.bigbuffalo.exit.permission"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="info.guardianproject.bigbuffalo.exit.permission" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <application
+        android:name="info.guardianproject.bigbuffalo.App"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:description="@string/app_description"
+        android:theme="@style/AppTheme" >
+        
+		<activity android:name="net.hockeyapp.android.UpdateActivity" />        
+        
+		<service android:name="info.guardianproject.cacheword.CacheWordService" 
+		    android:enabled="true" android:exported="false" />        
+        
+        <activity
+            android:name="info.guardianproject.bigbuffalo.MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppThemeNoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.HelpActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_help" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.DownloadsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_downloads" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.AddFeedActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_add_feed" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.PostActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_post"
+            android:theme="@style/AppThemeReporter" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.AddPostActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_add_post"
+            android:theme="@style/AppThemeReporter"
+            android:windowSoftInputMode="adjustResize" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.PanicActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_panic"
+            android:theme="@style/Theme.Transparent" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.ViewMediaActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_view_media" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.LockScreenActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_lock_screen" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.KillActivity"
+            android:excludeFromRecents="true"
+            android:noHistory="true" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.installer.HTTPDAppSender"
+            android:configChanges="keyboardHidden|orientation|screenSize" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.CreateAccountActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/title_activity_create_account">
+        </activity>
+        <service android:name="info.guardianproject.bigbuffalo.api.SyncService" >
+        </service>
+
+        <activity
+            android:name="info.guardianproject.bigbuffalo.installer.SecureBluetoothSenderActivity"
+            android:label="@string/title_activity_secure_blue_tooth_sender" >
+        </activity>
+        <activity
+            android:name="info.guardianproject.bigbuffalo.installer.SecureBluetoothReceiverActivity"
+            android:label="@string/title_activity_secure_blue_tooth_receiver" >
+        </activity>
+        
+        <activity
+            android:name="info.guardianproject.bigbuffalo.installer.SecureShareReceiveActivity"
+            android:label="@string/title_secure_share_receive" >
+			<intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/x-bigbuffalo-bundle" />
+            </intent-filter>
+        </activity>
+
+		<provider 
+   			android:name="info.guardianproject.bigbuffalo.api.SecureShareContentProvider"
+			android:authorities="info.guardianproject.bigbuffalo.secureshareprovider" 
+			android:exported="true"
+			android:enabled="true"
+		/>
+
+	</application>
+
+</manifest>

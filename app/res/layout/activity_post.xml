@@ -1,0 +1,26 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ff0"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <info.guardianproject.bigbuffalo.widgets.NestedViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffff"
+        tools:context=".PostActivity" />
+    
+    <info.guardianproject.bigbuffalo.views.PostSignInView
+        android:id="@+id/signIn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </info.guardianproject.bigbuffalo.views.PostSignInView>
+
+    <info.guardianproject.bigbuffalo.views.CreateAccountView
+        android:id="@+id/createAccount"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </info.guardianproject.bigbuffalo.views.CreateAccountView>
+    
+</FrameLayout>
