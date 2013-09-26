@@ -31,7 +31,7 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 	public static final boolean UI_ENABLE_POST_LOGIN = false;
 	public static final boolean UI_ENABLE_REPORTER = false;
 	public static final boolean UI_ENABLE_CHAT = false;
-	public static final boolean UI_ENABLE_LANGUAGE_CHOICE = false;
+	public static final boolean UI_ENABLE_LANGUAGE_CHOICE = true;
 	
 	public static final String EXIT_BROADCAST_PERMISSION = "info.guardianproject.bigbuffalo.exit.permission";
 	public static final String EXIT_BROADCAST_ACTION = "info.guardianproject.bigbuffalo.exit.action";
