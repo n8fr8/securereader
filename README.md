@@ -1,4 +1,1 @@
-bigbuffalo
-==========
-
-It is big, and from Buffalo.
+This is the Secure Reader repo.
