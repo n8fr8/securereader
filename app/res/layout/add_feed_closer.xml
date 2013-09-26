@@ -1,0 +1,10 @@
+    
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|center_vertical"
+        android:drawableRight="@drawable/ic_context_close"
+        android:gravity="right|center_vertical"
+        android:padding="5dp"
+        android:text="@string/add_feed_collapse" />
+

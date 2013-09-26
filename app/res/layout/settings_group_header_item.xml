@@ -1,0 +1,30 @@
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/settings_group_header_item_background" >
+
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/SettingsHeadingStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="2dp"
+            android:layout_weight="1"
+            android:gravity="left|center_vertical"
+            android:text="Title goes here" />
+
+        <TextView
+            android:id="@+id/tvSubTitle"
+            style="@style/SettingsSubHeadingStyle"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical" />
+
+    </LinearLayout>

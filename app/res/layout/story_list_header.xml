@@ -1,0 +1,33 @@
+<info.guardianproject.bigbuffalo.widgets.HeightLimitedLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="left|center_vertical" >
+
+        <ImageView
+            android:id="@+id/arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_context_sync_arrow_pull" />
+        
+        <ImageView
+            android:id="@+id/sadface"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_status_sad_gray" />
+        
+        <TextView
+            android:id="@+id/tvHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left|center_vertical"
+            android:layout_margin="20dp"
+            android:gravity="left|center_vertical"
+            android:text="@string/menu_last_synced_placeholder"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#A4A59B" />
+
+    </info.guardianproject.bigbuffalo.widgets.HeightLimitedLinearLayout>

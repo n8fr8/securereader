@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffffff"
+    android:orientation="vertical" >
+
+    <info.guardianproject.bigbuffalo.views.StoryMediaContentView
+        android:id="@+id/mediaContentView"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        app:height_inhibitor="1"
+        app:show_placeholder="true" >
+
+    </info.guardianproject.bigbuffalo.views.StoryMediaContentView>
+        
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvTitle"
+        style="@style/DownloadsItemTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/mediaContentView"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@id/mediaContentView"
+        android:background="#ffffff"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:text="@string/story_item_short_title"
+        app:fade_last_line="true" />
+
+
+
+</RelativeLayout>

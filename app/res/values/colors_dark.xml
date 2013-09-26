@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<resources> 
+   <color name="actionbar_dark_background">#848879</color>  
+   <color name="actionbar_dark_dividers">#BAE24B</color>  
+   <color name="actionbar_dark_bottom_edge">#BAE24B</color>  
+</resources>

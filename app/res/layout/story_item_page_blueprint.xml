@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llRoot"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/story_item_background_selector"
+    android:gravity="top"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/ivPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/story_media_content_view" />
+
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvTitle"
+        style="@style/StoryItemTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="@string/story_item_short_title" />
+
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvAuthor"
+        style="@style/StoryItemAuthorStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/story_item_short_author" />
+
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvContent"
+        style="@style/StoryItemContentStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="TextView" />
+
+    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        android:id="@+id/tvReadMore"
+        style="@style/StoryItemOrwebLinkStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="#ffffff"
+        android:drawableLeft="@drawable/ic_read_orweb"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:padding="10dp"
+        android:text="@string/story_item_read_with_orweb" />
+
+</LinearLayout>

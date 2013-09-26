@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<resources> 
+   <color name="grey_light">#dddddd</color>  
+   <color name="grey_light_light">#efefef</color>  
+   <color name="grey_light_medium">#aaaaaa</color>  
+   <color name="grey_dark">#4f4f4f</color>  
+   <color name="grey_dark_dark">#353535</color>  
+   <color name="accent">#dddddd</color>  
+      
+   <color name="grey_light_opacity_60">#9adddddd</color>
+
+   <color name="accent_dark_medium">#80A4A59B</color>  
+   <color name="accent_dark">#40A4A59B</color>  
+   
+   <color name="button_primary">#95BA55</color>
+   <color name="button_primary_selected">#8095BA55</color>
+   <color name="button_secondary">#CECECC</color>
+   <color name="button_secondary_selected">#80CECECC</color>
+   
+   <color name="lock_screen_background">#dddddd</color>
+   
+   <color name="feed_list_title_normal">#000000</color>
+   <color name="feed_list_title_error">#ff0000</color>
+   
+   <color name="orweb_link_enabled">@color/button_primary</color>
+   <color name="orweb_link_disabled">@color/grey_light</color>
+</resources>

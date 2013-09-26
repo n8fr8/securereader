@@ -1,0 +1,84 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/llRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lock_screen_background"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="20dp" >
+
+    <ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_launch_logo" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/imageView1"
+        android:src="@drawable/ic_launch_description" />
+
+   <Button
+       android:id="@+id/btnStartCreatePassphrase"
+       style="@style/RoundedButtonStyle"
+       android:layout_width="match_parent"
+       android:layout_height="50dp"
+       android:layout_alignParentBottom="true"
+       android:layout_marginBottom="15dp"
+       android:layout_marginLeft="15dp"
+       android:layout_marginRight="15dp"
+       android:layout_marginTop="30dp"
+       android:text="@string/lock_screen_set_passphrase" />
+            
+    <SeekBar
+        android:id="@+id/switchLanguage"
+        style="?android:attr/seekBarStyle"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnStartCreatePassphrase"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="8dp"
+        android:max="100"
+        android:maxHeight="30dp"
+        android:minHeight="30dp"
+        android:minWidth="30dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:progressDrawable="@drawable/slider_switch"
+        android:thumb="@drawable/slider_switch_thumb"
+        android:thumbOffset="0dp" />
+
+    <TextView
+        android:id="@+id/tvFarsi"
+        style="@style/LockScreenLanguageStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/switchLanguage"
+        android:layout_alignLeft="@id/switchLanguage"
+        android:gravity="left"
+        android:text="@string/lock_screen_language_farsi"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/tvEnglish"
+        style="@style/LockScreenLanguageStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/switchLanguage"
+        android:layout_alignRight="@id/switchLanguage"
+        android:layout_toRightOf="@+id/tvFarsi"
+        android:gravity="right"
+        android:text="@string/lock_screen_language_english"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>

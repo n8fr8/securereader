@@ -1,0 +1,112 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl0"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/RelativeLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:paddingBottom="10dp" >
+
+        <ImageView
+            android:id="@+id/ivFeedIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_margin="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_filter_logo_placeholder" />
+
+        <FrameLayout
+            android:id="@+id/frameOperation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true" >
+
+            <ImageView
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:src="@drawable/ic_checkbox_off" />
+
+            <ImageView
+                android:id="@+id/btnRemove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:src="@drawable/ic_checkbox_on" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayout1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/ivFeedIcon"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_toLeftOf="@id/frameOperation"
+            android:layout_toRightOf="@id/ivFeedIcon"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/tvFeedName"
+                style="@style/AddFeedFeedNameStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Expand" />
+
+            <TextView
+                android:id="@+id/tvFeedDescription"
+                style="@style/AddFeedFeedDescriptionStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Expand" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llOperationButtons"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@id/RelativeLayout1"
+        android:layout_alignTop="@id/RelativeLayout1"
+        android:background="@drawable/popup_toolbar_background_dark" >
+
+        <TextView
+            android:id="@+id/btnRemove"
+            style="@style/DownloadsOperationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:drawableTop="@drawable/ic_downloads_trash"
+            android:gravity="center_horizontal"
+            android:text="@string/add_feed_operation_remove" />
+
+        <TextView
+            android:id="@+id/btnCopyURL"
+            style="@style/DownloadsOperationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:drawableTop="@drawable/ic_downloads_copy"
+            android:gravity="center_horizontal"
+            android:text="@string/add_feed_operation_copy_url" />
+
+        <TextView
+            android:id="@+id/btnCancel"
+            style="@style/DownloadsOperationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="0.5"
+            android:drawableTop="@drawable/ic_downloads_cancel"
+            android:gravity="center_horizontal"
+            android:text="@string/add_feed_operation_cancel" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    android:id="@+id/llRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/settings_security_set_kill_passphrase"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/grey_light_medium" />
+
+    <EditText
+        android:id="@+id/editNewPassphrase"
+        style="@style/LockScreenEditCreateStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/edit_text_lock_screen_background_selector"
+        android:ems="10"
+        android:hint="@string/settings_security_set_kill_passphrase_enter"
+        android:inputType="textPassword" >
+    </EditText>
+    <EditText
+        android:id="@+id/editConfirmNewPassphrase"
+        style="@style/LockScreenEditCreateStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/edit_text_lock_screen_background_selector"
+        android:ems="10"
+        android:hint="@string/settings_security_set_kill_passphrase_confirm"
+        android:inputType="textPassword" >
+    </EditText>
+
+    <LinearLayout
+        android:id="@+id/llButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" >
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_secondary_background_selector"
+            android:text="@android:string/cancel" />
+
+        <Button
+            android:id="@+id/btnOk"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/button_primary_background_selector"
+            android:text="@android:string/ok" />
+
+    </LinearLayout>
+
+</LinearLayout>
