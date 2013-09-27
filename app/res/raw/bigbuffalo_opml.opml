@@ -6,10 +6,12 @@
     <dateModified>2013-07-18T00:38:00+00:00</dateModified>
   </head>
   <body>
-	<outline text="VOA News Persian Service" htmlUrl="http://ir.voanews.com/api/epiqq" xmlUrl="" />
-	<outline text="Iranian" htmlUrl="http://iranian.com/index/rss" xmlUrl="" />
-	<outline text="Khodnevis" htmlUrl="https://khodnevis.org/rss.xml" xmlUrl="" />
-	<outline text="Salamat News" htmlUrl="http://www.salamatnews.com/Rss.xml" xmlUrl="" />
-	<outline text="HRA News" htmlUrl="http://hra-news.org/index.php?format=feed&type=rss" xmlUrl="" />
+	<outline text="NY Times Global News" htmlUrl="http://www.nytimes.com/services/xml/rss/index.html" xmlUrl="" />
+	<outline text="Washington Post World News" htmlUrl="http://feeds.washingtonpost.com/rss/world" xmlUrl="" />
+	<outline text="CNN Top Stories" htmlUrl="http://rss.cnn.com/rss/cnn_topstories.rss" xmlUrl="" />
+	<outline text="CNN World News" htmlUrl="http://rss.cnn.com/rss/cnn_world.rss" xmlUrl="" />
+	<outline text="The Guardian World News" htmlUrl="http://feeds.theguardian.com/theguardian/world/rss" xmlUrl="" />
+	<outline text="Spiegel Online Top Stories" htmlUrl="http://www.spiegel.de/international/index.rss" xmlUrl="" />
+	<outline text="Spiegel Online World News" htmlUrl="http://www.spiegel.de/international/world/index.rss" xmlUrl="" />
   </body>
 </opml>
