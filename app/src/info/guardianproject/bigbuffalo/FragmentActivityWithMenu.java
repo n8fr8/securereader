@@ -3,6 +3,7 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.bigbuffalo.ui.ActionProviderShare;
+import info.guardianproject.bigbuffalo.ui.PackageHelper;
 import info.guardianproject.bigbuffalo.ui.UICallbacks;
 import info.guardianproject.bigbuffalo.uiutil.ActivitySwitcher;
 import info.guardianproject.bigbuffalo.uiutil.UIHelpers;
@@ -330,11 +331,28 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 			// lock screen is not shown!)
 			mInternalActivityOpened = true;
 		}
-		else if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null
-				&& intent.getData().toString().equals(getString(R.string.market_orbot)))
+		else if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null)
 		{
-			// Install orbot
-			mInternalActivityOpened = true;
+			if (intent.getData().toString().equals(getString(R.string.market_orbot)))
+			{
+				// Install orbot
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getData().toString().equals(PackageHelper.URI_ORWEB_PLAY))
+			{
+				// Install orweb
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getComponent() != null && intent.getComponent().getPackageName() != null && intent.getComponent().getPackageName().equals(PackageHelper.URI_ORWEB))
+			{
+				// Read more with orweb
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getData().toString().equals(PackageHelper.URI_CHATSECURE_PLAY))
+			{
+				// Install ChatSecure
+				mInternalActivityOpened = true;
+			}
 		}
 	}
 

@@ -519,7 +519,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			try
 			{
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getLink()));
-				intent.setClassName("info.guardianproject.browser", "info.guardianproject.browser.Browser");
+				intent.setClassName(PackageHelper.URI_ORWEB, PackageHelper.URI_ORWEB + ".Browser");
 				// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				v.getContext().startActivity(intent);
 			}
