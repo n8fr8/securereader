@@ -7,10 +7,13 @@ import info.guardianproject.bigbuffalo.uiutil.AnimationHelpers;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 
 public class PanicActivity extends Activity implements OnTouchListener
 {
+	private LayoutInflater mInflater;
 	private View mArrow;
 	private ImageView mSymbol;
 	private boolean mOnlyTesting;
@@ -189,4 +193,21 @@ public class PanicActivity extends Activity implements OnTouchListener
 			PanicActivity.this.finish();
 		}
 	}
+	
+	@Override public Object  getSystemService(String name) {
+	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+	         if (mInflater == null) {
+	             mInflater = ((LayoutInflater) super.getSystemService(name)).cloneInContext(this);
+	             mInflater.setFactory(new LayoutInflater.Factory() {
+					
+					@Override
+					public View onCreateView(String name, Context context, AttributeSet attrs) {
+						return App.createView(name, context, attrs);
+					}
+				});
+	         }
+	         return mInflater;
+	     }
+	     return super.getSystemService(name);
+	 }
 }

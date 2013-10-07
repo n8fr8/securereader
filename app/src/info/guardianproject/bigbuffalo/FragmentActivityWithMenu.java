@@ -25,7 +25,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -39,6 +41,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class FragmentActivityWithMenu extends SherlockFragmentActivity implements LockScreenCallbacks, LeftSideMenuListener, ICacheWordSubscriber
 {
+	private LayoutInflater mInflater;
 	private KillReceiver mKillReceiver;
 	private SetUiLanguageReceiver mSetUiLanguageReceiver;
 	private WipeReceiver mWipeReceiver;
@@ -802,6 +805,23 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 			}
 		}
 	}
+
+	@Override public Object  getSystemService(String name) {
+	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+	         if (mInflater == null) {
+	             mInflater = ((LayoutInflater) super.getSystemService(name)).cloneInContext(this);
+	             mInflater.setFactory(new LayoutInflater.Factory() {
+					
+					@Override
+					public View onCreateView(String name, Context context, AttributeSet attrs) {
+						return App.createView(name, context, attrs);
+					}
+				});
+	         }
+	         return mInflater;
+	     }
+	     return super.getSystemService(name);
+	 }
 
 	
 }

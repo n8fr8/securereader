@@ -357,7 +357,7 @@ public class Settings
 
 	public enum UiLanguage
 	{
-		English, Farsi
+		English, Farsi, Tibetan
 	}
 
 	/**
@@ -376,6 +376,8 @@ public class Settings
 		String defaultLanguage = Locale.getDefault().getLanguage();
 		if (defaultLanguage == "ar")
 			return UiLanguage.Farsi;
+		else if (defaultLanguage == "bo")
+			return UiLanguage.Tibetan;
 		return UiLanguage.English;
 	}
 

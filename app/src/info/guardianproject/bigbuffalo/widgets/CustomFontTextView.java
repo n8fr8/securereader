@@ -13,7 +13,6 @@ import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
-
 import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.uiutil.FontManager;
 
@@ -187,5 +186,11 @@ public class CustomFontTextView extends TextView
 		}
 
 		getPaint().setShader(mShader); // original
+	}
+	
+	@Override
+	public void setText(CharSequence text, BufferType type)
+	{
+		super.setText(FontManager.precomposeText(this, text), type);
 	}
 }

@@ -5,12 +5,15 @@ import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.cacheword.CacheWordActivityHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
-
 import java.security.GeneralSecurityException;
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -19,8 +22,10 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -40,12 +45,14 @@ import android.widget.Toast;
 public class LockScreenActivity extends Activity implements LockScreenCallbacks, OnFocusChangeListener, ICacheWordSubscriber
 {
     private static final String TAG = "LockScreenActivity";
+	private LayoutInflater mInflater;
 	private EditText mEnterPassphrase;
 	private EditText mNewPassphrase;
 	private EditText mConfirmNewPassphrase;
 	private Button mBtnOpen;
 
 	private CacheWordActivityHandler mCacheWord;
+	private info.guardianproject.bigbuffalo.LockScreenActivity.SetUiLanguageReceiver mSetUiLanguageReceiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -65,12 +72,16 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 	@Override
 	protected void onResume()
 	{
+		mSetUiLanguageReceiver = new SetUiLanguageReceiver();
+		registerReceiver(mSetUiLanguageReceiver, new IntentFilter(App.SET_UI_LANGUAGE_BROADCAST_ACTION), App.EXIT_BROADCAST_PERMISSION, null);
+
 		super.onResume();
 		mCacheWord.onResume();
 	}
 
 	@Override
 	protected void onPause() {
+		unregisterReceiver(mSetUiLanguageReceiver);
 	    super.onPause();
 	    mCacheWord.onPause();
 	}
@@ -357,4 +368,38 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
         finish();
         LockScreenActivity.this.overridePendingTransition(0, 0);
     }
+    
+	@Override public Object  getSystemService(String name) {
+	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+	         if (mInflater == null) {
+	             mInflater = ((LayoutInflater) super.getSystemService(name)); //.cloneInContext(this);
+	             mInflater.setFactory(new LayoutInflater.Factory() {
+					
+					@Override
+					public View onCreateView(String name, Context context, AttributeSet attrs) {
+						return App.createView(name, context, attrs);
+					}
+				});
+	         }
+	         return mInflater;
+	     }
+	     return super.getSystemService(name);
+	 }
+	
+	private final class SetUiLanguageReceiver extends BroadcastReceiver
+	{
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			new Handler().post(new Runnable()
+			{
+
+				@Override
+				public void run()
+				{
+					onUiLanguageChanged();
+				}
+			});
+		}
+	}
 }
