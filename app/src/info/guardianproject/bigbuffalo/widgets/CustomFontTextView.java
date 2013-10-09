@@ -21,6 +21,8 @@ public class CustomFontTextView extends TextView
 	private Rect mBounds;
 	private Shader mShader;
 	private boolean mFadeLastLine = false;
+	private float mLineSpacingExtra;
+	private float mLineSpacingMulti;
 
 	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle)
 	{
@@ -43,6 +45,8 @@ public class CustomFontTextView extends TextView
 	private void init(AttributeSet attrs)
 	{
 		mBounds = new Rect();
+		mLineSpacingExtra = 0;
+		mLineSpacingMulti = 1.0f;
 
 		if (attrs != null)
 		{
@@ -55,6 +59,11 @@ public class CustomFontTextView extends TextView
 					this.setTypeface(font);
 			}
 			mFadeLastLine = a.getBoolean(R.styleable.CustomFontTextView_fade_last_line, false);
+			a.recycle();
+			
+			a = getContext().obtainStyledAttributes(attrs, new int[] { android.R.attr.lineSpacingExtra, android.R.attr.lineSpacingMultiplier });
+			mLineSpacingExtra = a.getFloat(0, mLineSpacingExtra);
+			mLineSpacingMulti = a.getFloat(1, mLineSpacingMulti);
 			a.recycle();
 		}
 
@@ -134,6 +143,7 @@ public class CustomFontTextView extends TextView
 		newClone.setTypeface(getTypeface());
 		newClone.setTextSize(TypedValue.COMPLEX_UNIT_PX, this.getTextSize());
 		newClone.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
+		newClone.setLineSpacing(mLineSpacingExtra, mLineSpacingMulti);
 		LayoutParams params = getLayoutParams();
 		if (params instanceof ViewGroup.MarginLayoutParams)
 		{
@@ -141,6 +151,13 @@ public class CustomFontTextView extends TextView
 			newClone.setLayoutParams(newParams);
 		}
 		return newClone;
+	}
+
+	@Override
+	public void setLineSpacing(float add, float mult) {
+		super.setLineSpacing(add, mult);
+		mLineSpacingExtra = add;
+		mLineSpacingMulti = mult;
 	}
 
 	@Override
