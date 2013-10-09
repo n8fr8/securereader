@@ -229,6 +229,8 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="font">Glegoo-Regular</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+<!--         <item name="android:lineSpacingExtra">10dp</item> -->
     </style>
 	
     <style name="StoryItemShortTimeStyle">
@@ -273,6 +275,8 @@
         <item name="android:textColor">@color/grey_dark_dark</item>
         <item name="android:textSize">18sp</item>
         <item name="font">Roboto-Regular</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+<!--         <item name="android:lineSpacingExtra">10dp</item> -->
     </style>
     
     <style name="StoryItemCommentsIndicatorStyle">
