@@ -438,9 +438,16 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			// Use the bidi class to figure out the swipe direction!
 			if (App.getSettings().readerSwipeDirection() == ReaderSwipeDirection.Automatic)
 			{
+				try
+				{
 				Bidi bidi = new Bidi(mItem.getCleanMainContent(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
 				if (!bidi.baseIsLeftToRight())
 					bReverse = true;
+				}
+				catch (IllegalArgumentException e)
+				{
+					// Content probably null for some reason.
+				}
 			}
 			else if (App.getSettings().readerSwipeDirection() == ReaderSwipeDirection.Ltr)
 			{
