@@ -209,20 +209,17 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 	
 	public static View createView(String name, Context context, AttributeSet attrs)
 	{
-		if (App.getSettings().uiLanguage() == UiLanguage.Tibetan)
+		if (name.equals("TextView"))
 		{
-			if (name.equals("TextView"))
-			{
-				return new CustomFontTextView(context, attrs);
-			}
-			else if (name.equals("Button"))
-			{
-				return new CustomFontButton(context, attrs);
-			}
-			else if (name.equals("EditText"))
-			{
-				return new CustomFontEditText(context, attrs);
-			}
+			return new CustomFontTextView(context, attrs);
+		}
+		else if (name.equals("Button"))
+		{
+			return new CustomFontButton(context, attrs);
+		}
+		else if (name.equals("EditText"))
+		{
+			return new CustomFontEditText(context, attrs);
 		}
 		return null;
 	}
