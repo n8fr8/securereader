@@ -154,7 +154,7 @@ public class SyncService extends Service {
     	void taskComplete(int status) {
     		if (status == FINISHED) {
     			if (type == TYPE_FEED) {
-    				((App) getApplicationContext()).socialReader.setFeedAndItemData(feed);
+    				//((App) getApplicationContext()).socialReader.setFeedAndItemData(feed);
     				((App) getApplicationContext()).socialReader.backgroundDownloadFeedItemMedia(feed);
     			}
     			//if (callback != null) {
