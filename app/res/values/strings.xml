@@ -290,4 +290,5 @@
     <string name="install_orweb_title">Read with Orweb</string>
     <string name="install_orweb_prompt">Orweb is a privacy enhanced web browser. When used with Orbot, Orweb protects against network analysis, blocks cookies, keeps no local browsing history, and disables Flash to keep you safe. Do you want to download Orweb now?</string>
     	
+    <string name="apps_feed_name">Applications</string>
 </resources>
