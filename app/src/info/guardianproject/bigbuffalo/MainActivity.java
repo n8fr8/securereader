@@ -205,6 +205,10 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			this.mShowFeedFilterType = (FeedFilterType) intent.getSerializableExtra(INTENT_EXTRA_SHOW_THIS_TYPE);
 			getIntent().removeExtra(INTENT_EXTRA_SHOW_THIS_TYPE);
 		}
+		else if (socialReader.getDefaultFeedId() >= 0) 
+		{
+			this.mShowFeedId = socialReader.getDefaultFeedId();
+		}
 		else
 		{
 			this.mShowFeedFilterType = null;
