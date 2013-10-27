@@ -13,8 +13,10 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -106,20 +108,24 @@ public class Reader
 			SAXParser sp = spf.newSAXParser();
 
 			XMLReader xr = sp.getXMLReader();
-			/*
-			 * xr.setErrorHandler(new ErrorHandler() { public void
-			 * error(SAXParseException exception) throws SAXException {
-			 * Log.v(LOGTAG, "SAXParseException error: " +
-			 * exception.getMessage()); exception.printStackTrace(); }
-			 * 
-			 * public void fatalError(SAXParseException exception) throws
-			 * SAXException { Log.v(LOGTAG, "SAXParseException fatalError: " +
-			 * exception.getMessage()); exception.printStackTrace(); }
-			 * 
-			 * public void warning(SAXParseException exception) throws
-			 * SAXException { Log.v(LOGTAG, "SAXParseException warning: " +
-			 * exception.getMessage()); exception.printStackTrace(); } });
-			 */
+			
+			xr.setErrorHandler(new ErrorHandler() { 
+				public void error(SAXParseException exception) throws SAXException {
+					Log.v(LOGTAG, "ErrorHandler: SAXParseException error: " + exception.getMessage()); 
+					exception.printStackTrace(); 
+				}
+			  
+				public void fatalError(SAXParseException exception) throws SAXException { 
+					Log.v(LOGTAG, "ErrorHandler: SAXParseException fatalError: " + exception.getMessage()); 
+					exception.printStackTrace(); 
+				}
+			  
+				public void warning(SAXParseException exception) throws SAXException { 
+					Log.v(LOGTAG, "ErrorHandler: SAXParseException warning: " + exception.getMessage());
+					exception.printStackTrace(); 
+				} 
+			});
+			
 
 			Handler handler = new Handler();
 			xr.setContentHandler(handler);
@@ -152,6 +158,7 @@ public class Reader
 					
 					InputStream is = response.getEntity().getContent();
 					xr.parse(new InputSource(is));
+					
 					is.close();
 
 					Date currentDate = new Date();
@@ -177,25 +184,25 @@ public class Reader
 		catch (ParserConfigurationException pce)
 		{
 			Log.e("SAX XML", "sax parse error", pce);
-			feed.setStatus(Feed.STATUS_LAST_SYNC_FAILED_UNKNOWN);
+			feed.setStatus(Feed.STATUS_LAST_SYNC_PARSE_ERROR);
 
 		}
 		catch (SAXException se)
 		{
 			Log.e("SAX XML", "sax error", se);
-			feed.setStatus(Feed.STATUS_LAST_SYNC_FAILED_UNKNOWN);
+			feed.setStatus(Feed.STATUS_LAST_SYNC_PARSE_ERROR);
 
 		}
 		catch (IOException ioe)
 		{
 			Log.e("SAX XML", "sax parse io error", ioe);
-			feed.setStatus(Feed.STATUS_LAST_SYNC_FAILED_UNKNOWN);
+			feed.setStatus(Feed.STATUS_LAST_SYNC_PARSE_ERROR);
 
 		}
 		catch (IllegalStateException ise)
 		{
 			ise.printStackTrace();
-			feed.setStatus(Feed.STATUS_LAST_SYNC_FAILED_UNKNOWN);
+			feed.setStatus(Feed.STATUS_LAST_SYNC_PARSE_ERROR);
 		}
 		return feed;
 	}
