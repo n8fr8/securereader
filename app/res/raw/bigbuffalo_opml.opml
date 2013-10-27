@@ -6,12 +6,15 @@
     <dateModified>2013-07-18T00:38:00+00:00</dateModified>
   </head>
   <body>
-	<outline text="NY Times Global News" htmlUrl="http://www.nytimes.com/services/xml/rss/index.html" xmlUrl="" />
+	<outline text="NYT > World" htmlUrl="http://rss.nytimes.com/services/xml/rss/nyt/World.xml" xmlUrl="" />
 	<outline text="Washington Post World News" htmlUrl="http://feeds.washingtonpost.com/rss/world" xmlUrl="" />
 	<outline text="CNN Top Stories" htmlUrl="http://rss.cnn.com/rss/cnn_topstories.rss" xmlUrl="" />
 	<outline text="CNN World News" htmlUrl="http://rss.cnn.com/rss/cnn_world.rss" xmlUrl="" />
 	<outline text="The Guardian World News" htmlUrl="http://feeds.theguardian.com/theguardian/world/rss" xmlUrl="" />
-	<outline text="Spiegel Online Top Stories" htmlUrl="http://www.spiegel.de/international/index.rss" xmlUrl="" />
-	<outline text="Spiegel Online World News" htmlUrl="http://www.spiegel.de/international/world/index.rss" xmlUrl="" />
+	<outline text="High Peaks Pure Earth" htmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" xmlUrl="" />	
+	<outline text="Phayul" htmlUrl="http://www.rsssearchhub.com/preview/phayul-latest-news-rss-PDJpmJ/" xmlUrl="" />
+	<outline text="VOA Tibetan" htmlUrl="http://www.voatibetan.com/rsspage.aspx" xmlUrl="" />
+	<outline text="RFA Tibetan" htmlUrl="http://www.rfa.org/tibetan/RSS" xmlUrl="" />
+	<outline text="Voice of Tibet" htmlUrl="http://feeds.feedburner.com/VoiceOfTibet" xmlUrl="" />
   </body>
 </opml>
