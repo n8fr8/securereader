@@ -59,14 +59,14 @@
         android:thumbOffset="0dp" />
 
     <TextView
-        android:id="@+id/tvFarsi"
+        android:id="@+id/tvTibetan"
         style="@style/LockScreenLanguageStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/switchLanguage"
         android:layout_alignLeft="@id/switchLanguage"
         android:gravity="left"
-        android:text="@string/lock_screen_language_farsi"
+        android:text="@string/lock_screen_language_tibetan"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
