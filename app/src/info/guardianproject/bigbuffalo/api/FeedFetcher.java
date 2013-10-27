@@ -53,14 +53,15 @@ public class FeedFetcher extends AsyncTask<Feed, Integer, Feed>
 			Reader reader = new Reader(socialReader, feed);
 			feed = reader.fetchFeed();
 		}
+
+		socialReader.setFeedAndItemData(feed);
+
 		return feed;
 	}
 
 	@Override
 	protected void onPostExecute(Feed feed)
-	{
-		socialReader.setFeedAndItemData(feed);
-		
+	{		
 		if (feedFetchedCallback != null)
 		{
 			feedFetchedCallback.feedFetched(feed);
