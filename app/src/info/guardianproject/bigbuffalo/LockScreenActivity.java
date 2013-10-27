@@ -152,7 +152,7 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 							seekBar.setProgress(100);
 						else	
 							seekBar.setProgress(0);
-						App.getSettings().setUiLanguage((seekBar.getProgress() > 50) ? UiLanguage.English : UiLanguage.Farsi);
+						App.getSettings().setUiLanguage((seekBar.getProgress() > 50) ? UiLanguage.English : UiLanguage.Tibetan);
 						onUiLanguageChanged();
 					}
 				}
