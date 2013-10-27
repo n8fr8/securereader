@@ -21,27 +21,35 @@ public class Feed extends FeedEntity
 	public static final String LOGTAG = "rss.Feed";
 
 	SimpleDateFormat[] dateFormats = { new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US),
-			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH), new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH) };
+			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH), 
+			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH), 
+			new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz", Locale.ENGLISH) // <dc:date>2013-10-03T23:34:30Z</dc:date>
+	};
 
+    //<pubDate>Thu, 03 Oct 2013 23:34:30 GMT</pubDate>
+    
+	
+	
 	Date dateParser(String dateString)
 	{
+		Date returnDate = null;
 		for (SimpleDateFormat format : dateFormats)
 		{
 			try
 			{
-				Date returnDate = format.parse(dateString);
-				// Log.v(LOGTAG, "Date Parsing Worked with " + format.toString()
+				returnDate = format.parse(dateString);
+				//Log.v(LOGTAG, "Date Parsing Worked with " + format.toString()
 				// + " on " + dateString);
-				return returnDate;
+				break;
 			}
 			catch (ParseException e)
 			{
-				// Log.v(LOGTAG, "Date Parsing Failed with " + format.toString()
+				//Log.v(LOGTAG, "Date Parsing Failed with " + format.toString()
 				// + " on " + dateString);
 			}
 		}
 
-		return null;
+		return returnDate;
 	}
 
 	public Feed(Attributes attributes)
@@ -100,6 +108,7 @@ public class Feed extends FeedEntity
 	public static int STATUS_LAST_SYNC_FAILED_UNKNOWN = 3;
 	public static int STATUS_LAST_SYNC_FAILED_BAD_URL = 4;
 	public static int STATUS_SYNC_IN_PROGRESS = 5;
+	public static int STATUS_LAST_SYNC_PARSE_ERROR = 6;
 	private int _status = 0;
 
 	private ArrayList<MediaContent> _mediaContent;

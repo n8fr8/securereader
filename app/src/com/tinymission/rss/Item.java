@@ -48,35 +48,34 @@ public class Item extends FeedEntity implements Serializable
 	private MediaThumbnail _mediaThumbnail;
 
 	
+	SimpleDateFormat[] dateFormats = { new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US),
+			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH), 
+			new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH), 
+			new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ssz", Locale.ENGLISH) // <dc:date>2013-10-03T23:34:30Z</dc:date>
+	};
+	
 	Date dateParser(String dateString)
 	{
-		//SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-		SimpleDateFormat[] dateFormats = { new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US),
-				new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH), new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH) };
-
-		if (dateString != null) {
-			for (SimpleDateFormat format : dateFormats)
+		Date returnDate = new Date();
+		for (SimpleDateFormat format : dateFormats)
+		{
+			try
 			{
-				try
-				{
-					Date returnDate = format.parse(dateString);
-					// Log.v(LOGTAG, "Date Parsing Worked with " + format.toString()
-					// + " on " + dateString);
-					return returnDate;
-				}
-				catch (ParseException e)
-				{
-					// Log.v(LOGTAG, "Date Parsing Failed with " + format.toString()
-					// + " on " + dateString);
-				}
+				returnDate = format.parse(dateString);
+				Log.v(LOGTAG, "Date Parsing Worked with " + format.toString()
+				 + " on " + dateString);
+				break;
+			}
+			catch (ParseException e)
+			{
+				Log.v(LOGTAG, "Date Parsing Failed with " + format.toString()
+				 + " on " + dateString);
 			}
 		}
 
-		//return null;
-		// If it doesn't work out, return now
-		return new Date();
+		return returnDate;
 	}
-
+	
 	public Item()
 	{
 		super(null);
