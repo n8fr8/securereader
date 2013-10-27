@@ -12,6 +12,7 @@ package info.guardianproject.bigbuffalo.api;
 import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.adapters.DownloadsAdapter;
 import info.guardianproject.bigbuffalo.api.MediaDownloader.MediaDownloaderCallback;
+import info.guardianproject.bigbuffalo.api.Settings.UiLanguage;
 import info.guardianproject.bigbuffalo.api.SyncServiceFeedFetcher.SyncServiceFeedFetchedCallback;
 import info.guardianproject.cacheword.CacheWordHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
@@ -44,6 +45,7 @@ import android.content.res.Resources;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -58,7 +60,7 @@ public class SocialReader implements ICacheWordSubscriber
 {
 	public static final String LOGTAG = "SocialReader";
 
-	public static final String CHAT_ROOM_NAME = "Chat";
+	public static final String CHAT_ROOM_NAME = "Courier_Chat";
 	
 	public static final String CONTENT_SHARING_MIME_TYPE = "application/x-bigbuffalo-bundle";
 	public static final String CONTENT_SHARING_EXTENSION = "bbb";
@@ -92,14 +94,16 @@ public class SocialReader implements ICacheWordSubscriber
 
 	public static final int DEFAULT_NUM_FEED_ITEMS = 20;
 
-	public static final String BIG_BUFFALO_FEED_URL = "http://bigbuffalo.wordpress.com/feed/";
-	public static final String OPML_URL = "http://bigbuffalo.com/big-buffalo.opml";
-	public static final String APP_FEED_URL = "http://bigbuffalo.com/wordpress/apps.rss";
+	public long defaultFeedId = -1;
+	public static final String BIG_BUFFALO_FEED_URL = "http://bigbuffalo.com/feed/";
+	public static final String OPML_URL = "http://www.sleepybackwater.com/opml/opml.php"; // Needs to have lang=en_US or fa_IR or bo or bo_CN
+	public static final String APP_FEED_URL = "http://bigbuffalo.com/apps.rss";
 
 	// In Milliseconds
 	public final static long FEED_REFRESH_AGE = 300000; // 5 minutes
 	public final static long OPML_CHECK_FREQUENCY = 43200000; // .5 day
 	public final static long EXPIRATION_CHECK_FREQUENCY = 43200000; // .5 days
+	
 
 	// Constant to use when passing an item to be shared to the
 	// securebluetoothsender as an extra in the intent
@@ -304,8 +308,18 @@ public class SocialReader implements ICacheWordSubscriber
 
 	private void checkOPML() {
 		Log.v(LOGTAG,"checkOPML");
+
+		UiLanguage lang = settings.uiLanguage();
+		String opmlUrl = OPML_URL + "?lang=";
+		if (lang == UiLanguage.Farsi) {
+			opmlUrl = opmlUrl + "fa_IR";
+		} else {
+			opmlUrl = opmlUrl + "en_US";
+		}
+		Log.v(LOGTAG, "OPML Feed Url: " + opmlUrl);
+		
 		if (isOnline() == ONLINE && settings.lastOPMLCheckTime() < System.currentTimeMillis() - OPML_CHECK_FREQUENCY) {
-			OPMLParser oParser = new OPMLParser(SocialReader.this, OPML_URL,
+			OPMLParser oParser = new OPMLParser(SocialReader.this, opmlUrl,
 				new OPMLParser.OPMLParserListener() {
 					@Override
 					public void opmlParsed(ArrayList<OPMLParser.OPMLOutline> outlines) {
@@ -385,7 +399,8 @@ public class SocialReader implements ICacheWordSubscriber
 
 	// Working hand in hand with isOnline this tells other classes whether or not they should use Tor when connecting
 	public boolean useTor() {
-		if (settings.requireTor() || oc.isOrbotRunning()) {
+		//if (settings.requireTor() || oc.isOrbotRunning()) {
+		if (settings.requireTor()) {
 			return true;
 		} else {
 			return false;
@@ -412,6 +427,10 @@ public class SocialReader implements ICacheWordSubscriber
 		}
 
 		return true;
+	}
+	
+	public long getDefaultFeedId() {
+		return defaultFeedId;
 	}
 
 	/*
@@ -638,6 +657,7 @@ public class SocialReader implements ICacheWordSubscriber
 
 	Feed manualCompositeFeed = new Feed();
 
+	/*
 	public Feed getSubscribedFeedItems()
 	{
 		Feed returnFeed = new Feed();
@@ -650,7 +670,42 @@ public class SocialReader implements ICacheWordSubscriber
 
 		return returnFeed;
 	}
+	*/
 	
+	public Feed getSubscribedFeedItems()
+	{
+		return getCombinedSubscribedFeedItems();
+	}	
+
+	Feed cachedSubscribedFeedItems = new Feed();
+	public Feed getCombinedSubscribedFeedItems()
+	{
+		if (cachedSubscribedFeedItems == null) {
+			cachedSubscribedFeedItems = new Feed();
+		}
+		cachedSubscribedFeedItems.setDatabaseId(Feed.DEFAULT_DATABASE_ID);
+		
+		new AsyncTask<Void, Void, Feed>() {
+			protected Feed doInBackground(Void... nothing) {
+				if (databaseAdapter != null && databaseAdapter.databaseReady())
+				{
+					return databaseAdapter.getSubscribedFeedItems(DEFAULT_NUM_FEED_ITEMS);
+				}
+				
+				return null;
+		    }
+
+		    protected void onProgressUpdate(Void... progress) {
+		    }
+
+		    protected void onPostExecute(Feed result) {
+		    	cachedSubscribedFeedItems = result;
+		    }			
+		}.execute();
+
+		return cachedSubscribedFeedItems;
+	}
+		
 	public Feed getFeedItemsWithTag(Feed feed, String tag) {
 		Feed returnFeed = new Feed();
 		if (databaseAdapter != null && databaseAdapter.databaseReady())
@@ -674,11 +729,8 @@ public class SocialReader implements ICacheWordSubscriber
 		databaseAdapter = new DatabaseAdapter(cacheWord, applicationContext);
 
 		if (databaseAdapter.getAllFeeds().size() == 0) {
-			Feed newFeed = new Feed(applicationContext.getString(R.string.bigbuffalo_feed_name), BIG_BUFFALO_FEED_URL);
-			newFeed.setSubscribed(true);
-			databaseAdapter.addOrUpdateFeed(newFeed);
-			
-			Feed otherNewFeed = new Feed(applicationContext.getString(R.string.bigbuffalo_apps_feed_name), APP_FEED_URL);
+						
+			Feed otherNewFeed = new Feed(applicationContext.getString(R.string.apps_feed_name), APP_FEED_URL);
 			otherNewFeed.setSubscribed(true);
 			databaseAdapter.addOrUpdateFeed(otherNewFeed);
 			
