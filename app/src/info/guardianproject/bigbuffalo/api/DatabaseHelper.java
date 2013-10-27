@@ -57,6 +57,8 @@ public class DatabaseHelper extends SQLCipherOpenHelper
 			+ " text null, " + ITEMS_TABLE_CONTENT_ENCODED + " text null, " + ITEMS_TABLE_PUBLISH_DATE + " text null, " + ITEMS_TABLE_GUID + " text null, "
 			+ ITEMS_TABLE_AUTHOR + " text null, " + ITEMS_TABLE_COMMENTS_URL + " text null, " + ITEMS_TABLE_SOURCE + " text null, " + ITEMS_TABLE_CATEGORY
 			+ " text null, " + ITEMS_TABLE_FAVORITE + " boolean default 0, " + ITEMS_TABLE_SHARED + " boolean default 0);";
+	
+	public static final String ITEMS_TABLE_CREATE_INDEX = "create index item_publish_date_index on " + ITEMS_TABLE + " (" + ITEMS_TABLE_PUBLISH_DATE + ");";
 
 	public static final String ITEM_MEDIA_TABLE = "item_media";
 	public static final String ITEM_MEDIA_TABLE_COLUMN_ID = "item_media_id";
@@ -121,6 +123,9 @@ public class DatabaseHelper extends SQLCipherOpenHelper
 	{
 		Log.v(LOGTAG, "SQL: " + ITEMS_TABLE_CREATE_SQL);
 		_sqliteDatabase.execSQL(ITEMS_TABLE_CREATE_SQL);
+		
+		Log.v(LOGTAG, "SQL: " + ITEMS_TABLE_CREATE_INDEX);
+		_sqliteDatabase.execSQL(ITEMS_TABLE_CREATE_INDEX);
 
 		Log.v(LOGTAG, "SQL: " + FEEDS_TABLE_CREATE_SQL);
 		_sqliteDatabase.execSQL(FEEDS_TABLE_CREATE_SQL);
