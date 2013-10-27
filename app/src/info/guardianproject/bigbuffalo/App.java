@@ -5,8 +5,13 @@ import info.guardianproject.bigbuffalo.api.Settings.UiLanguage;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.api.SocialReporter;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
+import info.guardianproject.bigbuffalo.widgets.CustomFontButton;
+import info.guardianproject.bigbuffalo.widgets.CustomFontEditText;
+import info.guardianproject.bigbuffalo.widgets.CustomFontTextView;
 
 import java.util.Locale;
+
+
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -19,7 +24,9 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import com.tinymission.rss.Feed;
 
@@ -140,6 +147,12 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 			applyUiLanguage();
 		}
 	}
+		
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		applyUiLanguage();
+	}
 
 	@SuppressLint("NewApi")
 	private void applyUiLanguage()
@@ -150,7 +163,17 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		//
 		Configuration config = new Configuration();
 		config.setTo(getBaseContext().getResources().getConfiguration());
-		Locale loc = new Locale((lang == UiLanguage.Farsi) ? "ar" : "en");
+		
+		String language = "en";
+		if (lang == UiLanguage.Farsi)
+			language = "ar";
+		else if (lang == UiLanguage.Tibetan)
+			language = "bo";
+		
+		if (language.equals(getBaseContext().getResources().getConfiguration().locale.getLanguage()))
+			return; //No change
+		
+		Locale loc = new Locale(language);
 		if (Build.VERSION.SDK_INT >= 17)
 			config.setLocale(loc);
 		else
@@ -183,5 +206,21 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 			}
 		}, null, Activity.RESULT_OK, null, null);
 	}
-
+	
+	public static View createView(String name, Context context, AttributeSet attrs)
+	{
+		if (name.equals("TextView"))
+		{
+			return new CustomFontTextView(context, attrs);
+		}
+		else if (name.equals("Button"))
+		{
+			return new CustomFontButton(context, attrs);
+		}
+		else if (name.equals("EditText"))
+		{
+			return new CustomFontEditText(context, attrs);
+		}
+		return null;
+	}
 }

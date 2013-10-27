@@ -44,7 +44,7 @@
             android:layout_toRightOf="@id/llSender"
             android:text="@string/httpd_app_sender_sender"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#5F7F20" />
+            android:textColor="@color/button_primary" />
 
         <TextView
             android:id="@+id/tvSenderTitle"
@@ -92,7 +92,7 @@
             android:layout_toRightOf="@id/llReceiver"
             android:text="@string/httpd_app_sender_receiver"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#95BA55" />
+            android:textColor="@color/button_primary" />
 
         <LinearLayout
             android:id="@+id/llReceiverInstructions"

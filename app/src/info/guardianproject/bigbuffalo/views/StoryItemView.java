@@ -438,9 +438,16 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			// Use the bidi class to figure out the swipe direction!
 			if (App.getSettings().readerSwipeDirection() == ReaderSwipeDirection.Automatic)
 			{
-				Bidi bidi = new Bidi(mItem.getCleanMainContent(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
-				if (!bidi.baseIsLeftToRight())
-					bReverse = true;
+				try
+				{
+					Bidi bidi = new Bidi(mItem.getCleanMainContent(), Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+					if (!bidi.baseIsLeftToRight())
+						bReverse = true;
+				}
+				catch (IllegalArgumentException e)
+				{
+					// Content probably null for some reason.
+				}
 			}
 			else if (App.getSettings().readerSwipeDirection() == ReaderSwipeDirection.Ltr)
 			{
@@ -519,7 +526,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			try
 			{
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getLink()));
-				intent.setClassName("info.guardianproject.browser", "info.guardianproject.browser.Browser");
+				intent.setClassName(PackageHelper.URI_ORWEB, PackageHelper.URI_ORWEB + ".Browser");
 				// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				v.getContext().startActivity(intent);
 			}

@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Region.Op;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -206,7 +207,8 @@ public class ExpandingFrameLayout extends FrameLayout
 	private void takeSnapshot()
 	{
 		View parent = (View) getParent();
-
+		if (parent != null)
+		{
 		ViewGroup.MarginLayoutParams params = (MarginLayoutParams) this.getLayoutParams();
 
 		isTakingSnap = true;
@@ -214,10 +216,17 @@ public class ExpandingFrameLayout extends FrameLayout
 		Bitmap bmp = parent.getDrawingCache();
 		isTakingSnap = false;
 
+			try
+			{
 		mBitmap = Bitmap.createBitmap(bmp, params.leftMargin, params.topMargin, bmp.getWidth() - params.rightMargin - params.leftMargin,
 				bmp.getHeight() - params.bottomMargin - params.topMargin).copy(bmp.getConfig(), false);
-
+			}
+			catch(Exception e)
+			{
+				Log.e("ExpandingFrameLayout", e.toString());
+			}
 		parent.setDrawingCacheEnabled(false);
+		}
 	}
 
 	/**

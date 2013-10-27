@@ -3,6 +3,7 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.bigbuffalo.ui.ActionProviderShare;
+import info.guardianproject.bigbuffalo.ui.PackageHelper;
 import info.guardianproject.bigbuffalo.ui.UICallbacks;
 import info.guardianproject.bigbuffalo.uiutil.ActivitySwitcher;
 import info.guardianproject.bigbuffalo.uiutil.UIHelpers;
@@ -24,7 +25,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
+import android.view.LayoutInflater.Factory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -38,6 +42,7 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class FragmentActivityWithMenu extends SherlockFragmentActivity implements LockScreenCallbacks, LeftSideMenuListener, ICacheWordSubscriber
 {
+	private LayoutInflater mInflater;
 	private KillReceiver mKillReceiver;
 	private SetUiLanguageReceiver mSetUiLanguageReceiver;
 	private WipeReceiver mWipeReceiver;
@@ -330,11 +335,28 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 			// lock screen is not shown!)
 			mInternalActivityOpened = true;
 		}
-		else if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null
-				&& intent.getData().toString().equals(getString(R.string.market_orbot)))
+		else if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null)
 		{
-			// Install orbot
-			mInternalActivityOpened = true;
+			if (intent.getData().toString().equals(getString(R.string.market_orbot)))
+			{
+				// Install orbot
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getData().toString().equals(PackageHelper.URI_ORWEB_PLAY))
+			{
+				// Install orweb
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getComponent() != null && intent.getComponent().getPackageName() != null && intent.getComponent().getPackageName().equals(PackageHelper.URI_ORWEB))
+			{
+				// Read more with orweb
+				mInternalActivityOpened = true;
+			}
+			else if (intent.getData().toString().equals(PackageHelper.URI_CHATSECURE_PLAY))
+			{
+				// Install ChatSecure
+				mInternalActivityOpened = true;
+			}
 		}
 	}
 
@@ -785,5 +807,40 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		}
 	}
 
+	@Override public Object  getSystemService(String name) {
+	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
+	         if (mInflater == null) {
+	             
+	        	 LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
+	        	 mInflater = mParent.cloneInContext(this);
+	        	 mInflater.setFactory(new FactoryWrapper(mParent));
+	    	 }
+	         return mInflater;
+	     }
+	     return super.getSystemService(name);
+	 }
+
+	private class FactoryWrapper implements LayoutInflater.Factory
+	{
+		private LayoutInflater mParent;
+
+		public FactoryWrapper(LayoutInflater parent)
+		{
+			mParent = parent;
+		}
+		
+		@Override
+		public View onCreateView(String name, Context context,
+				AttributeSet attrs) {
+			View view = App.createView(name, context, attrs);
+			if (view == null)
+			{
+				if (mParent != null)
+					view = FragmentActivityWithMenu.super.onCreateView(name, context, attrs);
+			}
+			return view;
+		}
+		
+	}
 	
 }

@@ -185,11 +185,10 @@
     <string name="settings_language_option_group_default">Default language</string>
     <string name="settings_language_english">English</string>
     <string name="settings_language_farsi">Farsi</string>
-    <string name="settings_language_tibetan">Tibetan</string>
-    <string name="lock_screen_title1">Welcome to Paik</string>
-    <string name="lock_screen_title2">Read, write and talk freely.</string>
+    <string name="lock_screen_title1">ད་ལྟ་རང་འཕྲིན་ཐུང་རྙིང་པ་ཚང་མ་གསུབ་གི་ཡིན་ནམ།</string>
+    <string name="lock_screen_title2">ད་ལྟ་རང་འཕྲིན་ཐུང་རྙིང་པ་ཚང་མ་གསུབ་གི་ཡིན་ནམ།</string>
     <string name="lock_screen_set_passphrase">SET A PASSPHRASE</string>
-    <string name="lock_screen_open">Open</string>
+    <string name="lock_screen_open">གླང་ཆེན་གྱིས་དགྲ་ཤ་ལེན་པ།</string>
     <string name="lock_screen_create_passphrase">OPEN APP</string>
     <string name="lock_screen_create_passphrase_label">Create a passphrase to protect your information:</string>
     <string name="lock_screen_passphrase_hint">passphrase</string>
@@ -277,7 +276,7 @@
     <string name="story_list_hint_tor_more">Learn more about using Tor</string>
     <string name="story_list_hint_tor_less">Less</string>
     <string name="story_list_hint_tor_no_net">No Internet. Try again later.</string>
-    <string name="story_list_hint_tor_go_online">CONNECT TO TOR</string>
+    <string name="story_list_hint_tor_go_online">གླང་ཆེན་གྱིས་དགྲ་ཤ་ལེན་པ།</string>
     <string name="story_list_hint_tor_more_title">Using Tor</string>
     <string name="story_list_hint_tor_more_info">Tor is not required for the news reader, however, it is strongly recommended. You can opt out of using Tor for the news, in your preferences. Your privacy will not be protected in this case.\n\nTor is required for publishing reports on Paik.</string>
     <string name="story_list_hint_tor_connected_title">You have successfully connected to Tor!</string>
@@ -291,5 +290,4 @@
     <string name="install_orweb_title">Read with Orweb</string>
     <string name="install_orweb_prompt">Orweb is a privacy enhanced web browser. When used with Orbot, Orweb protects against network analysis, blocks cookies, keeps no local browsing history, and disables Flash to keep you safe. Do you want to download Orweb now?</string>
     	
-    <string name="apps_feed_name">Applications</string>
 </resources>

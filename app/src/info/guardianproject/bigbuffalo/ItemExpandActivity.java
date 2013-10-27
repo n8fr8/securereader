@@ -316,6 +316,7 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 					public void run()
 					{
 						mFullListStories.setVisibility(View.VISIBLE);
+						if (mFullStoryView != null)
 						mFullStoryView.collapse();
 					}
 				});
