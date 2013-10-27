@@ -32,11 +32,11 @@ public class Settings
 	public static final String KEY_ACCEPTED_POST_PERMISSION = "accepted_post_permission";
 	public static final String KEY_XMLRPC_USERNAME = "xmlrpc_username";
 	public static final String KEY_XMLRPC_PASSWORD = "xmlrpc_password";
-	public static final String KEY_USE_KILL_PASSPHRASE = "use_kpassphrase";
-	public static final String KEY_KILL_PASSPHRASE = "kphrase";
+	public static final String KEY_USE_KILL_PASSPHRASE = "use_passphrase";
+	public static final String KEY_KILL_PASSPHRASE = "passphrase";
 	public static final String KEY_CHAT_SECURE_DIALOG_SHOWN = "chat_secure_dialog_shown";
 	public static final String KEY_USERNAME_PASSWORD_CHAT_REGISTERED = "chat_username_password_registered";
-	
+		
 	public Settings(Context context)
 	{
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
