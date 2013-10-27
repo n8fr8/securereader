@@ -136,7 +136,7 @@
     <string name="add_feed_collapse">Close</string>
     <string name="add_feed_not_loaded">Feed data not loaded</string>
     <string name="add_feed_error_loading">We were unable to load this feed. Be sure that the RSS feed URL is correct.</string>
-    <string name="settings_tor_require">Require Tor</string>
+    <string name="settings_tor_require">Use Tor</string>
     <string name="settings_heading_chat">Chat</string>
     <string name="settings_gibberbot_connected">ChatSecure account connected</string>
     <string name="settings_heading_panic_action">Panic Action</string>
@@ -198,6 +198,7 @@
     <string name="lock_screen_passphrases_not_matching">Passphrases did not match, please try again</string>
     <string name="lock_screen_language_farsi">Farsi</string>
     <string name="lock_screen_language_english">English</string>
+    <string name="lock_screen_language_tibetan">Tibetan</string>
     <string name="lock_screen_wrong_password">Oops! Try again.</string>
     <string name="post_item_no_title">Untitled</string>
     <string name="add_post_menu_post">POST</string>
