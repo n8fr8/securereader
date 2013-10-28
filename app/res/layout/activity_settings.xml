@@ -428,13 +428,6 @@
                     android:text="@string/settings_language_english" />
 
                 <RadioButton
-                    android:id="@+id/rbUiLanguageFarsi"
-                    style="@style/SettingsRadioButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/settings_language_farsi" />
-
-                <RadioButton
                     android:id="@+id/rbUiLanguageTibetan"
                     style="@style/SettingsRadioButtonStyle"
                     android:layout_width="wrap_content"
@@ -447,12 +440,14 @@
                 style="@style/SettingsOptionGroupStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_reader_swipe_direction" />
+                android:text="@string/settings_reader_swipe_direction"
+                android:visibility="gone" />
 
             <RadioGroup
                 android:id="@+id/rgReaderSwipeDirection"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
 
                 <RadioButton
                     android:id="@+id/rbSwipeDirectionRtl"
