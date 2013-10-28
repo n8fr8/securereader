@@ -22,7 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:layout_weight="1"
+            android:ellipsize="end"
             android:gravity="left|center_vertical"
+            android:maxLines="1"
             android:padding="4dp"
             android:text="@string/story_item_short_source"
             android:textAllCaps="true" />
