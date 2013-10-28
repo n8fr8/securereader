@@ -23,6 +23,7 @@ public class CustomFontTextView extends TextView
 	private boolean mFadeLastLine = false;
 	private float mLineSpacingExtra;
 	private float mLineSpacingMulti;
+	private CustomFontTextViewHelper mHelper;
 
 	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle)
 	{
@@ -48,16 +49,11 @@ public class CustomFontTextView extends TextView
 		mLineSpacingExtra = 0;
 		mLineSpacingMulti = 1.0f;
 
+		mHelper = new CustomFontTextViewHelper(this, attrs);
+		
 		if (attrs != null)
 		{
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-			String fontName = a.getString(R.styleable.CustomFontTextView_font);
-			if (fontName != null && !isInEditMode())
-			{
-				Typeface font = FontManager.getFontByName(getContext(), fontName);
-				if (font != null)
-					this.setTypeface(font);
-			}
 			mFadeLastLine = a.getBoolean(R.styleable.CustomFontTextView_fade_last_line, false);
 			a.recycle();
 			
@@ -66,7 +62,6 @@ public class CustomFontTextView extends TextView
 			mLineSpacingMulti = a.getFloat(1, mLineSpacingMulti);
 			a.recycle();
 		}
-
 		mShader = getPaint().getShader();
 	}
 
@@ -140,7 +135,7 @@ public class CustomFontTextView extends TextView
 	public CustomFontTextView createClone()
 	{
 		CustomFontTextView newClone = new CustomFontTextView(getContext());
-		newClone.setTypeface(getTypeface());
+		newClone.setTypeface(mHelper.getOriginalFont());
 		newClone.setTextSize(TypedValue.COMPLEX_UNIT_PX, this.getTextSize());
 		newClone.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
 		newClone.setLineSpacing(mLineSpacingExtra, mLineSpacingMulti);
@@ -208,6 +203,9 @@ public class CustomFontTextView extends TextView
 	@Override
 	public void setText(CharSequence text, BufferType type)
 	{
-		super.setText(FontManager.precomposeText(this, text), type);
+		if (mHelper != null)
+			super.setText(mHelper.precomposeAndSetFont(text, type), type);
+		else
+			super.setText(FontManager.precomposeText(this, text), type);
 	}
 }
