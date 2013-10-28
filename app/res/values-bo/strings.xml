@@ -96,7 +96,7 @@
     <string name="story_item_search_by_tag_hint">Search by #tag</string>
     <string name="story_item_swipe_hint_up">Up to close</string>
     <string name="story_item_swipe_hint_over">Over to read</string>
-    <string name="story_item_read_with_orweb">Read online with Orweb</string>
+    <string name="story_item_read_with_orweb">Read full article</string>
     <string name="error_unknown">Error: Unknown error (see log)</string>
     <string name="error_http_unauthorized">Error: 401 unauthorized</string>
     <string name="error_http_forbidden">Error: 403 forbidden</string>

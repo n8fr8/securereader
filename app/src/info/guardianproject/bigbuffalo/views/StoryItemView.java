@@ -409,16 +409,16 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 				tv.setEnabled(isReadMoreEnabled);
 				if (!isReadMoreEnabled)
 				{
-					tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_read_orweb_gray, 0, 0, 0);
+					//tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_read_orweb_gray, 0, 0, 0);
 					tv.setOnClickListener(null);
 				}
 				else
 				{
-					tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_read_orweb, 0, 0, 0);
-					if (PackageHelper.isOrwebInstalled(blueprint.getContext()))
+					//tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_read_orweb, 0, 0, 0);
+					//if (PackageHelper.isOrwebInstalled(blueprint.getContext()))
 						tv.setOnClickListener(new ReadMoreClickListener(story));
-					else
-						tv.setOnClickListener(new PromptOrwebClickListener(blueprint.getContext()));
+					//else
+					//	tv.setOnClickListener(new PromptOrwebClickListener(blueprint.getContext()));
 				}
 				tv.setVisibility(View.VISIBLE);
 			}
@@ -526,7 +526,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			try
 			{
 				Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mItem.getLink()));
-				intent.setClassName(PackageHelper.URI_ORWEB, PackageHelper.URI_ORWEB + ".Browser");
+				//intent.setClassName(PackageHelper.URI_ORWEB, PackageHelper.URI_ORWEB + ".Browser");
 				// intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				v.getContext().startActivity(intent);
 			}

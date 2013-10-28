@@ -74,7 +74,7 @@ public class Settings
 	 */
 	public boolean requireTor()
 	{
-		return mPrefs.getBoolean(KEY_REQUIRE_TOR, true);
+		return mPrefs.getBoolean(KEY_REQUIRE_TOR, false);
 	}
 
 	/**
