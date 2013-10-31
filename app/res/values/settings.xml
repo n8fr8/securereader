@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string translatable="false" name="server_address">http://ec2-23-20-243-244.compute-1.amazonaws.com/f33d3r/</string>
-    <string translatable="false" name="default_user">newuser</string>
-    <string translatable="false" name="default_password">highlysecure</string>
-</resources>

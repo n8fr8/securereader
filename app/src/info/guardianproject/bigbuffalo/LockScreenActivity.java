@@ -140,7 +140,16 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 		SeekBar switchLanguage = (SeekBar) findViewById(R.id.switchLanguage);
 		if (App.UI_ENABLE_LANGUAGE_CHOICE)
 		{
-			switchLanguage.setProgress((App.getSettings().uiLanguage() == UiLanguage.English) ? 100 : 0);
+			//switchLanguage.setProgress((App.getSettings().uiLanguage() == UiLanguage.English) ? 100 : 0);
+			
+			if (App.getSettings().uiLanguage() == UiLanguage.English) {
+				switchLanguage.setProgress(100);
+			} else if (App.getSettings().uiLanguage() == UiLanguage.Tibetan) {
+				switchLanguage.setProgress(50);
+			} else if (App.getSettings().uiLanguage() == UiLanguage.Chinese) {
+				switchLanguage.setProgress(0);
+			}
+			
 			switchLanguage.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
 			{
 				@Override
@@ -148,11 +157,21 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 				{
 					if (fromUser)
 					{
-						if (progress > 50)
+						if (progress > 75) {
 							seekBar.setProgress(100);
-						else	
+							App.getSettings().setUiLanguage(UiLanguage.English);
+						}
+						else if (progress > 25) {
+							seekBar.setProgress(50);
+							App.getSettings().setUiLanguage(UiLanguage.Chinese);
+						}
+						else {	
 							seekBar.setProgress(0);
-						App.getSettings().setUiLanguage((seekBar.getProgress() > 50) ? UiLanguage.English : UiLanguage.Tibetan);
+							App.getSettings().setUiLanguage(UiLanguage.Tibetan);
+						}
+						
+						
+						//App.getSettings().setUiLanguage((seekBar.getProgress() > 50) ? UiLanguage.English : UiLanguage.Tibetan);
 						onUiLanguageChanged();
 					}
 				}
@@ -172,7 +191,8 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 		{
 			// Hide language selection!
 			switchLanguage.setVisibility(View.GONE);
-			findViewById(R.id.tvFarsi).setVisibility(View.GONE);
+			findViewById(R.id.tvChinese).setVisibility(View.GONE);
+			findViewById(R.id.tvTibetan).setVisibility(View.GONE);
 			findViewById(R.id.tvEnglish).setVisibility(View.GONE);
 		}
 	}

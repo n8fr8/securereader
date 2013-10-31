@@ -700,7 +700,7 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 				mMenuViewHolder.tvNumChats = (TextView) menuView.findViewById(R.id.tvNumChats);
 			}
 
-			isOnline = (App.getInstance().socialReader.isOnline() == SocialReader.ONLINE);
+			isOnline = App.getInstance().socialReader.isTorOnline();
 			// isSignedIn = App.getInstance().socialReporter.isSignedIn();
 
 			numFeeds = App.getInstance().socialReader.getSubscribedFeedsList().size();

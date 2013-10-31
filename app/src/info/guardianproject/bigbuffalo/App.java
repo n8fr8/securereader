@@ -169,6 +169,8 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 			language = "ar";
 		else if (lang == UiLanguage.Tibetan)
 			language = "bo";
+		else if (lang == UiLanguage.Chinese)
+			language = "zh";
 		
 		if (language.equals(getBaseContext().getResources().getConfiguration().locale.getLanguage()))
 			return; //No change

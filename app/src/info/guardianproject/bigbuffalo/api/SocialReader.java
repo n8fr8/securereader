@@ -96,7 +96,7 @@ public class SocialReader implements ICacheWordSubscriber
 
 	public long defaultFeedId = -1;
 	public static final String BIG_BUFFALO_FEED_URL = "http://bigbuffalo.com/feed/";
-	public static final String OPML_URL = "http://www.sleepybackwater.com/opml/opml.php"; // Needs to have lang=en_US or fa_IR or bo or bo_CN
+	public static final String OPML_URL = "http://securereader.guardianproject.info/opml/opml.php"; // Needs to have lang=en_US or fa_IR or bo or bo_CN or zh_CN
 	public static final String APP_FEED_URL = "http://bigbuffalo.com/apps.rss";
 
 	// In Milliseconds
@@ -313,8 +313,12 @@ public class SocialReader implements ICacheWordSubscriber
 		String opmlUrl = OPML_URL + "?lang=";
 		if (lang == UiLanguage.Farsi) {
 			opmlUrl = opmlUrl + "fa_IR";
-		} else {
-			opmlUrl = opmlUrl + "en_US";
+		} else if (lang == UiLanguage.English) {
+			opmlUrl = opmlUrl + "en_US_BO";
+		} else if (lang == UiLanguage.Tibetan) {
+			opmlUrl = opmlUrl + "bo_CN";
+		} else if (lang == UiLanguage.Chinese) {
+			opmlUrl = opmlUrl + "en_US_BO";
 		}
 		Log.v(LOGTAG, "OPML Feed Url: " + opmlUrl);
 		
@@ -356,6 +360,18 @@ public class SocialReader implements ICacheWordSubscriber
 		cacheWord.connectToService();
 
         appStatus = SocialReader.APP_IN_FOREGROUND;
+	}
+	
+	public boolean isTorOnline() 
+	{
+		if (oc.isOrbotInstalled() && oc.isOrbotRunning()) 
+		{
+			return true;
+		} 
+		else 
+		{
+			return false;
+		}		
 	}
 
 	// This public method will indicate whether or not the application is online

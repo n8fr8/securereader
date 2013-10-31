@@ -69,6 +69,19 @@
         android:text="@string/lock_screen_language_tibetan"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
+	<TextView
+	    android:id="@+id/tvChinese"
+	    style="@style/LockScreenLanguageStyle"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@id/switchLanguage"
+	    android:layout_alignParentBottom="false"
+	    android:layout_alignParentLeft="false"
+	    android:layout_centerInParent="true"
+	    android:gravity="center"
+	    android:text="@string/lock_screen_language_chinese"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+        
     <TextView
         android:id="@+id/tvEnglish"
         style="@style/LockScreenLanguageStyle"
@@ -76,7 +89,6 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/switchLanguage"
         android:layout_alignRight="@id/switchLanguage"
-        android:layout_toRightOf="@+id/tvFarsi"
         android:gravity="right"
         android:text="@string/lock_screen_language_english"
         android:textAppearance="?android:attr/textAppearanceSmall" />
