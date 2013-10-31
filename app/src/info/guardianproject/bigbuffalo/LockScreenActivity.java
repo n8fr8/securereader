@@ -72,18 +72,21 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 	@Override
 	protected void onResume()
 	{
+		super.onResume();
 		mSetUiLanguageReceiver = new SetUiLanguageReceiver();
 		registerReceiver(mSetUiLanguageReceiver, new IntentFilter(App.SET_UI_LANGUAGE_BROADCAST_ACTION), App.EXIT_BROADCAST_PERMISSION, null);
-
-		super.onResume();
 		mCacheWord.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		unregisterReceiver(mSetUiLanguageReceiver);
 	    super.onPause();
-	    mCacheWord.onPause();
+	    if (mSetUiLanguageReceiver != null)
+	    {
+	    	unregisterReceiver(mSetUiLanguageReceiver);
+	    	mSetUiLanguageReceiver = null;
+		    mCacheWord.onPause();
+	    }
 	}
 
 	@Override
@@ -145,9 +148,9 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 			if (App.getSettings().uiLanguage() == UiLanguage.English) {
 				switchLanguage.setProgress(100);
 			} else if (App.getSettings().uiLanguage() == UiLanguage.Tibetan) {
-				switchLanguage.setProgress(50);
-			} else if (App.getSettings().uiLanguage() == UiLanguage.Chinese) {
 				switchLanguage.setProgress(0);
+			} else if (App.getSettings().uiLanguage() == UiLanguage.Chinese) {
+				switchLanguage.setProgress(50);
 			}
 			
 			switchLanguage.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
