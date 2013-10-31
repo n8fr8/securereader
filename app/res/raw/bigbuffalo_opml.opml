@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <opml version="1.1">
   <head>
-    <title>Big Buffalo</title>
+    <title>English Language Tibetan News Feeds </title>
     <dateCreated>2013-07-18T00:38:00+00:00</dateCreated>
     <dateModified>2013-07-18T00:38:00+00:00</dateModified>
   </head>
   <body>
-	<outline text="NYT > World" htmlUrl="http://rss.nytimes.com/services/xml/rss/nyt/World.xml" xmlUrl="" />
-	<outline text="Washington Post World News" htmlUrl="http://feeds.washingtonpost.com/rss/world" xmlUrl="" />
-	<outline text="CNN Top Stories" htmlUrl="http://rss.cnn.com/rss/cnn_topstories.rss" xmlUrl="" />
-	<outline text="CNN World News" htmlUrl="http://rss.cnn.com/rss/cnn_world.rss" xmlUrl="" />
-	<outline text="The Guardian World News" htmlUrl="http://feeds.theguardian.com/theguardian/world/rss" xmlUrl="" />
-	<outline text="High Peaks Pure Earth" htmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" xmlUrl="" />	
-	<outline text="Phayul" htmlUrl="http://www.rsssearchhub.com/preview/phayul-latest-news-rss-PDJpmJ/" xmlUrl="" />
-	<outline text="VOA Tibetan" htmlUrl="http://www.voatibetan.com/rsspage.aspx" xmlUrl="" />
-	<outline text="RFA Tibetan" htmlUrl="http://www.rfa.org/tibetan/RSS" xmlUrl="" />
+	<outline text="High Peaks Pure Earth" htmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" xmlUrl="" />
+	<outline text="VOA News about Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zruuqeuikq" xmlUrl="" />
+	<outline text="VOA News from Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zgykme_qg_" xmlUrl="" />
+	<outline text="VOA Dali Lama News" htmlUrl="http://www.voatibetanenglish.com/api/zjpkoey-kp" xmlUrl="" />
 	<outline text="Voice of Tibet" htmlUrl="http://feeds.feedburner.com/VoiceOfTibet" xmlUrl="" />
+	<outline text="Phayul" htmlUrl="http://www.phayul.com/xmls/news/rssfeeds/latestrss.xml" xmlUrl="" />
+	<outline text="VOA Tibetan" htmlUrl="http://www.voatibetan.com/api/"  xmlUrl="" />
+	<outline text="RFA Tibetan" htmlUrl="http://www.rfa.org/tibetan/RSS" xmlUrl="" />
+	<outline text="Khapdha" htmlUrl="http://www.khabdha.org/?feed=rss2" xmlUrl="" />
+	<outline text="Karkhung" htmlUrl="http://karkhung.com/?feed=rss2" xmlUrl="" />
   </body>
 </opml>
