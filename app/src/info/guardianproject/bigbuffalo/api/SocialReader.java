@@ -331,7 +331,7 @@ public class SocialReader implements ICacheWordSubscriber
 						if (outlines != null) {
 							for (int i = 0; i < outlines.size(); i++) {
 								OPMLParser.OPMLOutline outlineElement = outlines.get(i);
-								Feed newFeed = new Feed(outlineElement.text, outlineElement.htmlUrl);
+								Feed newFeed = new Feed(outlineElement.text, outlineElement.xmlUrl);
 								newFeed.setSubscribed(true);
 								databaseAdapter.addOrUpdateFeed(newFeed);
 								Log.v(LOGTAG,"May have added: " + newFeed.getTitle() + " " + newFeed.getFeedURL());
