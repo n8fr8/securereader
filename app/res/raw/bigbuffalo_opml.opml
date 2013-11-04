@@ -6,15 +6,15 @@
     <dateModified>2013-07-18T00:38:00+00:00</dateModified>
   </head>
   <body>
-	<outline text="High Peaks Pure Earth" htmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" xmlUrl="" />
-	<outline text="VOA News about Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zruuqeuikq" xmlUrl="" />
-	<outline text="VOA News from Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zgykme_qg_" xmlUrl="" />
-	<outline text="VOA Dali Lama News" htmlUrl="http://www.voatibetanenglish.com/api/zjpkoey-kp" xmlUrl="" />
-	<outline text="Voice of Tibet" htmlUrl="http://feeds.feedburner.com/VoiceOfTibet" xmlUrl="" />
-	<outline text="Phayul" htmlUrl="http://www.phayul.com/xmls/news/rssfeeds/latestrss.xml" xmlUrl="" />
-	<outline text="VOA Tibetan" htmlUrl="http://www.voatibetan.com/api/"  xmlUrl="" />
-	<outline text="RFA Tibetan" htmlUrl="http://www.rfa.org/tibetan/RSS" xmlUrl="" />
-	<outline text="Khapdha" htmlUrl="http://www.khabdha.org/?feed=rss2" xmlUrl="" />
-	<outline text="Karkhung" htmlUrl="http://karkhung.com/?feed=rss2" xmlUrl="" />
+	<outline text="High Peaks Pure Earth" htmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" xmlUrl="http://feeds.feedburner.com/highpeakspureearth/lAfp" />
+	<outline text="VOA News about Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zruuqeuikq" xmlUrl="http://www.voatibetanenglish.com/api/zruuqeuikq" />
+	<outline text="VOA News from Tibet" htmlUrl="http://www.voatibetanenglish.com/api/zgykme_qg_" xmlUrl="http://www.voatibetanenglish.com/api/zgykme_qg_" />
+	<outline text="VOA Dali Lama News" htmlUrl="http://www.voatibetanenglish.com/api/zjpkoey-kp" xmlUrl="http://www.voatibetanenglish.com/api/zjpkoey-kp" />
+	<outline text="Voice of Tibet" htmlUrl="http://feeds.feedburner.com/VoiceOfTibet" xmlUrl="http://feeds.feedburner.com/VoiceOfTibet" />
+	<outline text="Phayul" htmlUrl="http://www.phayul.com/xmls/news/rssfeeds/latestrss.xml" xmlUrl="http://www.phayul.com/xmls/news/rssfeeds/latestrss.xml" />
+	<outline text="VOA Tibetan" htmlUrl="http://www.voatibetan.com/api/"  xmlUrl="http://www.voatibetan.com/api/" />
+	<outline text="RFA Tibetan" htmlUrl="http://www.rfa.org/tibetan/RSS" xmlUrl="http://www.rfa.org/tibetan/RSS" />
+	<outline text="Khapdha" htmlUrl="http://www.khabdha.org/?feed=rss2" xmlUrl="http://www.khabdha.org/?feed=rss2" />
+	<outline text="Karkhung" htmlUrl="http://karkhung.com/?feed=rss2" xmlUrl="http://karkhung.com/?feed=rss2" />
   </body>
 </opml>
