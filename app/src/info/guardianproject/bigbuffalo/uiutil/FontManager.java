@@ -15,6 +15,18 @@ import android.widget.TextView;
 
 public class FontManager
 {
+	public static class TransformedText
+	{
+		public TransformedText(CharSequence transformedText, Typeface typeface)
+		{
+			this.transformedText = transformedText;
+			this.typeface = typeface;
+		}
+		
+		public CharSequence transformedText;
+		public Typeface typeface;
+	}
+	
 	private static HashMap<String, Typeface> gFonts = new HashMap<String, Typeface>();
 	
 	public static Typeface getFontByName(Context context, String name)
@@ -55,18 +67,15 @@ public class FontManager
 		return false;
 	}
 	
-	public static CharSequence precomposeText(TextView view, CharSequence text)
+	public static TransformedText transformText(TextView view, CharSequence text)
 	{
 		if (FontManager.isTibetan(text))
 		{
         	Typeface font = FontManager.getFontByName(view.getContext(), "Jomolhari");
-        	if (font != null && font != view.getTypeface())
-        		view.setTypeface(font);
-        	
 			String result = text.toString();
 			result = CustomTypefaceManager.handlePrecompose(result);
-			return result;
+			return new TransformedText(result, font);
 		}
-		return text;
+		return null;
 	}
 }

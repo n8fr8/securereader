@@ -2,6 +2,7 @@ package info.guardianproject.bigbuffalo.widgets;
 
 import info.guardianproject.bigbuffalo.uiutil.FontManager;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.Button;
 import android.widget.TextView.BufferType;
@@ -39,6 +40,14 @@ public class CustomFontButton extends Button {
 		if (mHelper != null)
 			super.setText(mHelper.precomposeAndSetFont(text, type), type);
 		else
-			super.setText(FontManager.precomposeText(this, text), type);
+			super.setText(text, type);
+	}
+	
+	@Override
+	public void setTypeface(Typeface tf) {
+		if (mHelper != null)
+			super.setTypeface(mHelper.handleSetTypefaceRequest(tf));
+		else
+			super.setTypeface(tf);
 	}
 }

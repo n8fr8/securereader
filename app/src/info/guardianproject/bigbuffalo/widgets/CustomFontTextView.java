@@ -206,6 +206,14 @@ public class CustomFontTextView extends TextView
 		if (mHelper != null)
 			super.setText(mHelper.precomposeAndSetFont(text, type), type);
 		else
-			super.setText(FontManager.precomposeText(this, text), type);
+			super.setText(text, type);
+	}
+	
+	@Override
+	public void setTypeface(Typeface tf) {
+		if (mHelper != null)
+			super.setTypeface(mHelper.handleSetTypefaceRequest(tf));
+		else
+			super.setTypeface(tf);
 	}
 }
