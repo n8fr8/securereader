@@ -62,7 +62,7 @@ public class PanicActivity extends Activity implements OnTouchListener
 			{
 				Intent intent = new Intent(PanicActivity.this, SettingsActivity.class);
 				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				intent.putExtra("go_to_group", R.id.groupPanicAction);
+				intent.putExtra(SettingsActivity.EXTRA_GO_TO_GROUP, R.id.groupPanicAction);
 				PanicActivity.this.startActivity(intent);
 				PanicActivity.this.finish();
 			}

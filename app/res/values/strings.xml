@@ -171,7 +171,8 @@
     <string name="settings_language_chinese">Chinese</string>
     <string name="lock_screen_title1">Welcome to YakReader</string>
     <string name="lock_screen_title2">Read, write and talk freely.</string>
-    <string name="lock_screen_set_passphrase">SET A PASSPHRASE</string>
+    <string name="lock_screen_choose_language">Choose a language</string>
+    <string name="lock_screen_set_passphrase">GET STARTED</string>
     <string name="lock_screen_open">Open</string>
     <string name="lock_screen_create_passphrase">OPEN APP</string>
     <string name="lock_screen_create_passphrase_label">Create a passphrase to protect your information:</string>

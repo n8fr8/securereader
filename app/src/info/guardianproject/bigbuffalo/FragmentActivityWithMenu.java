@@ -56,6 +56,8 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 	LeftSideMenu mLeftSideMenu;
 
 	int mDeferedCommand;
+	protected boolean mResumed;
+	private boolean mNeedToRecreate;
 
 	protected void setMenuIdentifier(int idMenu)
 	{
@@ -173,11 +175,26 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		}
 	}
 
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		mResumed = false;
+	}
+
 	@SuppressLint("NewApi")
 	@Override
 	protected void onResume()
 	{
 		super.onResume();
+		mResumed = true;
+		
+		if (mNeedToRecreate)
+		{
+			onUiLanguageChanged();
+			return;
+		}
+		
 		if (Build.VERSION.SDK_INT >= 11)
 			invalidateOptionsMenu();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMenuCommandReceiver, new IntentFilter("MenuCommand"));
@@ -269,18 +286,23 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 	@SuppressLint("NewApi")
 	protected void onUiLanguageChanged()
 	{
-		if (Build.VERSION.SDK_INT >= 11)
+		if (!mResumed)
 		{
-			recreate();
+			mNeedToRecreate = true;
 		}
 		else
 		{
+			mNeedToRecreate = false;
 			Intent intentThis = getIntent();
-			overridePendingTransition(0, 0);
+			
+			Bundle b = new Bundle();
+			onSaveInstanceState(b);
+			intentThis.putExtra("savedInstance", b);
 			intentThis.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			finish();
 			overridePendingTransition(0, 0);
-			startActivity(intentThis);
+			startActivityAsInternal(intentThis);
+			overridePendingTransition(0, 0);
 		}
 	}
 
@@ -300,6 +322,12 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		super.startActivity(intent);
 	}
 
+	public void startActivityAsInternal(Intent intent)
+	{
+		mInternalActivityOpened = true;
+		super.startActivity(intent);
+	}
+	
 	@Override
 	public void startActivityForResult(Intent intent, int request)
 	{

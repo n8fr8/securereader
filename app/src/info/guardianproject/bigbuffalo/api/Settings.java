@@ -374,11 +374,11 @@ public class Settings
 		
 		// Is default system language arabic?
 		String defaultLanguage = Locale.getDefault().getLanguage();
-		if (defaultLanguage == "ar")
+		if (defaultLanguage.equals("ar"))
 			return UiLanguage.Farsi;
-		else if (defaultLanguage == "bo")
+		else if (defaultLanguage.equals("bo"))
 			return UiLanguage.Tibetan;
-		else if (defaultLanguage == "zh")
+		else if (defaultLanguage.equals("zh"))
 			return UiLanguage.Chinese;
 		return UiLanguage.English;
 	}

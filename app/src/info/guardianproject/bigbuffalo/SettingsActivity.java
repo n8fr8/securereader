@@ -13,6 +13,7 @@ import org.holoeverywhere.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -37,11 +38,15 @@ public class SettingsActivity extends FragmentActivityWithMenu
 {
 	private static final String TAG = "Settings";
 
+	public static final String EXTRA_GO_TO_GROUP = "go_to_group";
+
 	Settings mSettings;
 	private ViewGroup rootView;
 
 	private RadioButton mRbUseKillPassphraseOn;
 	private RadioButton mRbUseKillPassphraseOff;
+
+	private boolean mLanguageBeingUpdated;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -110,8 +115,21 @@ public class SettingsActivity extends FragmentActivityWithMenu
 	{
 		super.onResume();
 		populateProfileTab();
-
-		int goToSection = getIntent().getIntExtra("go_to_group", 0);
+		if (getIntent().hasExtra(EXTRA_GO_TO_GROUP))
+		{
+			handleGoToGroup(getIntent().getIntExtra(EXTRA_GO_TO_GROUP, 0));
+			getIntent().removeExtra(EXTRA_GO_TO_GROUP);
+		}
+		
+		if (getIntent().hasExtra("savedInstance"))
+		{
+			this.onRestoreInstanceState(getIntent().getBundleExtra("savedInstance"));
+			getIntent().removeExtra("savedInstance");
+		}
+	}
+	
+	private void handleGoToGroup(int goToSection)
+	{
 		if (goToSection != 0)
 		{
 			final View view = rootView.findViewById(goToSection);
@@ -532,6 +550,56 @@ public class SettingsActivity extends FragmentActivityWithMenu
 	@Override
 	protected void onUiLanguageChanged()
 	{
-		// Don't react, so leave empty and don't call super class!
+		mLanguageBeingUpdated = true;
+		super.onUiLanguageChanged();
+	}
+
+	private void collectExpandedGroupViews(View current, ArrayList<Integer> expandedViews)
+	{
+		if (current instanceof ViewGroup)
+		{
+			for (int child = 0; child < ((ViewGroup) current).getChildCount(); child++)
+				collectExpandedGroupViews(((ViewGroup) current).getChildAt(child), expandedViews);
+		}
+		if (current instanceof GroupView)
+		{
+			if (((GroupView) current).getExpanded())
+				expandedViews.add(Integer.valueOf(current.getId()));
+		}
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		if (mLanguageBeingUpdated)
+		{
+			ArrayList<Integer> expandedViews = new ArrayList<Integer>();
+			collectExpandedGroupViews(rootView, expandedViews);
+			outState.putIntegerArrayList("expandedViews", expandedViews);
+		}
+	}
+
+	private void expandSelectedGroupViews(View current, ArrayList<Integer> expandedViews)
+	{
+		if (current instanceof ViewGroup)
+		{
+			for (int child = 0; child < ((ViewGroup) current).getChildCount(); child++)
+				expandSelectedGroupViews(((ViewGroup) current).getChildAt(child), expandedViews);
+		}
+		if (current instanceof GroupView)
+		{
+			if (expandedViews.contains(Integer.valueOf(current.getId())))
+				((GroupView) current).setExpanded(true, false);
+		}
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		if (savedInstanceState.containsKey("expandedViews"))
+		{
+			expandSelectedGroupViews(rootView, savedInstanceState.getIntegerArrayList("expandedViews"));
+			handleGoToGroup(R.id.groupLanguage);
+		}
 	}
 }

@@ -4,6 +4,7 @@ import info.guardianproject.bigbuffalo.api.Settings.UiLanguage;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
+import info.guardianproject.bigbuffalo.widgets.DropdownSpinner;
 import info.guardianproject.cacheword.CacheWordActivityHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import java.security.GeneralSecurityException;
@@ -15,6 +16,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
@@ -35,8 +37,10 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -54,6 +58,9 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 
 	private CacheWordActivityHandler mCacheWord;
 	private info.guardianproject.bigbuffalo.LockScreenActivity.SetUiLanguageReceiver mSetUiLanguageReceiver;
+	private DropdownSpinner mDropdownLanguage;
+	private String[] mLanguageNames;
+	private UiLanguage[] mLanguageCodes;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -141,66 +148,51 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 			}
 		});
 
-		SeekBar switchLanguage = (SeekBar) findViewById(R.id.switchLanguage);
+		
+		mDropdownLanguage = (DropdownSpinner) findViewById(R.id.languagePopup);
+		
 		if (App.UI_ENABLE_LANGUAGE_CHOICE)
 		{
-			//switchLanguage.setProgress((App.getSettings().uiLanguage() == UiLanguage.English) ? 100 : 0);
+			mLanguageNames = new String[] { 
+					getString(R.string.settings_language_english),
+					getString(R.string.settings_language_tibetan),
+					getString(R.string.settings_language_chinese) };
+			mLanguageCodes = new UiLanguage[] { 
+					UiLanguage.English,
+					UiLanguage.Tibetan,
+					UiLanguage.Chinese };
 			
-			if (App.getSettings().uiLanguage() == UiLanguage.English) {
-				switchLanguage.setProgress(100);
-			} else if (App.getSettings().uiLanguage() == UiLanguage.Tibetan) {
-				switchLanguage.setProgress(0);
-			} else if (App.getSettings().uiLanguage() == UiLanguage.Chinese) {
-				switchLanguage.setProgress(50);
-			}
+			ListAdapter adapter = new LanguageListAdapter(this, mLanguageNames);
+			mDropdownLanguage.setAdapter(adapter);
+			selectLanguageByUiLanguage(App.getSettings().uiLanguage(), false);
+			mDropdownLanguage.setOnSelectionChangedListener(new DropdownSpinner.OnSelectionChangedListener() {
 			
-			switchLanguage.setOnSeekBarChangeListener(new OnSeekBarChangeListener()
-			{
 				@Override
-				public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
-				{
-					if (fromUser)
-					{
-						if (progress > 75) {
-							seekBar.setProgress(100);
-							App.getSettings().setUiLanguage(UiLanguage.English);
-						}
-						else if (progress > 25) {
-							seekBar.setProgress(50);
-							App.getSettings().setUiLanguage(UiLanguage.Chinese);
-						}
-						else {	
-							seekBar.setProgress(0);
-							App.getSettings().setUiLanguage(UiLanguage.Tibetan);
-						}
-						
-						
-						//App.getSettings().setUiLanguage((seekBar.getProgress() > 50) ? UiLanguage.English : UiLanguage.Tibetan);
-						onUiLanguageChanged();
-					}
-				}
-
-				@Override
-				public void onStartTrackingTouch(SeekBar seekBar)
-				{
-				}
-
-				@Override
-				public void onStopTrackingTouch(SeekBar seekBar)
-				{
+				public void onSelectionChanged(int position) {
+					App.getSettings().setUiLanguage(mLanguageCodes[position]);
 				}
 			});
 		}
 		else
 		{
 			// Hide language selection!
-			switchLanguage.setVisibility(View.GONE);
-			findViewById(R.id.tvChinese).setVisibility(View.GONE);
-			findViewById(R.id.tvTibetan).setVisibility(View.GONE);
-			findViewById(R.id.tvEnglish).setVisibility(View.GONE);
+			mDropdownLanguage.setVisibility(View.GONE);
 		}
 	}
-
+	
+	private boolean selectLanguageByUiLanguage(UiLanguage language, boolean sendNotification)
+	{
+		for (int i = 0; i < mLanguageCodes.length; i++)
+		{
+			if (mLanguageCodes[i].equals(language))
+			{
+				mDropdownLanguage.setCurrentSelection(i, sendNotification);
+				return true;
+			}
+		}		
+		return false;
+	}
+	
 	private void createCreatePassphraseView()
 	{
 		setContentView(R.layout.lock_screen_create_passphrase);
@@ -351,19 +343,12 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 	@SuppressLint("NewApi")
 	protected void onUiLanguageChanged()
 	{
-		if (Build.VERSION.SDK_INT >= 11)
-		{
-			recreate();
-		}
-		else
-		{
-			Intent intentThis = getIntent();
-			overridePendingTransition(0, 0);
-			intentThis.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-			finish();
-			overridePendingTransition(0, 0);
-			startActivity(intentThis);
-		}
+		Intent intentThis = getIntent();
+		intentThis.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+		finish();
+		overridePendingTransition(0, 0);
+		startActivity(intentThis);
+		overridePendingTransition(0, 0);
 	}
 
 	@Override
@@ -419,6 +404,24 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 					onUiLanguageChanged();
 				}
 			});
+		}
+	}
+	
+	private class LanguageListAdapter extends ArrayAdapter<String>
+	{
+		public LanguageListAdapter(Context context, String[] languages)
+		{
+			super(context, R.layout.dropdown_language_item, R.id.tvLanguageName, languages);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent)
+		{
+			// User super class to create the View
+			View v = super.getView(position, convertView, parent);
+			TextView tv = (TextView) v.findViewById(R.id.tvLanguageName);
+			tv.setText(getItem(position));
+			return v;
 		}
 	}
 }

@@ -102,8 +102,11 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		if (activity.isInternalActivityOpened())
 			return;
 
-		mInBackground = true;
-		socialReader.onPause();
+		if (!mInBackground)
+		{
+			mInBackground = true;
+			socialReader.onPause();
+		}
 	}
 
 	// When any activity resumes with a previous activity not being ours.
@@ -162,7 +165,6 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		// Update language!
 		//
 		Configuration config = new Configuration();
-		config.setTo(getBaseContext().getResources().getConfiguration());
 		
 		String language = "en";
 		if (lang == UiLanguage.Farsi)
@@ -182,7 +184,7 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 			config.locale = loc;
 		Locale.setDefault(loc);
 		getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-
+	
 		// Notify activities (if any)
 		Intent intent = new Intent(App.SET_UI_LANGUAGE_BROADCAST_ACTION);
 		this.sendOrderedBroadcast(intent, App.EXIT_BROADCAST_PERMISSION, new BroadcastReceiver()
