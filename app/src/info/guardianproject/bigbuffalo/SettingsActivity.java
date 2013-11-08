@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 import org.holoeverywhere.app.Dialog;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -570,7 +571,8 @@ public class SettingsActivity extends FragmentActivityWithMenu
 	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+		// Dont call base, see http://stackoverflow.com/questions/4504024/android-localization-problem-not-all-items-in-the-layout-update-properly-when-s
+		//super.onSaveInstanceState(outState);
 		if (mLanguageBeingUpdated)
 		{
 			ArrayList<Integer> expandedViews = new ArrayList<Integer>();
@@ -595,11 +597,13 @@ public class SettingsActivity extends FragmentActivityWithMenu
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
+		//super.onRestoreInstanceState(savedInstanceState);
 		if (savedInstanceState.containsKey("expandedViews"))
 		{
 			expandSelectedGroupViews(rootView, savedInstanceState.getIntegerArrayList("expandedViews"));
 			handleGoToGroup(R.id.groupLanguage);
 		}
 	}
+	
+	
 }

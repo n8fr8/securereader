@@ -7,6 +7,7 @@ import info.guardianproject.bigbuffalo.api.SocialReporter;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.bigbuffalo.widgets.CustomFontButton;
 import info.guardianproject.bigbuffalo.widgets.CustomFontEditText;
+import info.guardianproject.bigbuffalo.widgets.CustomFontRadioButton;
 import info.guardianproject.bigbuffalo.widgets.CustomFontTextView;
 
 import java.util.Locale;
@@ -220,6 +221,10 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		else if (name.equals("Button"))
 		{
 			return new CustomFontButton(context, attrs);
+		}
+		else if (name.equals("RadioButton"))
+		{
+			return new CustomFontRadioButton(context, attrs);
 		}
 		else if (name.equals("EditText"))
 		{
