@@ -53,11 +53,22 @@
         android:text="@string/lock_screen_choose_language"
         android:textAllCaps="false" />
 
+    <TextView
+        android:id="@+id/tvTitle"
+        style="@style/LockScreenTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:layout_above="@id/tvChooseLanguage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_horizontal"
+        android:text="@string/app_name" />
+
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/tvChooseLanguage"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tvTitle"
         android:scaleType="centerInside"
         android:src="@drawable/ic_launch_logo" />
 
