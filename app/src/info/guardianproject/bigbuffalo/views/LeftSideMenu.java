@@ -616,8 +616,8 @@ public class LeftSideMenu
 				canvas.translate(positionContent, 0);
 				int xTo = - (int)((mMenuIndicatorInset) * getShowPercentage() / 100f);
 				Bitmap bmp = mMenuIndicatorDrawable.getBitmap();
-				canvas.clipRect(0, 0, xTo + bmp.getScaledWidth(canvas), mContent.getBottom(), Op.REPLACE);
-				canvas.drawBitmap(bmp, xTo, mMenuIndicatorY - (bmp.getScaledHeight(canvas) / 2), null);
+				canvas.clipRect(0, 0, xTo + bmp.getWidth(), mContent.getBottom(), Op.REPLACE);
+				canvas.drawBitmap(bmp, xTo, mMenuIndicatorY - (bmp.getHeight() / 2), null);
 				canvas.restore();
 			}
 			
