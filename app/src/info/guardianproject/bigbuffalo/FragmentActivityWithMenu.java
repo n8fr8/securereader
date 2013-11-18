@@ -2,7 +2,6 @@ package info.guardianproject.bigbuffalo;
 
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
 import info.guardianproject.bigbuffalo.ui.ActionProviderShare;
-import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
 import info.guardianproject.bigbuffalo.ui.PackageHelper;
 import info.guardianproject.bigbuffalo.ui.UICallbacks;
 import info.guardianproject.bigbuffalo.uiutil.ActivitySwitcher;
@@ -25,6 +24,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -833,15 +834,23 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		}
 	}
 
-	@Override public Object  getSystemService(String name) {
-	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-	         if (mInflater == null) {    
-	        	 LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
-	        	 mInflater = mParent.cloneInContext(this);
-	        	 mInflater.setFactory(new LayoutFactoryWrapper());
-	    	 }
-	         return mInflater;
-	     }
-	     return super.getSystemService(name);
-	 }
+	@Override
+	public View onCreateView(String name, Context context, AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(name, context, attrs);
+	}
+
+	@SuppressLint("NewApi")
+	@Override
+	public View onCreateView(View parent, String name, Context context,
+			AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(parent, name, context, attrs);
+	}
+	
+	
 }

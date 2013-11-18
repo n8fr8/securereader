@@ -3,8 +3,8 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.R;
 
 import info.guardianproject.bigbuffalo.api.SocialReader;
-import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
 import info.guardianproject.bigbuffalo.uiutil.AnimationHelpers;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -195,15 +195,21 @@ public class PanicActivity extends Activity implements OnTouchListener
 		}
 	}
 	
-	@Override public Object  getSystemService(String name) {
-	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-	         if (mInflater == null) {    
-	        	 LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
-	        	 mInflater = mParent.cloneInContext(this);
-	        	 mInflater.setFactory(new LayoutFactoryWrapper());
-	    	 }
-	         return mInflater;
-	     }
-	     return super.getSystemService(name);
-	 }
+	@Override
+	public View onCreateView(String name, Context context, AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(name, context, attrs);
+	}
+
+	@SuppressLint("NewApi")
+	@Override
+	public View onCreateView(View parent, String name, Context context,
+			AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(parent, name, context, attrs);
+	}
 }

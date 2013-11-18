@@ -3,7 +3,6 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.api.Settings.UiLanguage;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
-import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
 import info.guardianproject.bigbuffalo.widgets.DropdownSpinner;
 import info.guardianproject.cacheword.CacheWordActivityHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
@@ -378,18 +377,24 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
         LockScreenActivity.this.overridePendingTransition(0, 0);
     }
     
-	@Override public Object  getSystemService(String name) {
-	     if (LAYOUT_INFLATER_SERVICE.equals(name)) {
-	         if (mInflater == null) {    
-	        	 LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
-	        	 mInflater = mParent.cloneInContext(this);
-	        	 mInflater.setFactory(new LayoutFactoryWrapper());
-	    	 }
-	         return mInflater;
-	     }
-	     return super.getSystemService(name);
-	 }
-	
+	@Override
+	public View onCreateView(String name, Context context, AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(name, context, attrs);
+	}
+
+	@SuppressLint("NewApi")
+	@Override
+	public View onCreateView(View parent, String name, Context context,
+			AttributeSet attrs) {
+		View ret = App.createView(name, context, attrs);
+		if (ret != null)
+			return ret;
+		return super.onCreateView(parent, name, context, attrs);
+	}
+    
 	private final class SetUiLanguageReceiver extends BroadcastReceiver
 	{
 		@Override
