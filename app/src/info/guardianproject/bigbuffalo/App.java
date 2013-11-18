@@ -61,6 +61,7 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 
 	public SocialReader socialReader;
 	public SocialReporter socialReporter;
+	private String mCurrentLanguage;
 
 	@Override
 	public void onCreate()
@@ -76,6 +77,8 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		socialReporter = new SocialReporter(socialReader);
 
 		m_settings.registerChangeListener(this);
+		
+		mCurrentLanguage = getBaseContext().getResources().getConfiguration().locale.getLanguage();
 	}
 
 	public static Context getContext()
@@ -175,8 +178,9 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		else if (lang == UiLanguage.Chinese)
 			language = "zh";
 		
-		if (language.equals(getBaseContext().getResources().getConfiguration().locale.getLanguage()))
-			return; //No change
+		if (language.equals(mCurrentLanguage))
+			return;
+		mCurrentLanguage = language;
 		
 		Locale loc = new Locale(language);
 		if (Build.VERSION.SDK_INT >= 17)
