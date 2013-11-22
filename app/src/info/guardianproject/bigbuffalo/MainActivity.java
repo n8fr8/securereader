@@ -53,8 +53,6 @@ import com.tinymission.rss.Item;
 
 public class MainActivity extends ItemExpandActivity implements OnSharedPreferenceChangeListener
 {
-	public static String HOCKEY_APP_ID = "629f97e71c12c857c0201e374e394bb7";
-
 	public static String INTENT_EXTRA_SHOW_THIS_TYPE = "info.guardianproject.bigbuffalo.showThisFeedType";
 	public static String INTENT_EXTRA_SHOW_THIS_FEED = "info.guardianproject.bigbuffalo.showThisFeedId";
 	public static String INTENT_EXTRA_SHOW_THIS_ITEM = "info.guardianproject.bigbuffalo.showThisItemId";
@@ -140,9 +138,6 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		// socialReader.goOnline(this);
 		showRecent(false);
 		createFeedSpinner();
-
-		checkForUpdates();
-
 	}
 
 	private void createFeedSpinner()
@@ -228,20 +223,6 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 
 		// Resume sync if we are back from Orbot
 		updateTorView();
-
-		checkForCrashes();
-
-	}
-
-	private void checkForCrashes()
-	{
-		CrashManager.register(this, HOCKEY_APP_ID);
-	}
-
-	private void checkForUpdates()
-	{
-		// Remove this for store builds!
-		UpdateManager.register(this, HOCKEY_APP_ID);
 	}
 
 	@Override
