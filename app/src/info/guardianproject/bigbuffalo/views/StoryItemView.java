@@ -19,9 +19,11 @@ import info.guardianproject.bigbuffalo.widgets.UpdatingTextView.OnUpdateListener
 import java.text.Bidi;
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.text.TextUtils;
@@ -31,6 +33,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -134,6 +137,12 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		ViewGroup column = getNextColumn(ret);
 		int columnHeightMax = column.getHeight();
 		int currentColumnHeight = 0;
+		
+		int fullMarginTop = column.getResources().getDimensionPixelOffset(R.dimen.full_top_margin);
+		
+		int marginLeft = column.getResources().getDimensionPixelOffset(R.dimen.card_left_margin);
+		int marginRight = column.getResources().getDimensionPixelOffset(R.dimen.card_right_margin);
+		int marginCenter = column.getResources().getDimensionPixelOffset(R.dimen.card_center_margin);		
 
 		for (int idxView = 0; idxView < blueprints.size();)
 		{
@@ -142,10 +151,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			View child = blueprints.get(idxView);
 			if (child.getParent() != null)
 				((ViewGroup) child.getParent()).removeView(child);
-
-			if (child.getId() != R.id.tvReadMore)
-				child.setPadding(child.getPaddingLeft(), 0, child.getPaddingRight(), 0);
-
+	
 			if (child.getId() == R.id.ivPhotos)
 			{
 				if (isTwoColumnMode())
@@ -163,101 +169,102 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 				tv.setMaxLines(Integer.MAX_VALUE);
 			}
 
-			if (child.getId() == R.id.tvAuthor && TextUtils.isEmpty(((TextView) child).getText()))
-			{
-				// Author is empty, so remove that view
-				idxView++;
-				continue;
-			}
-			else if (child.getId() == R.id.tvContent && TextUtils.isEmpty(((TextView) child).getText()))
-			{
-				// Content is empty, so remove that view
-				idxView++;
-				continue;
-			}
-			else if (child.getVisibility() == View.GONE)
+			if (child.getVisibility() == View.GONE)
 			{
 				// Dont add this view
 				idxView++;
 				continue;
 			}
 
-			if (currentColumnHeight != 0)
-				currentColumnHeight += UIHelpers.dpToPx(10, child.getContext());
-			else if (currentColumnHeight == 0 && child.getId() == R.id.tvTitle && !isTwoColumnMode())
-				currentColumnHeight += UIHelpers.dpToPx(10, child.getContext());
+			MarginLayoutParams lpChild = (MarginLayoutParams) child.getLayoutParams();
 
-			// Author should be in second column in 2 column mode, inless it has
-			// been line breaked to next page
-			// (in that case it is topmost in the colun)
-			if (child.getId() == R.id.tvAuthor && isTwoColumnMode() && isInFirstColumn() && currentColumnHeight != 0)
+			// Adjust for the center margin between columns
+			if (isTwoColumnMode())
 			{
-				// Do nothing. This will pull up a new column for us,
-				// effectively placing the author in column 2.
+				if (isInFirstColumn())
+				{
+					if (lpChild.rightMargin == marginRight)
+						lpChild.rightMargin = marginCenter;
+				}
+				else
+				{
+					if (lpChild.leftMargin == marginLeft)
+						lpChild.leftMargin = marginCenter;
+				}
 			}
-			else if (child.getId() == R.id.tvTitle && isTwoColumnMode() && isInFirstColumn() && currentPageView.findViewById(R.id.ivPhotos) != null
-					&& ((StoryMediaContentView) currentPageView.findViewById(R.id.ivPhotos)).isMediaLoaded())
+			
+			// If at top of column and child is not photo, add margin
+			if (currentColumnHeight == 0 && child.getId() != R.id.ivPhotos)
+				currentColumnHeight += fullMarginTop;
+			else if (currentColumnHeight != 0)
+				currentColumnHeight += lpChild.topMargin;
+			
+			if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && currentColumnHeight != 0 && ((StoryMediaContentView) child).isMediaLoaded())
 			{
-				// Do nothing. This will put the title in column 2.
+				// Do nothing. This will pull up a new column for us, in which we will be topmost!
 			}
 			else
 			{
 				boolean spillToNextColumn = false;
 
 				// Adjust to column
+				int widthChild = column.getWidth() - lpChild.leftMargin - lpChild.rightMargin;
 				if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && ((StoryMediaContentView) child).isMediaLoaded())
-					child.measure(View.MeasureSpec.makeMeasureSpec(column.getWidth(), View.MeasureSpec.EXACTLY),
-							View.MeasureSpec.makeMeasureSpec(columnHeightMax - currentColumnHeight, View.MeasureSpec.EXACTLY));
+					child.measure(View.MeasureSpec.makeMeasureSpec(widthChild, View.MeasureSpec.EXACTLY),
+							View.MeasureSpec.makeMeasureSpec(columnHeightMax - currentColumnHeight - lpChild.bottomMargin, View.MeasureSpec.EXACTLY));
 				else
-					child.measure(View.MeasureSpec.makeMeasureSpec(column.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
-				child.layout(0, 0, child.getMeasuredWidth(), child.getMeasuredHeight());
+					child.measure(View.MeasureSpec.makeMeasureSpec(widthChild, View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
+				child.layout(lpChild.leftMargin, 0, lpChild.leftMargin + child.getMeasuredWidth(), child.getMeasuredHeight());
 
-				if (child.getHeight() + currentColumnHeight <= columnHeightMax || child instanceof CustomFontTextView)
+				int currentPlusHeight = child.getHeight() + lpChild.bottomMargin + currentColumnHeight;	
+				if (child instanceof CustomFontTextView
+						&& currentPlusHeight > columnHeightMax) 
 				{
-					if (child instanceof CustomFontTextView)
-					{
-						CustomFontTextView tv = (CustomFontTextView) child;
+					CustomFontTextView tv = (CustomFontTextView) child;
+					int numVisibleLines = tv.getVisibleLines();
 
-						if (child.getHeight() + currentColumnHeight > columnHeightMax)
-						{
-							int numVisibleLines = tv.getVisibleLines();
+					// Special case, we can't line break the "read more"
+					// control
+					if (child.getId() == R.id.tvReadMore)
+						numVisibleLines = 0;
 
-							// Special case, we can't line break the "read more"
-							// control
-							if (child.getId() == R.id.tvReadMore)
-								numVisibleLines = 0;
-
-							if (numVisibleLines == 0)
-							{
-								column = getNextColumn(ret);
-								columnHeightMax = column.getHeight();
-								currentColumnHeight = 0;
-								continue;
-							}
-
-							tv.setHeight(columnHeightMax - currentColumnHeight);
-							tv.measure(View.MeasureSpec.makeMeasureSpec(column.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
-							tv.layout(0, 0, tv.getMeasuredWidth(), tv.getMeasuredHeight());
-
-							if (tv.getId() == R.id.tvContent
-									|| (tv.getTag() != null && tv.getTag() instanceof Integer && ((Integer) tv.getTag()).intValue() == R.id.tvContent))
-							{
-								// Split it in two!
-								CustomFontTextView newClone = ((CustomFontTextView) child).createClone();
-								newClone.setText(tv.getOverflowingText());
-								newClone.setTag(Integer.valueOf(R.id.tvContent));
-								blueprints.add(idxView + 1, newClone);
-							}
-							spillToNextColumn = true;
-						}
+					if (numVisibleLines == 0) {
+						column = getNextColumn(ret);
+						columnHeightMax = column.getHeight();
+						currentColumnHeight = 0;
+						continue;
 					}
+
+					tv.setHeight(columnHeightMax - currentColumnHeight - lpChild.bottomMargin);
+					tv.measure(View.MeasureSpec.makeMeasureSpec(
+							widthChild, View.MeasureSpec.EXACTLY),
+							View.MeasureSpec.UNSPECIFIED);
+					tv.layout(lpChild.leftMargin, 0, lpChild.leftMargin + tv.getMeasuredWidth(),
+							tv.getMeasuredHeight());
+
+					if (tv.getId() == R.id.tvContent || tv.getId() == R.id.tvTitle
+							|| (tv.getTag() != null
+									&& tv.getTag() instanceof Integer && ((Integer) tv
+									.getTag()).intValue() == R.id.tvContent)) {
+						// Split it in two!
+						CustomFontTextView newClone = ((CustomFontTextView) child)
+								.createClone();
+						newClone.setText(tv.getOverflowingText());
+						newClone.setTag(Integer.valueOf(R.id.tvContent));
+						RelativeLayout.LayoutParams lpNewClone = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+						lpNewClone.leftMargin = marginLeft;
+						lpNewClone.rightMargin = marginRight;
+						newClone.setLayoutParams(lpNewClone);
+						blueprints.add(idxView + 1, newClone);
+					}
+					spillToNextColumn = true;
 				}
 
 				idxView++;
 
 				// Fits
 				RelativeLayout.LayoutParams relLayout = new RelativeLayout.LayoutParams(child.getWidth(), child.getHeight());
-				relLayout.leftMargin = UIHelpers.getRelativeLeft(column);
+				relLayout.leftMargin = UIHelpers.getRelativeLeft(column) + lpChild.leftMargin;
 				relLayout.topMargin = UIHelpers.getRelativeTop(column) + currentColumnHeight;
 
 				currentPageView.addView(child);
@@ -372,8 +379,22 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 				tv.setText(blueprint.getContext().getString(R.string.story_item_short_author, story.getAuthor()));
 			else
 				tv.setText(null);
+			if (TextUtils.isEmpty(tv.getText()))
+			{
+				tv.setVisibility(View.GONE);
+			}
 		}
 
+		// Author date
+		tv = (TextView) blueprint.findViewById(R.id.tvAuthorDate);
+		if (tv != null)
+			tv.setText(UIHelpers.dateDateDisplayString(story.getPublicationTime(), tv.getContext()));
+
+		// Author time
+		tv = (TextView) blueprint.findViewById(R.id.tvAuthorTime);
+		if (tv != null)
+			tv.setText(UIHelpers.dateTimeDisplayString(story.getPublicationTime(), tv.getContext()));
+		
 		// Content
 		tv = (TextView) blueprint.findViewById(R.id.tvContent);
 		if (tv != null)
@@ -381,6 +402,9 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			mDefaultTextSize = tv.getTextSize();
 			tv.setTextSize(TypedValue.COMPLEX_UNIT_PX, tv.getTextSize() + App.getSettings().getContentFontSizeAdjustment());
 			tv.setText(story.getCleanMainContent());
+			tv.setPaintFlags(tv.getPaintFlags() | Paint.SUBPIXEL_TEXT_FLAG);
+			if (TextUtils.isEmpty(tv.getText()))
+				tv.setVisibility(View.GONE);
 		}
 
 		// Set source
@@ -461,10 +485,10 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 	public ArrayList<View> createPages(PagedView parent)
 	{
 		mPagedView = parent;
-		if (mPages == null)
-		{
+		//if (mPages == null)
+		//{
 			this.createBlueprintViews(parent);
-		}
+		//}
 		relayout();
 		return mPages;
 	}

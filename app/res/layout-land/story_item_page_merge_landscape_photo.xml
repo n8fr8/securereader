@@ -1,4 +1,4 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"
@@ -6,108 +6,47 @@
     android:gravity="top"
     android:orientation="vertical" >
 
-        <TableLayout
-        android:id="@+id/tlSource"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:stretchColumns="1">
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left" >
-
-        <TextView
-            android:id="@+id/tvSource"
-            style="@style/StoryItemShortSourceStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="left|center_vertical"
-            android:maxLines="1"
-            android:padding="4dp"
-            android:text="@string/story_item_short_source"
-            android:textAllCaps="true" />
-
-        <TextView
-            android:id="@+id/tvTime"
-            style="@style/StoryItemShortTimeStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:text="@string/story_item_short_time" />
-
-    </TableRow>
-    </TableLayout>
-    
-
-
     <View
         android:id="@+id/strut"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_below="@id/tlSource"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" />    
+    
+    <include
+        android:id="@+id/layout_source"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/source_height"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_center_margin"
+        android:layout_marginTop="@dimen/source_top_margin"
+        android:layout_toLeftOf="@id/strut"
+        layout="@layout/story_item_page_source" />
 
     <include
         android:id="@+id/ivPhotos"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/tlSource"
-        android:layout_toLeftOf="@id/strut"
-        layout="@layout/story_media_content_view" />
-
-    <LinearLayout
-        android:id="@+id/ll2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/ivPhotos"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/tlSource"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/card_right_margin"
         android:layout_toRightOf="@id/strut"
-        android:background="#ffffff"
-        android:orientation="vertical" >
+        layout="@layout/story_media_content_view" />
 
         <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
             android:id="@+id/tvTitle"
             style="@style/StoryItemTitleStyle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:fade_last_line="true" 
-            android:text="@string/story_item_short_title" />
-
-        <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
-            android:id="@+id/tvAuthor"
-            style="@style/StoryItemAuthorStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:fade_last_line="true"
-            android:text="@string/story_item_short_author" />
-
-        <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
-            android:id="@+id/tvContent"
-            style="@style/StoryItemContentStyle"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="10dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            app:fade_last_line="true"
-            android:text="TextView" />
-
-    </LinearLayout>
+            android:layout_alignBottom="@id/ivPhotos"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/layout_source"
+            android:layout_marginBottom="@dimen/card_bottom_margin"
+            android:layout_marginLeft="@dimen/card_left_margin"
+            android:layout_marginRight="@dimen/card_center_margin"
+            android:layout_marginTop="@dimen/title_top_margin"
+            android:layout_toLeftOf="@id/strut"
+            android:text="@string/story_item_short_title"
+            app:fade_last_line="true" />
 
     <ViewStub
         android:id="@+id/viewStubTags"
@@ -117,4 +56,4 @@
         android:inflatedId="@+id/svTags"
         android:layout="@layout/story_item_page_tags" />
 
-</merge>
+</RelativeLayout>

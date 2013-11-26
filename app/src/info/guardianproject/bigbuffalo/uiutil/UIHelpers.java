@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.DateFormat;
 import java.util.Date;
 
 import javax.microedition.khronos.egl.EGLContext;
@@ -42,6 +43,20 @@ public class UIHelpers
 		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
 	}
 
+	public static String dateDateDisplayString(Date date, Context context)
+	{
+		if (date == null)
+			return "";
+		return DateFormat.getDateInstance().format(date);
+	}
+
+	public static String dateTimeDisplayString(Date date, Context context)
+	{
+		if (date == null)
+			return "";
+		return DateFormat.getTimeInstance().format(date);
+	}
+	
 	public static String dateDiffDisplayString(Date date, Context context, int idStringNever, int idStringRecently, int idStringMinutes, int idStringMinute,
 			int idStringHours, int idStringHour, int idStringDays, int idStringDay)
 	{

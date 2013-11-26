@@ -1,12 +1,13 @@
 package info.guardianproject.bigbuffalo.widgets;
 
+import info.guardianproject.bigbuffalo.uiutil.FontManager;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.RadioButton;
 
 public class CustomFontRadioButton extends RadioButton {
 
+	@SuppressWarnings("unused")
 	private CustomFontTextViewHelper mHelper;
 
 	public CustomFontRadioButton(Context context, AttributeSet attrs, int defStyle)
@@ -35,17 +36,6 @@ public class CustomFontRadioButton extends RadioButton {
 	@Override
 	public void setText(CharSequence text, BufferType type)
 	{
-		if (mHelper != null)
-			super.setText(mHelper.precomposeAndSetFont(text, type), type);
-		else
-			super.setText(text, type);
-	}
-	
-	@Override
-	public void setTypeface(Typeface tf) {
-		if (mHelper != null)
-			super.setTypeface(mHelper.handleSetTypefaceRequest(tf));
-		else
-			super.setTypeface(tf);
+		super.setText(FontManager.transformText(this, text), type);
 	}
 }

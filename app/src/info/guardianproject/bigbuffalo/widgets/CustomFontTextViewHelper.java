@@ -1,21 +1,25 @@
 package info.guardianproject.bigbuffalo.widgets;
 
 import info.guardianproject.bigbuffalo.R;
+import info.guardianproject.bigbuffalo.uiutil.AllCapsTransformation;
 import info.guardianproject.bigbuffalo.uiutil.FontManager;
-import info.guardianproject.bigbuffalo.uiutil.FontManager.TransformedText;
+import android.annotation.SuppressLint;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.os.Build;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TextView.BufferType;
 
-public class CustomFontTextViewHelper {
+public class CustomFontTextViewHelper implements TextWatcher {
 	private TextView mView;
 	private Typeface mFont;
-	private boolean mHintNeedsTransform;
-	private boolean mUsingTransformedFont;
-	private Typeface mTransformedFont;
-
+	private boolean mUseAllCaps = false;
+	private boolean mInTransform;
+	
+	@SuppressLint({ "InlinedApi", "NewApi" })
 	public CustomFontTextViewHelper(TextView view, AttributeSet attrs)
 	{
 		mView = view;
@@ -30,72 +34,58 @@ public class CustomFontTextViewHelper {
 					mView.setTypeface(mFont);
 			}
 			a.recycle();
+			
+			a = mView.getContext().obtainStyledAttributes(attrs, new int[] { android.R.attr.textAllCaps });
+			mUseAllCaps = a.getBoolean(0, false);
+			a.recycle();
 		}
 		if (mFont == null)
 			mFont = mView.getTypeface();
-
-		mHintNeedsTransform = false;
-		if (mView.getHint() != null)
+		
+		// All caps does not work with Spanned text, so turn it off and handle in setText()
+		if (mUseAllCaps)
 		{
-			// Hint needs precompose?
-			CharSequence hint = mView.getHint();
-			TransformedText transformed = FontManager.transformText(mView, hint);
-			if (transformed != null)
-			{
-				mHintNeedsTransform = true;
-				mView.setHint(transformed.transformedText);
-				useTransformedTypeface(transformed);
-			}
+			if (Build.VERSION.SDK_INT >= 14)
+				mView.setAllCaps(false);
+			mView.setTransformationMethod(new AllCapsTransformation(mView.getContext()));
 		}
 		
-		if (mView.getText() != null)
+		if (mView.getHint() != null)
 		{
-			TransformedText transformed = FontManager.transformText(mView, mView.getText());
-			if (transformed != null)
-			{
-				mView.setText(transformed.transformedText);
-				useTransformedTypeface(transformed);
-			}			
+			mView.setHint(FontManager.transformText(mView, mView.getHint()));
 		}
-	}
-	
-	public Typeface getOriginalFont()
-	{
-		return mFont;
-	}
-	
-	public CharSequence precomposeAndSetFont(CharSequence text, BufferType type)
-	{
-		TransformedText transformed = FontManager.transformText(mView, text);
-		if (transformed == null && !mHintNeedsTransform)
-		{
-			// No conversion, reset font!
-			mUsingTransformedFont = false;
-			if (mView.getTypeface() != mFont)
-				mView.setTypeface(mFont);
-			return text;
-		}
-		else if (transformed != null)
-		{
-			useTransformedTypeface(transformed);
-			return transformed.transformedText;
-		}
-		return text;
 	}
 
-	private void useTransformedTypeface(TransformedText transformed)
+	@Override
+	public void afterTextChanged(Editable s)
 	{
-		mTransformedFont = transformed.typeface;
-		mUsingTransformedFont = true;	
-    	if (transformed.typeface != null && transformed.typeface != mView.getTypeface())
-    		mView.setTypeface(transformed.typeface);
+		if (!mInTransform)
+		{
+			mInTransform = true;
+			CharSequence t = FontManager.transformText(mView, s);
+			if (t != s)
+			{
+				int start = mView.getSelectionStart();
+				int end = mView.getSelectionEnd();
+				int len = s.length();
+				int delta = len - t.length();
+				mView.setText(t);
+				if (mView instanceof EditText)
+				{
+					((EditText) mView).setSelection(Math.max(-1, start - delta), Math.max(-1, end - delta));
+				}
+			}
+			mInTransform = false;
+		}
 	}
-	
-	public Typeface handleSetTypefaceRequest(Typeface tf) {
-		if (tf != mTransformedFont)
-			mFont = tf;
-		if (mUsingTransformedFont)
-			return mTransformedFont;
-		return tf;
+
+	@Override
+	public void beforeTextChanged(CharSequence s, int start, int count, int after)
+	{
+	}
+
+	@Override
+	public void onTextChanged(CharSequence s, int start, int before, int count)
+	{
 	}
 }

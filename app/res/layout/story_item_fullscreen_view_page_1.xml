@@ -3,48 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false" >
-
-        <TableLayout
-        android:id="@+id/tlSource"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:stretchColumns="1">
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left" >
-
-        <TextView
-            android:id="@+id/tvSource"
-            style="@style/StoryItemShortSourceStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="left|center_vertical"
-            android:maxLines="1"
-            android:padding="4dp"
-            android:text="@string/story_item_short_source"
-            android:textAllCaps="true" />
-
-        <info.guardianproject.bigbuffalo.widgets.UpdatingTextView
-            android:id="@+id/tvTime"
-            style="@style/StoryItemShortTimeStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:text="@string/story_item_short_time" />
-
-    </TableRow>
-    </TableLayout>
     
-
-
     <LinearLayout
         android:id="@+id/column1"
         android:layout_width="match_parent"
@@ -52,7 +11,6 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@id/tlSource"
         android:layout_weight="0.5"
         android:orientation="vertical" >
 

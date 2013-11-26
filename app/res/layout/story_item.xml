@@ -12,7 +12,7 @@
         android:id="@+id/horizontalPagerContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="112dp"
         android:scrollbars="none" >
     </info.guardianproject.bigbuffalo.widgets.PagedView>
     
@@ -68,14 +68,16 @@
 
     </LinearLayout>
 
-    <info.guardianproject.bigbuffalo.widgets.DottedProgressView
+    <info.guardianproject.bigbuffalo.widgets.PageIndicatorView
         android:id="@+id/contentPageIndicator"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="7dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="58dp"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
         android:background="@drawable/bottom_bar_item_background_selector"
-        app:dot_color_current="@color/grey_light_medium"
-        app:dot_radius="6" />
+        android:drawable="@drawable/page_indicator_dot_selector"
+        android:gravity="center_horizontal" />
 
 </FrameLayout>

@@ -1,18 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/llRoot"
+<LinearLayout android:id="@+id/llRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/story_item_background_selector"
     android:gravity="top"
-    android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:paddingTop="10dp" >
-
-    <include
-        android:id="@+id/ivPhotos"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/story_media_content_view" />
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <include
         android:id="@+id/layout_source"
@@ -35,12 +26,18 @@
 
     <include
         android:id="@+id/layout_author"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/card_left_margin"
         android:layout_marginRight="@dimen/card_right_margin"
         android:layout_marginTop="@dimen/author_top_margin"
         layout="@layout/story_item_page_author" />
+
+    <include
+        android:id="@+id/ivPhotos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        layout="@layout/story_media_content_view" />
 
     <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
         android:id="@+id/tvContent"
@@ -64,6 +61,7 @@
         android:drawableLeft="@drawable/ic_read_orweb"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
+        android:paddingBottom="10dp"
         android:paddingTop="10dp"
         android:text="@string/story_item_read_with_orweb" />
 

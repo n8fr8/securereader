@@ -62,6 +62,8 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			mHeightInhibitor = a.getFloat(R.styleable.StoryMediaContentView_height_inhibitor, 1.75f);
 			a.recycle();
 		}
+		if (this.isInEditMode())
+			mShowPlaceholder = true;
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.Region.Op;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import info.guardianproject.bigbuffalo.R;
@@ -66,7 +67,11 @@ public class HeightLimitedLinearLayout extends LinearLayout
 		if (mHeightLimit != 0 && width > 0)
 		{
 			int height = (int) (width / mHeightLimit);
-			super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
+			ViewGroup.LayoutParams lp = getLayoutParams();
+			if (lp != null && (lp.width == LayoutParams.FILL_PARENT || lp.width == LayoutParams.MATCH_PARENT))
+				super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+			else
+				super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
 		}
 	}
 

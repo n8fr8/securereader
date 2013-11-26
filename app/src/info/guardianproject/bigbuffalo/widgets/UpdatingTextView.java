@@ -3,9 +3,8 @@ package info.guardianproject.bigbuffalo.widgets;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
-public class UpdatingTextView extends TextView
+public class UpdatingTextView extends CustomFontTextView
 {
 	public interface OnUpdateListener
 	{

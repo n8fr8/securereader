@@ -1,15 +1,14 @@
 package info.guardianproject.bigbuffalo.views;
 
 import info.guardianproject.bigbuffalo.App;
-import info.guardianproject.bigbuffalo.FragmentActivityWithMenu;
 import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.adapters.DownloadsAdapter;
 import info.guardianproject.bigbuffalo.adapters.ShareSpinnerAdapter;
 import info.guardianproject.bigbuffalo.adapters.TextSizeSpinnerAdapter;
 import info.guardianproject.bigbuffalo.models.PagedViewContent;
+import info.guardianproject.bigbuffalo.models.ViewPagerIndicator;
 import info.guardianproject.bigbuffalo.ui.UICallbacks;
 import info.guardianproject.bigbuffalo.widgets.CheckableImageView;
-import info.guardianproject.bigbuffalo.widgets.DottedProgressView;
 import info.guardianproject.bigbuffalo.widgets.PagedView;
 import info.guardianproject.bigbuffalo.widgets.PagedView.PagedViewListener;
 
@@ -21,12 +20,10 @@ import java.util.ArrayList;
 import org.holoeverywhere.widget.AdapterView;
 import org.holoeverywhere.widget.Spinner;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Rect;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -44,7 +41,7 @@ public class FullScreenStoryItemView extends FrameLayout implements PagedViewLis
 	private View mBtnRead;
 	private View mBtnComments;
 	private CheckableImageView mBtnFavorite;
-	private DottedProgressView mCurrentPageIndicator;
+	private View mCurrentPageIndicator;
 	private ShareSpinnerAdapter mShareAdapter;
 	private TextSizeSpinnerAdapter mTextSizeAdapter;
 	private PagedView mHorizontalPagerContent;
@@ -89,9 +86,9 @@ public class FullScreenStoryItemView extends FrameLayout implements PagedViewLis
 
 	private void initialize()
 	{
-		mCurrentPageIndicator = (DottedProgressView) findViewById(R.id.contentPageIndicator);
+		mCurrentPageIndicator = findViewById(R.id.contentPageIndicator);
 		mHorizontalPagerContent = (PagedView) findViewById(R.id.horizontalPagerContent);
-		mHorizontalPagerContent.setViewPagerIndicator(mCurrentPageIndicator);
+		mHorizontalPagerContent.setViewPagerIndicator((ViewPagerIndicator)mCurrentPageIndicator);
 		mHorizontalPagerContent.setListener(this);
 
 		View toolbar = findViewById(R.id.storyToolbar);

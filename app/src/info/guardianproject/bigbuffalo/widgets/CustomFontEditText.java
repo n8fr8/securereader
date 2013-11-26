@@ -1,7 +1,7 @@
 package info.guardianproject.bigbuffalo.widgets;
 
+import info.guardianproject.bigbuffalo.uiutil.FontManager;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -27,25 +27,12 @@ public class CustomFontEditText extends EditText {
 	private void init(AttributeSet attrs)
 	{
 		mHelper = new CustomFontTextViewHelper(this, attrs);
+		addTextChangedListener(mHelper);
 	}
 	
 	@Override
 	public void setText(CharSequence text, BufferType type)
 	{
-		if (mHelper != null)
-			super.setText(mHelper.precomposeAndSetFont(text, type), type);
-		else 
-			super.setText(text, type);
+		super.setText(FontManager.transformText(this, text), type);
 	}
-
-	@Override
-	public void setTypeface(Typeface tf) {
-		if (mHelper != null)
-			super.setTypeface(mHelper.handleSetTypefaceRequest(tf));
-		else
-			super.setTypeface(tf);
-	}
-
-	
-
 }

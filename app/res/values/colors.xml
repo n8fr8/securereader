@@ -24,4 +24,7 @@
    
    <color name="orweb_link_enabled">@color/button_primary</color>
    <color name="orweb_link_disabled">@color/grey_light</color>
+   
+   <color name="grey">#808285</color>
+   <color name="claret">@color/button_primary</color>
 </resources>

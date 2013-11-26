@@ -5,7 +5,10 @@
     <attr name="height_inhibitor" format="float" default="0"/>
     <attr name="actionBarMenuIcon" format="reference" />
     <attr name="actionBarMenuIconInset" format="dimension" />
-    
+    <attr name="dot_total" format="integer" />
+    <attr name="dot_current" format="integer" />
+    <attr name="hide_if_only_one" format="boolean" defaultValue="true" />
+    	
     <declare-styleable name="CustomAppTheming">
         <attr name="actionBarThemeColorTitle" format="color"/>
         <attr name="actionBarThemeColorIconTint" format="color"/>
@@ -21,10 +24,18 @@
         <attr name="dot_rim_color" format="color" />
         <attr name="dot_color_current" format="color" />
         <attr name="dot_rim_color_current" format="color" />
-        <attr name="dot_total" format="integer" />
-    	<attr name="dot_current" format="integer" />
-    	<attr name="hide_if_only_one" format="boolean" defaultValue="true" />
+        <attr name="dot_total" />
+    	<attr name="dot_current" />
+    	<attr name="hide_if_only_one" />
     	<attr name="android:gravity" />
+    </declare-styleable>
+
+    <declare-styleable name="PageIndicatorView">
+        <attr name="dot_total" />
+    	<attr name="dot_current" />
+    	<attr name="hide_if_only_one" />
+    	<attr name="android:gravity" />
+    	<attr name="android:drawable" />
     </declare-styleable>
     
     <declare-styleable name="DropdownSpinner">

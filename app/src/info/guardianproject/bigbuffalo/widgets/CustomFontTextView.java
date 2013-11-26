@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Rect;
 import android.graphics.Shader;
-import android.graphics.Typeface;
 import android.text.Layout;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -15,6 +14,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.uiutil.FontManager;
+import info.guardianproject.bigbuffalo.uiutil.UIHelpers;
 
 public class CustomFontTextView extends TextView
 {
@@ -23,6 +23,7 @@ public class CustomFontTextView extends TextView
 	private boolean mFadeLastLine = false;
 	private float mLineSpacingExtra;
 	private float mLineSpacingMulti;
+	@SuppressWarnings("unused")
 	private CustomFontTextViewHelper mHelper;
 
 	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle)
@@ -48,9 +49,9 @@ public class CustomFontTextView extends TextView
 		mBounds = new Rect();
 		mLineSpacingExtra = 0;
 		mLineSpacingMulti = 1.0f;
-
-		mHelper = new CustomFontTextViewHelper(this, attrs);
 		
+		mHelper = new CustomFontTextViewHelper(this, attrs);
+
 		if (attrs != null)
 		{
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
@@ -135,7 +136,7 @@ public class CustomFontTextView extends TextView
 	public CustomFontTextView createClone()
 	{
 		CustomFontTextView newClone = new CustomFontTextView(getContext());
-		newClone.setTypeface(mHelper.getOriginalFont());
+		newClone.setTypeface(getTypeface());
 		newClone.setTextSize(TypedValue.COMPLEX_UNIT_PX, this.getTextSize());
 		newClone.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
 		newClone.setLineSpacing(mLineSpacingExtra, mLineSpacingMulti);
@@ -178,14 +179,8 @@ public class CustomFontTextView extends TextView
 			{
 				int bottomStartFade = 0;
 				int bottomEndFade = 0;
-				Rect bounds = new Rect();
-				if (nVisible > 0)
-				{
-					getLineBounds(nVisible - 1, bounds);
-					bottomStartFade = bounds.bottom;
-				}
-				getLineBounds(nVisible, bounds);
-				bottomEndFade = bounds.bottom;
+				bottomEndFade = getHeight() - getPaddingBottom();
+				bottomStartFade = bottomEndFade - UIHelpers.dpToPx(5, getContext());
 
 				int defaultColor = getTextColors().getDefaultColor();
 				int alphaColor = Color.argb(0, Color.red(defaultColor), Color.green(defaultColor), Color.blue(defaultColor));
@@ -203,17 +198,8 @@ public class CustomFontTextView extends TextView
 	@Override
 	public void setText(CharSequence text, BufferType type)
 	{
-		if (mHelper != null)
-			super.setText(mHelper.precomposeAndSetFont(text, type), type);
-		else
-			super.setText(text, type);
+		super.setText(FontManager.transformText(this, text), type);
 	}
 	
-	@Override
-	public void setTypeface(Typeface tf) {
-		if (mHelper != null)
-			super.setTypeface(mHelper.handleSetTypefaceRequest(tf));
-		else
-			super.setTypeface(tf);
-	}
+	
 }
