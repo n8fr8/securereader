@@ -467,7 +467,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 	{
 		try
 		{
-			LayoutInflater inflater = (LayoutInflater) this.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = getLayoutInflater();
 			final PopupWindow mMenuPopup = new PopupWindow(inflater.inflate(R.layout.story_search_by_tag, null, false), this.mStoryListView.getWidth(),
 					this.mStoryListView.getHeight(), true);
 

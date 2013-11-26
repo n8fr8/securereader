@@ -3,6 +3,7 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.api.Settings.UiLanguage;
 import info.guardianproject.bigbuffalo.api.SocialReader;
 import info.guardianproject.bigbuffalo.models.LockScreenCallbacks;
+import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
 import info.guardianproject.bigbuffalo.widgets.DropdownSpinner;
 import info.guardianproject.cacheword.CacheWordActivityHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
@@ -15,16 +16,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.ResultReceiver;
 import android.text.TextUtils;
 import android.text.method.PasswordTransformationMethod;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -40,8 +38,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListAdapter;
-import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -49,7 +45,6 @@ import android.widget.Toast;
 public class LockScreenActivity extends Activity implements LockScreenCallbacks, OnFocusChangeListener, ICacheWordSubscriber
 {
     private static final String TAG = "LockScreenActivity";
-	private LayoutInflater mInflater;
 	private EditText mEnterPassphrase;
 	private EditText mNewPassphrase;
 	private EditText mConfirmNewPassphrase;
@@ -376,25 +371,20 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
         finish();
         LockScreenActivity.this.overridePendingTransition(0, 0);
     }
-    
+      
 	@Override
-	public View onCreateView(String name, Context context, AttributeSet attrs) {
-		View ret = App.createView(name, context, attrs);
-		if (ret != null)
-			return ret;
-		return super.onCreateView(name, context, attrs);
+	public Object getSystemService(String name)
+	{
+		if (LAYOUT_INFLATER_SERVICE.equals(name))
+		{
+			LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
+			LayoutInflater inflater = mParent.cloneInContext(this);
+			inflater.setFactory(new LayoutFactoryWrapper(this));
+			return inflater;
+		}
+		return super.getSystemService(name);
 	}
-
-	@SuppressLint("NewApi")
-	@Override
-	public View onCreateView(View parent, String name, Context context,
-			AttributeSet attrs) {
-		View ret = App.createView(name, context, attrs);
-		if (ret != null)
-			return ret;
-		return super.onCreateView(parent, name, context, attrs);
-	}
-    
+	
 	private final class SetUiLanguageReceiver extends BroadcastReceiver
 	{
 		@Override

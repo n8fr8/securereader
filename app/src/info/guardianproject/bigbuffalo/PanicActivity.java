@@ -3,17 +3,15 @@ package info.guardianproject.bigbuffalo;
 import info.guardianproject.bigbuffalo.R;
 
 import info.guardianproject.bigbuffalo.api.SocialReader;
+import info.guardianproject.bigbuffalo.ui.LayoutFactoryWrapper;
 import info.guardianproject.bigbuffalo.uiutil.AnimationHelpers;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,7 +23,6 @@ import android.widget.TextView;
 
 public class PanicActivity extends Activity implements OnTouchListener
 {
-	private LayoutInflater mInflater;
 	private View mArrow;
 	private ImageView mSymbol;
 	private boolean mOnlyTesting;
@@ -196,20 +193,15 @@ public class PanicActivity extends Activity implements OnTouchListener
 	}
 	
 	@Override
-	public View onCreateView(String name, Context context, AttributeSet attrs) {
-		View ret = App.createView(name, context, attrs);
-		if (ret != null)
-			return ret;
-		return super.onCreateView(name, context, attrs);
-	}
-
-	@SuppressLint("NewApi")
-	@Override
-	public View onCreateView(View parent, String name, Context context,
-			AttributeSet attrs) {
-		View ret = App.createView(name, context, attrs);
-		if (ret != null)
-			return ret;
-		return super.onCreateView(parent, name, context, attrs);
+	public Object getSystemService(String name)
+	{
+		if (LAYOUT_INFLATER_SERVICE.equals(name))
+		{
+			LayoutInflater mParent = (LayoutInflater) super.getSystemService(name);
+			LayoutInflater inflater = mParent.cloneInContext(this);
+			inflater.setFactory(new LayoutFactoryWrapper(this));
+			return inflater;
+		}
+		return super.getSystemService(name);
 	}
 }

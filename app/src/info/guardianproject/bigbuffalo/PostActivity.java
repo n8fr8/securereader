@@ -309,7 +309,7 @@ public class PostActivity extends ItemExpandActivity implements ActionBar.TabLis
 	{
 		try
 		{
-			LayoutInflater inflater = (LayoutInflater) this.getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = getLayoutInflater();
 			final PopupWindow mMenuPopup = new PopupWindow(inflater.inflate(R.layout.story_search_by_tag, null, false), this.mViewPager.getWidth(),
 					this.mViewPager.getHeight(), true);
 
