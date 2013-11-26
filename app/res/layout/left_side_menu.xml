@@ -35,7 +35,7 @@
                 style="@style/LeftSideMenuItemStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/ivNews"
@@ -50,7 +50,8 @@
                 android:layout_alignLeft="@+id/tvNews"
                 android:layout_below="@+id/tvNews"
                 android:text="@string/menu_news"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/btnAddFeed"
@@ -381,15 +382,14 @@
             android:gravity="bottom"
             android:orientation="vertical" >
 
-
-
             <ImageView
                 android:id="@+id/btnTorStatus"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:src="@drawable/ic_menu_tor_off" />
+                android:src="@drawable/ic_menu_tor_off"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/tvTorStatus"
@@ -403,7 +403,8 @@
                 android:background="@android:color/transparent"
                 android:gravity="center_vertical"
                 android:text="@string/menu_tor_not_connected"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:visibility="invisible" />
 
         </RelativeLayout>
     </LinearLayout>

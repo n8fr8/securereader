@@ -706,6 +706,7 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 
 	class UpdateMenuTask extends AsyncTask<Void, Void, Void>
 	{
+		private boolean isUsingTor;
 		private boolean isOnline;
 		// private boolean isSignedIn;
 		private int numFeeds;
@@ -725,6 +726,7 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 				mMenuViewHolder.tvNumChats = (TextView) menuView.findViewById(R.id.tvNumChats);
 			}
 
+			isUsingTor = App.getInstance().socialReader.useTor();
 			isOnline = App.getInstance().socialReader.isTorOnline();
 			// isSignedIn = App.getInstance().socialReporter.isSignedIn();
 
@@ -750,7 +752,16 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 				mMenuViewHolder.tvTorStatus.setText(R.string.menu_tor_not_connected);
 				mMenuViewHolder.ivTorStatus.setImageResource(R.drawable.ic_menu_tor_off);
 			}
-
+			if (isUsingTor)
+			{
+				mMenuViewHolder.tvTorStatus.setVisibility(View.VISIBLE);
+				mMenuViewHolder.ivTorStatus.setVisibility(View.VISIBLE);
+			}
+			else
+			{
+				mMenuViewHolder.tvTorStatus.setVisibility(View.INVISIBLE);
+				mMenuViewHolder.ivTorStatus.setVisibility(View.INVISIBLE);
+			}
 			mMenuViewHolder.tvNumFeeds.setText(getString(R.string.menu_num_feeds, numFeeds));
 			mMenuViewHolder.tvNumStories.setText(getString(R.string.menu_num_stories, numPosts));
 			mMenuViewHolder.tvNumChats.setText(getString(R.string.menu_num_chats, 0));
