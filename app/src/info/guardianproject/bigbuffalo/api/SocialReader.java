@@ -364,7 +364,7 @@ public class SocialReader implements ICacheWordSubscriber
 	
 	public boolean isTorOnline() 
 	{
-		if (oc.isOrbotInstalled() && oc.isOrbotRunning()) 
+		if (useTor() && oc.isOrbotInstalled() && oc.isOrbotRunning()) 
 		{
 			return true;
 		} 

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.jsoup.Jsoup;
+import org.jsoup.examples.HtmlToPlainText;
 import org.xml.sax.Attributes;
 
 import android.util.Log;
@@ -139,16 +140,10 @@ public class Item extends FeedEntity implements Serializable
 		return _contentEncoded;
 	}
 
-	public String getCleanContentEncoded()
+	private String getCleanContentEncoded()
 	{
-		try
-		{
-			return Jsoup.parse(_contentEncoded).text();
-		}
-		catch (Exception ex)
-		{
-			return null;
-		}
+		HtmlToPlainText formatter = new HtmlToPlainText();
+        return formatter.getPlainText(Jsoup.parse(getContentEncoded()));
 	}
 
 	public void setContentEncoded(String _contentEncoded)
@@ -156,7 +151,7 @@ public class Item extends FeedEntity implements Serializable
 		this._contentEncoded = _contentEncoded;
 	}
 
-	public String getMainContent()
+	private String getMainContent()
 	{
 		Log.v(LOGTAG, "Content Encoded: " + _contentEncoded);
 		Log.v(LOGTAG, "Description: " + _description);
