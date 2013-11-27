@@ -19,7 +19,6 @@ import info.guardianproject.bigbuffalo.widgets.UpdatingTextView.OnUpdateListener
 import java.text.Bidi;
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -313,6 +312,15 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		mStoredPositions = storedPositions;
 	}
 
+	public void resetToStoredPositions(int duration)
+	{
+		View page1 = mPages.get(0);
+		if (page1 != null && page1 instanceof AnimatedRelativeLayout)
+		{
+			((AnimatedRelativeLayout) page1).animateToStartPositions(duration);
+		}
+	}
+	
 	private SparseArray<Rect> getStoredPositions()
 	{
 		if (mPages == null || mPages.size() == 0)

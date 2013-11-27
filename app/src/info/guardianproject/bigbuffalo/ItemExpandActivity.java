@@ -160,6 +160,18 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 		}
 	}
 
+	private void getStoredPositionForViewWithId(ViewGroup parent, int viewId, SparseArray<Rect> positions)
+	{
+		View view = parent.findViewById(viewId);
+		if (view != null)
+		{
+			Rect rect = UIHelpers.getRectRelativeToView(parent, view);
+			rect.offset(0, view.getPaddingTop());
+			rect.bottom -= view.getPaddingBottom();
+			positions.put(view.getId(), rect);
+		}
+	}
+	
 	private SparseArray<Rect> getStoredPositions(ViewGroup viewGroup)
 	{
 		if (viewGroup == null || viewGroup.getChildCount() == 0)
@@ -167,42 +179,11 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 
 		SparseArray<Rect> positions = new SparseArray<Rect>();
 
-		View view = viewGroup.findViewById(R.id.ivPhotos);
-		if (view != null)
-		{
-			Rect rect = UIHelpers.getRectRelativeToView(viewGroup, view);
-			rect.offset(0, view.getPaddingTop());
-			rect.bottom -= view.getPaddingBottom();
-			positions.put(view.getId(), rect);
-		}
-
-		view = viewGroup.findViewById(R.id.tvTitle);
-		if (view != null)
-		{
-			Rect rect = UIHelpers.getRectRelativeToView(viewGroup, view);
-			rect.offset(0, view.getPaddingTop());
-			rect.bottom -= view.getPaddingBottom();
-			positions.put(view.getId(), rect);
-		}
-
-		view = viewGroup.findViewById(R.id.tvAuthor);
-		if (view != null)
-		{
-			Rect rect = UIHelpers.getRectRelativeToView(viewGroup, view);
-			rect.offset(0, view.getPaddingTop());
-			rect.bottom -= view.getPaddingBottom();
-			positions.put(view.getId(), rect);
-		}
-
-		view = viewGroup.findViewById(R.id.tvContent);
-		if (view != null)
-		{
-			Rect rect = UIHelpers.getRectRelativeToView(viewGroup, view);
-			rect.offset(0, view.getPaddingTop());
-			rect.bottom -= view.getPaddingBottom();
-			positions.put(view.getId(), rect);
-		}
-
+		getStoredPositionForViewWithId(viewGroup, R.id.ivPhotos, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.tvTitle, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.tvContent, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.layout_source, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.layout_author, positions);
 		return positions;
 	}
 
@@ -296,7 +277,6 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 		configureActionBarForFullscreen(false);
 		// getSupportActionBar().hide();
 		// getSupportActionBar().show();
-
 		mFullStoryView.post(new Runnable()
 		{
 			// Reason for post? We need to give the call above
@@ -316,8 +296,10 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 					public void run()
 					{
 						mFullListStories.setVisibility(View.VISIBLE);
+						if (mFullView != null)
+							mFullView.onBeforeCollapse();
 						if (mFullStoryView != null)
-						mFullStoryView.collapse();
+							mFullStoryView.collapse();
 					}
 				});
 			}

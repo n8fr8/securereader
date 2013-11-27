@@ -375,4 +375,14 @@ public class FullScreenStoryItemView extends FrameLayout implements PagedViewLis
 		}
 		return null;
 	}
+	
+	public void onBeforeCollapse()
+	{
+		PagedViewContent content = mHorizontalPagerContent.getContentThis();
+		if (content != null && content instanceof StoryItemView)
+		{
+			StoryItemView siv = (StoryItemView) content;
+			siv.resetToStoredPositions(ExpandingFrameLayout.DEFAULT_COLLAPSE_DURATION);
+		}
+	}
 }

@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 public class AnimatedRelativeLayout extends RelativeLayout
 {
+	private SparseArray<Rect> mOriginalStartPositions;
 	private SparseArray<Rect> mStartPositions;
 	private SparseArray<Rect> mEndPositions;
 	private float mAnimationValue;
@@ -39,6 +40,12 @@ public class AnimatedRelativeLayout extends RelativeLayout
 		mStartPositions = startPositions;
 	}
 
+	public void animateToStartPositions(int duration)
+	{
+		mStartPositions = mOriginalStartPositions;
+		applyAnimation(true, duration);
+	}
+	
 	public boolean isAnimating()
 	{
 		return mAnimating;
@@ -48,6 +55,11 @@ public class AnimatedRelativeLayout extends RelativeLayout
 	protected void onAttachedToWindow()
 	{
 		super.onAttachedToWindow();
+		applyAnimation(false, 1000);
+	}
+
+	private void applyAnimation(final boolean reversed, int duration)
+	{
 		if (mStartPositions != null && mStartPositions.size() > 0)
 		{
 			mEndPositions = new SparseArray<Rect>();
@@ -79,8 +91,8 @@ public class AnimatedRelativeLayout extends RelativeLayout
 				}
 			}
 
-			final LayoutAnim anim = new LayoutAnim();
-			anim.setDuration(1000);
+			final LayoutAnim anim = new LayoutAnim(reversed);
+			anim.setDuration(duration);
 			anim.setFillBefore(true);
 			anim.setFillAfter(true);
 			anim.setAnimationListener(new AnimationListener()
@@ -93,7 +105,8 @@ public class AnimatedRelativeLayout extends RelativeLayout
 						@Override
 						public void run()
 						{
-							resetAnimatedProperties();
+							if (!reversed)
+								resetAnimatedProperties();
 						}
 					});
 				}
@@ -108,12 +121,12 @@ public class AnimatedRelativeLayout extends RelativeLayout
 				{
 				}
 			});
-			mAnimationValue = 0;
+			mAnimationValue = reversed ? 1.0f : 0;
 			mAnimating = true;
 			this.startAnimation(anim);
 		}
 	}
-
+	
 	private void resetAnimatedProperties()
 	{
 		mAnimating = false;
@@ -132,20 +145,25 @@ public class AnimatedRelativeLayout extends RelativeLayout
 				view.setLayoutParams(lp);
 			}
 		}
+		if (mOriginalStartPositions == null)
+			mOriginalStartPositions = mStartPositions;
 		mStartPositions = null;
 		this.clearAnimation();
 	}
 
 	public class LayoutAnim extends Animation
 	{
-		public LayoutAnim()
+		private boolean mIsReversed;
+
+		public LayoutAnim(boolean reversed)
 		{
+			mIsReversed = reversed;
 		}
 
 		@Override
 		protected void applyTransformation(float interpolatedTime, Transformation t)
 		{
-			mAnimationValue = interpolatedTime;
+			mAnimationValue = mIsReversed ? (1.0f - interpolatedTime) : interpolatedTime;
 			invalidate();
 		}
 
@@ -165,7 +183,8 @@ public class AnimatedRelativeLayout extends RelativeLayout
 	@Override
 	protected boolean drawChild(Canvas canvas, View child, long drawingTime)
 	{
-		int sc = Integer.MAX_VALUE;
+		boolean clipSet = false;
+		int sc = canvas.save();
 
 		if (isAnimating())
 		{
@@ -173,8 +192,6 @@ public class AnimatedRelativeLayout extends RelativeLayout
 			{
 				if (mStartPositions.indexOfKey(child.getId()) >= 0)
 				{
-					sc = canvas.save();
-
 					Rect startRect = mStartPositions.get(child.getId());
 					Rect endRect = mEndPositions.get(child.getId());
 
@@ -190,17 +207,20 @@ public class AnimatedRelativeLayout extends RelativeLayout
 						leftDelta = -leftDelta;
 					if (invertedTop)
 						topDelta = -topDelta;
+					clipSet = true;
 					canvas.clipRect(child.getLeft() + leftDelta, child.getTop() + topDelta, child.getRight() + leftDelta, child.getTop() + topDelta + height,
 							Op.INTERSECT);
 					canvas.translate(leftDelta, topDelta);
 				}
 			}
 		}
+		if (!clipSet)
+		{
+			canvas.clipRect(child.getLeft(), child.getTop(), child.getRight(), child.getBottom(),
+				Op.INTERSECT);
+		}
 		boolean ret = super.drawChild(canvas, child, drawingTime);
-
-		// Restore to count?
-		if (sc != Integer.MAX_VALUE)
-			canvas.restoreToCount(sc);
+		canvas.restoreToCount(sc);
 
 		return ret;
 	}
