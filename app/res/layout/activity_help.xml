@@ -195,6 +195,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:orientation="vertical"
+            android:visibility="gone"
             app:collapse_layout="@layout/add_feed_closer"
             app:header_layout="@layout/help_group_header_item"
             app:header_text="@string/help_terms_group_title" >
