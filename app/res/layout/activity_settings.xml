@@ -31,11 +31,12 @@
         		android:text="@string/settings_tor_require" />
 
     		<info.guardianproject.bigbuffalo.widgets.CheckableImageView
-        		android:id="@+id/chkRequireTor"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:layout_gravity="right|center_vertical"
-        		android:src="@drawable/checkbox_yes_no_selector" />
+    		    android:id="@+id/chkRequireTor"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_gravity="right|center_vertical"
+    		    android:src="@drawable/checkbox_selector" />
+
 		</LinearLayout> 
         
 

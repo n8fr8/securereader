@@ -3,22 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="52dp"
     android:background="@drawable/popup_item_background_selector"
-    android:descendantFocusability="blocksDescendants"
-    android:padding="10dp" >
+    android:descendantFocusability="blocksDescendants" >
 
     <TextView
         style="@style/PopupListItemStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
         android:layout_weight="1"
         android:text="@string/feed_filter_display_photos" />
 
     <info.guardianproject.bigbuffalo.widgets.CheckableImageView
         android:id="@+id/chkShowImages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
-        android:src="@drawable/checkbox_yes_no_selector" />
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:src="@drawable/checkbox_selector" />
 
 </LinearLayout>
