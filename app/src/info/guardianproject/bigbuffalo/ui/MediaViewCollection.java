@@ -2,6 +2,7 @@ package info.guardianproject.bigbuffalo.ui;
 
 import info.guardianproject.bigbuffalo.models.OnMediaOrientationListener;
 import info.guardianproject.bigbuffalo.views.ApplicationMediaContentPreviewView;
+import info.guardianproject.bigbuffalo.views.EPubMediaContentPreviewView;
 import info.guardianproject.bigbuffalo.views.ImageMediaContentPreviewView;
 import info.guardianproject.bigbuffalo.views.VideoMediaContentPreviewView;
 
@@ -103,7 +104,9 @@ public class MediaViewCollection implements OnMediaOrientationListener
 			View mediaView = null;
 
 			boolean isVideo = mediaContent.getType().startsWith("video/");
+			boolean isAudio = mediaContent.getType().startsWith("audio/");
 			boolean isApplication = mediaContent.getType().startsWith("application/vnd.android.package-archive");
+			boolean isEpub = mediaContent.getType().startsWith("application/epub+zip"); 
 			if (isVideo)
 			{
 				if (mInCreateViewsIndex == 0)
@@ -125,6 +128,14 @@ public class MediaViewCollection implements OnMediaOrientationListener
 				if (amc.isCached())
 					mContainsLoadedMedia = true;
 				mediaView = amc;
+			}
+			else if (isEpub) {
+				EPubMediaContentPreviewView amc = new EPubMediaContentPreviewView(mContext);
+				amc.setOnMediaOrientationListener(this);
+				amc.setMediaContent(mediaContent, false, forceBitwiseDownloads, useThisThread);
+				if (amc.isCached())
+					mContainsLoadedMedia = true;
+				mediaView = amc;				
 			}
 			else
 			{
