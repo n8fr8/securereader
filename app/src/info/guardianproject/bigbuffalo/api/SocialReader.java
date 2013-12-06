@@ -97,7 +97,8 @@ public class SocialReader implements ICacheWordSubscriber
 	public long defaultFeedId = -1;
 	public static final String BIG_BUFFALO_FEED_URL = "http://bigbuffalo.com/feed/";
 	public static final String OPML_URL = "http://securereader.guardianproject.info/opml/opml.php"; // Needs to have lang=en_US or fa_IR or bo or bo_CN or zh_CN
-	public static final String APP_FEED_URL = "http://bigbuffalo.com/apps.rss";
+	public static final String APP_FEED_URL = "http://securereader.guardianproject.info/swfeed/swfeed.php";
+	public static final String EPUB_FEED_URL = "http://securereader.guardianproject.info/opds/opds.php";
 
 	// In Milliseconds
 	public final static long FEED_REFRESH_AGE = 300000; // 5 minutes
@@ -749,6 +750,10 @@ public class SocialReader implements ICacheWordSubscriber
 			Feed otherNewFeed = new Feed(applicationContext.getString(R.string.apps_feed_name), APP_FEED_URL);
 			otherNewFeed.setSubscribed(true);
 			databaseAdapter.addOrUpdateFeed(otherNewFeed);
+			
+			Feed thirdNewFeed = new Feed(applicationContext.getString(R.string.apps_feed_name), EPUB_FEED_URL);
+			thirdNewFeed.setSubscribed(true);
+			databaseAdapter.addOrUpdateFeed(thirdNewFeed);
 			
 			loadOPMLFile();
 		}
