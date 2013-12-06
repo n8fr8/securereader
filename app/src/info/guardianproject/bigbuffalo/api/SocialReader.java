@@ -418,8 +418,10 @@ public class SocialReader implements ICacheWordSubscriber
 	public boolean useTor() {
 		//if (settings.requireTor() || oc.isOrbotRunning()) {
 		if (settings.requireTor()) {
+			Log.v(LOGTAG, "USE TOR");
 			return true;
 		} else {
+			Log.v(LOGTAG, "DON'T USE TOR");
 			return false;
 		}
 	}
@@ -1387,8 +1389,7 @@ public class SocialReader implements ICacheWordSubscriber
 		
 		final MediaDownloaderCallback mediaDownloaderCallback = mdc;
 		
-		if (mc.getType().equals("application/vnd.android.package-archive")) {
-			
+		if (mc.getType().equals("application/vnd.android.package-archive") || mc.getType().equals("application/epub+zip")) {
 			
 			java.io.File possibleFile = new java.io.File(this.getNonVirtualFileSystemDir(), MEDIA_CONTENT_FILE_PREFIX + mc.getDatabaseId());
 			
