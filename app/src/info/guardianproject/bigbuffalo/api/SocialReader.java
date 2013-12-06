@@ -753,7 +753,7 @@ public class SocialReader implements ICacheWordSubscriber
 			otherNewFeed.setSubscribed(true);
 			databaseAdapter.addOrUpdateFeed(otherNewFeed);
 			
-			Feed thirdNewFeed = new Feed(applicationContext.getString(R.string.apps_feed_name), EPUB_FEED_URL);
+			Feed thirdNewFeed = new Feed(applicationContext.getString(R.string.epubs_feed_name), EPUB_FEED_URL);
 			thirdNewFeed.setSubscribed(true);
 			databaseAdapter.addOrUpdateFeed(thirdNewFeed);
 			
