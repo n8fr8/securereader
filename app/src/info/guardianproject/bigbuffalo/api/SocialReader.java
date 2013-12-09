@@ -1399,7 +1399,9 @@ public class SocialReader implements ICacheWordSubscriber
 				mdc.mediaDownloadedNonVFS(possibleFile);
 				return true;
 			}
-			else if ((settings.syncMode() != Settings.SyncMode.BitWise || forceBitwiseDownload) && isOnline() == ONLINE)
+			else if (forceBitwiseDownload && isOnline() == ONLINE)
+			//else if ((settings.syncMode() != Settings.SyncMode.BitWise || forceBitwiseDownload) && isOnline() == ONLINE)
+			// only want to download this content type if they click it so...
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
@@ -1425,12 +1427,45 @@ public class SocialReader implements ICacheWordSubscriber
 				return false;
 			}
 			
-		} else {
-					
+		} 
+		else if (mc.getType().startsWith("audio") || mc.getType().startsWith("video")) 
+		{
 			File possibleFile = new File(getFileSystemDir(), MEDIA_CONTENT_FILE_PREFIX + mc.getDatabaseId());
 			if (possibleFile.exists())
 			{
-				Log.v(LOGTAG, "Image already downloaded: " + possibleFile.getAbsolutePath());
+				Log.v(LOGTAG, "Already downloaded: " + possibleFile.getAbsolutePath());
+				mdc.mediaDownloaded(possibleFile);
+				return true;
+			}
+			else if (forceBitwiseDownload && isOnline() == ONLINE)
+			{
+				Log.v(LOGTAG, "File doesn't exist, downloading");
+	
+				if (forceBitwiseDownload)
+				{
+					mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
+					DownloadsAdapter.downloading(mc.getItemDatabaseId());
+				}
+	
+				MediaDownloader mediaDownloader = new MediaDownloader(this);
+				mediaDownloader.setMediaDownloaderCallback(mdc);
+	
+				mediaDownloader.execute(mc);
+	
+				return true;
+			}
+			else
+			{
+				//Log.v(LOGTAG, "Can't download, not online or in bitwise mode");
+				return false;
+			}			
+		}
+		else if (mc.getType().startsWith("image")) 
+		{
+			File possibleFile = new File(getFileSystemDir(), MEDIA_CONTENT_FILE_PREFIX + mc.getDatabaseId());
+			if (possibleFile.exists())
+			{
+				Log.v(LOGTAG, "Already downloaded: " + possibleFile.getAbsolutePath());
 				mdc.mediaDownloaded(possibleFile);
 				return true;
 			}
@@ -1456,6 +1491,9 @@ public class SocialReader implements ICacheWordSubscriber
 				//Log.v(LOGTAG, "Can't download, not online or in bitwise mode");
 				return false;
 			}
+		} else {
+			Log.v(LOGTAG,"Not a media type we support");
+			return false;
 		}
 	}
 
