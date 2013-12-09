@@ -20,6 +20,7 @@ import info.guardianproject.bigbuffalo.models.FeedFilterType;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.holoeverywhere.widget.Toast;
 
@@ -27,6 +28,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -264,6 +266,23 @@ public class UICallbacks
 						Intent intent = new Intent(Intent.ACTION_VIEW);
 						intent.setDataAndType(Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),mediaContent.getType());
 						context.startActivity(intent);
+					}
+				} else if (mediaContent != null && mediaContent.getType().startsWith("application/epub+zip"))
+				{
+					// This is an epub
+					if (mediaContent.getDownloadedNonVFSFile() != null) {
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.setDataAndType(Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),mediaContent.getType());
+
+						PackageManager packageManager = context.getPackageManager();
+					    List list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+					    if (list.size() > 0) {
+					    	Toast.makeText(context,"Launching epub reader " + Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),Toast.LENGTH_SHORT);;
+					    	context.startActivity(intent);
+					    }
+					    else {
+					    	Toast.makeText(context,"No application found for " + Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),Toast.LENGTH_SHORT);;
+					    }
 					}
 				}
 				else
