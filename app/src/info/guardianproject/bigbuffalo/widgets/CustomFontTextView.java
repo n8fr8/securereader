@@ -2,12 +2,16 @@ package info.guardianproject.bigbuffalo.widgets;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.text.Layout;
+import android.text.TextUtils;
+import android.text.TextUtils.TruncateAt;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -23,47 +27,50 @@ public class CustomFontTextView extends TextView
 	private boolean mFadeLastLine = false;
 	private float mLineSpacingExtra;
 	private float mLineSpacingMulti;
+	private int mMaxLines;
 	@SuppressWarnings("unused")
 	private CustomFontTextViewHelper mHelper;
-
-	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle)
-	{
-		super(context, attrs, defStyle);
-		init(attrs);
-	}
+	private boolean needsTruncate;
+	private boolean inSetText;
+	private CharSequence mTruncatedText;
+	private TruncateAt mEllipsize;
 
 	public CustomFontTextView(Context context, AttributeSet attrs)
 	{
-		super(context, attrs);
-		init(attrs);
+		this(context, attrs, 0);
 	}
 
 	public CustomFontTextView(Context context)
 	{
-		super(context);
-		init(null);
+		this(context, null, 0);
 	}
 
-	private void init(AttributeSet attrs)
+	public CustomFontTextView(Context context, AttributeSet attrs, int defStyle)
 	{
+		super(context, attrs, defStyle);
+
 		mBounds = new Rect();
 		mLineSpacingExtra = 0;
 		mLineSpacingMulti = 1.0f;
-		
+		mMaxLines = Integer.MAX_VALUE;
+		mEllipsize = null;
 		mHelper = new CustomFontTextViewHelper(this, attrs);
 
-		if (attrs != null)
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomFontTextView, defStyle, 0);
+		mFadeLastLine = a.getBoolean(R.styleable.CustomFontTextView_fade_last_line, false);
+		mMaxLines = a.getInteger(R.styleable.CustomFontTextView_android_maxLines, Integer.MAX_VALUE);
+		if (a.hasValue(R.styleable.CustomFontTextView_android_ellipsize))
 		{
-			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView);
-			mFadeLastLine = a.getBoolean(R.styleable.CustomFontTextView_fade_last_line, false);
-			a.recycle();
-			
-			a = getContext().obtainStyledAttributes(attrs, new int[] { android.R.attr.lineSpacingExtra, android.R.attr.lineSpacingMultiplier });
-			mLineSpacingExtra = a.getFloat(0, mLineSpacingExtra);
-			mLineSpacingMulti = a.getFloat(1, mLineSpacingMulti);
-			a.recycle();
+			TypedValue tv = new TypedValue();
+			a.getValue(R.styleable.CustomFontTextView_android_ellipsize, tv);
+			if (tv.data == 3)
+				mEllipsize = TruncateAt.END;
 		}
+		mLineSpacingExtra = a.getFloat(R.styleable.CustomFontTextView_android_lineSpacingExtra, mLineSpacingExtra);
+		mLineSpacingMulti = a.getFloat(R.styleable.CustomFontTextView_android_lineSpacingMultiplier, mLineSpacingMulti);
+		a.recycle();
 		mShader = getPaint().getShader();
+		setMaxLines(mMaxLines);
 	}
 
 	@Override
@@ -81,6 +88,7 @@ public class CustomFontTextView extends TextView
 					this.getLineBounds(n - 1, mBounds);
 					bottom = mBounds.bottom;
 				}
+				Log.d("TAG", "Text " + getText() + " is " + getLineCount() + " but visible " + n + " (measured to " + this.getMeasuredWidth() + "," + this.getMeasuredHeight() + ")");
 				super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(bottom + this.getPaddingBottom(), MeasureSpec.EXACTLY));
 			}
 		}
@@ -167,16 +175,17 @@ public class CustomFontTextView extends TextView
 	protected void onSizeChanged(int w, int h, int oldw, int oldh)
 	{
 		super.onSizeChanged(w, h, oldw, oldh);
+		mTruncatedText = null;
 		fadeLastLine();
 	}
 
 	private void fadeLastLine()
 	{
-		if (mFadeLastLine)
+		int nVisible = getVisibleLines();
+		if (getLayout() != null && getLineCount() > nVisible)
 		{
-			int nVisible = getVisibleLines();
-			if (getLayout() != null && getLineCount() > nVisible)
-			{
+			if (mFadeLastLine)
+			{		
 				int bottomStartFade = 0;
 				int bottomEndFade = 0;
 				bottomEndFade = getHeight() - getPaddingBottom();
@@ -191,14 +200,73 @@ public class CustomFontTextView extends TextView
 				return;
 			}
 		}
-
+		
+		if (!inSetText && !mFadeLastLine && mEllipsize == TruncateAt.END && mTruncatedText == null)
+		{		
+			needsTruncate = true;
+		}
 		getPaint().setShader(mShader); // original
 	}
 	
+	
+	
+	@Override
+	protected void onDraw(Canvas canvas)
+	{
+		if (needsTruncate)
+		{
+			if (getLayout() != null)
+			{
+				int nVisible = getVisibleLines();
+				int lineCount = getLineCount();
+				int maxLines = Math.max(1, Math.min(nVisible, mMaxLines));
+				if (lineCount > maxLines)
+				{
+					needsTruncate = false;
+					
+					int offsetLastWhole = 0;
+					if (maxLines > 1)
+						offsetLastWhole = getLayout().getLineEnd(maxLines - 2);
+					int lineEnd = getLayout().getLineEnd(lineCount - 1);
+					CharSequence seq = getText().subSequence(offsetLastWhole, lineEnd);
+					if (this.getTransformationMethod() != null)
+						seq = this.getTransformationMethod().getTransformation(seq, this);
+					CharSequence ellipsized = TextUtils.ellipsize(seq, this.getPaint(), getWidth() - getPaddingLeft() - getPaddingRight(), TruncateAt.END);
+					if (ellipsized != seq)
+					{
+						inSetText = true;
+						mTruncatedText = TextUtils.concat(getText().subSequence(0, offsetLastWhole), ellipsized);
+						super.setText(mTruncatedText);
+						inSetText = false;
+					}
+				}
+			}
+		}
+		super.onDraw(canvas);
+	}
+
 	@Override
 	public void setText(CharSequence text, BufferType type)
 	{
+		mTruncatedText = null;
 		super.setText(FontManager.transformText(this, text), type);
+	}
+
+	@Override
+	public void setMaxLines(int maxlines)
+	{
+		mMaxLines = maxlines;
+		if (!inSetText && !mFadeLastLine && mEllipsize == TruncateAt.END)
+		{		
+			needsTruncate = true;
+		}
+	}
+
+	@Override
+	public void setEllipsize(TruncateAt where)
+	{
+		mEllipsize = where;
+		//super.setEllipsize(where);
 	}
 	
 	

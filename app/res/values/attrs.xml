@@ -43,11 +43,15 @@
         <attr name="android:divider" />
     </declare-styleable>
     
-    <declare-styleable name="CustomFontTextView">
+    <declare-styleable name="CustomFontTextView" parent="TextView">
         <attr name="font" format="string" />
         <attr name="linked_text_view" format="reference" />
         <attr name="fade_last_line" format="boolean" defaultValue="false" />
-    </declare-styleable>
+        <attr name="android:maxLines" />
+        <attr name="android:lineSpacingExtra" />
+        <attr name="android:lineSpacingMultiplier" />
+        <attr name="android:ellipsize" />
+        </declare-styleable>
     
     <declare-styleable name="GroupView">
         <attr name="header_layout" format="reference" />

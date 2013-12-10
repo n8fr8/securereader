@@ -231,7 +231,7 @@
 
     <style name="StoryItemShortTitleStyle">
         <item name="android:textColor">@color/grey_dark_dark</item>
-        <item name="android:textSize">24sp</item>
+        <item name="android:textSize">21sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">false</item>
         <item name="font">Glegoo-Regular</item>
