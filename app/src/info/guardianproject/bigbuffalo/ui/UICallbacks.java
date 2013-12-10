@@ -18,6 +18,13 @@ import info.guardianproject.bigbuffalo.installer.SecureBluetooth;
 import info.guardianproject.bigbuffalo.installer.SecureBluetoothReceiverActivity;
 import info.guardianproject.bigbuffalo.models.FeedFilterType;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -254,10 +261,13 @@ public class UICallbacks
 		}
 
 		case R.integer.command_view_media:
-		{
+		{	
+			Log.v("UICallbacks", "command_view_media");
 			if (commandParameters != null && commandParameters.containsKey("media"))
 			{
 				MediaContent mediaContent = (MediaContent) commandParameters.getSerializable("media");
+				Log.v("UICallbacks", "MediaContent " + mediaContent.getType());
+
 				if (mediaContent != null && mediaContent.getType().startsWith("application/vnd.android.package-archive"))
 				{
 					// This is an application package. View means
@@ -267,22 +277,54 @@ public class UICallbacks
 						intent.setDataAndType(Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),mediaContent.getType());
 						context.startActivity(intent);
 					}
-				} else if (mediaContent != null && mediaContent.getType().startsWith("application/epub+zip"))
+				} 
+				else if (mediaContent != null && mediaContent.getType().startsWith("application/epub+zip"))
 				{
+					Log.v("UICallbacks", "MediaContent is epub");
+
 					// This is an epub
 					if (mediaContent.getDownloadedNonVFSFile() != null) {
-						Intent intent = new Intent(Intent.ACTION_VIEW);
-						intent.setDataAndType(Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),mediaContent.getType());
+						Log.v("UICallbacks", "Not null");
+						
+						try {
+							File properlyNamed = new File(mediaContent.getDownloadedNonVFSFile().toString() + ".epub"); 
+							InputStream in = new FileInputStream(mediaContent.getDownloadedNonVFSFile());
+							OutputStream out = new FileOutputStream(properlyNamed);
 
-						PackageManager packageManager = context.getPackageManager();
-					    List list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-					    if (list.size() > 0) {
-					    	Toast.makeText(context,"Launching epub reader " + Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),Toast.LENGTH_SHORT);;
-					    	context.startActivity(intent);
-					    }
-					    else {
-					    	Toast.makeText(context,"No application found for " + Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),Toast.LENGTH_SHORT);;
-					    }
+						    // Transfer bytes from in to out
+						    byte[] buf = new byte[1024];
+						    int len;
+						    while ((len = in.read(buf)) > 0) {
+						        out.write(buf, 0, len);
+						    }
+						    in.close();
+						    out.close();
+						    
+							Intent intent = new Intent(Intent.ACTION_VIEW);
+							intent.setDataAndType(Uri.fromFile(properlyNamed),mediaContent.getType());
+
+							PackageManager packageManager = context.getPackageManager();
+						    List list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+						    if (list.size() > 0) {
+						    	Log.v("UICallbacks", "Launching epub reader" + Uri.fromFile(properlyNamed).toString());
+						    	context.startActivity(intent);
+						    }
+						    else {
+						    	Log.v("UICallbacks", "No application found" + Uri.fromFile(properlyNamed).toString());
+						    }
+						    
+						    
+						} catch (FileNotFoundException e) {
+						
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}					    
+					    
+					}
+					else {
+						Log.v("UICallbacks", "NULL");
 					}
 				}
 				else
