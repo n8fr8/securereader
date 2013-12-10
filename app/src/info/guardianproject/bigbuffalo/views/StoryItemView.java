@@ -154,8 +154,10 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			if (child.getId() == R.id.ivPhotos)
 			{
 				if (isTwoColumnMode())
-					((StoryMediaContentView) child).setHeightInhibitor(0); // Full
-				// bleed
+				{
+					((StoryMediaContentView) child).setHeightInhibitor(0); // Full bleed
+					((StoryMediaContentView) child).setUseFinalSizeForDownloadView(true);
+				}
 				else
 					((StoryMediaContentView) child).setHeightInhibitor(1.75f);
 
@@ -198,7 +200,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			else if (currentColumnHeight != 0)
 				currentColumnHeight += lpChild.topMargin;
 			
-			if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && currentColumnHeight != 0 && ((StoryMediaContentView) child).isMediaLoaded())
+			if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && currentColumnHeight != 0 && ((StoryMediaContentView) child).willCreateView())
 			{
 				// Do nothing. This will pull up a new column for us, in which we will be topmost!
 			}
@@ -208,7 +210,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 
 				// Adjust to column
 				int widthChild = column.getWidth() - lpChild.leftMargin - lpChild.rightMargin;
-				if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && ((StoryMediaContentView) child).isMediaLoaded())
+				if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && ((StoryMediaContentView) child).willCreateView())
 					child.measure(View.MeasureSpec.makeMeasureSpec(widthChild, View.MeasureSpec.EXACTLY),
 							View.MeasureSpec.makeMeasureSpec(columnHeightMax - currentColumnHeight - lpChild.bottomMargin, View.MeasureSpec.EXACTLY));
 				else

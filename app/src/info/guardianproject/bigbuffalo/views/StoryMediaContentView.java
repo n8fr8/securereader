@@ -32,7 +32,8 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	private boolean mShowPlaceholderWhileLoading;
 	private MediaViewCollection mMediaViewCollection;
 	private boolean mAllowFullScreenMediaViewing;
-
+	private boolean mUseFinalSizeForDownloadView;
+	
 	public StoryMediaContentView(Context context)
 	{
 		super(context);
@@ -64,6 +65,7 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		}
 		if (this.isInEditMode())
 			mShowPlaceholder = true;
+		mUseFinalSizeForDownloadView = false;
 	}
 
 	@Override
@@ -156,9 +158,9 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			if (mShowDLButtonForBitWise)
 			{
 				if (mMediaViewCollection.isLoadingMedia())
-					createDownloadingView(false);
+					createDownloadingView(mUseFinalSizeForDownloadView);
 				else
-					createDownloadView();
+					createDownloadView(mUseFinalSizeForDownloadView);
 			}
 			else if (mShowPlaceholderWhileLoading)
 				createDownloadingView(true);
@@ -250,12 +252,17 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		this.addView(mImageView);
 	}
 
-	private void createDownloadView()
+	private void createDownloadView(boolean useFinalSize)
 	{
 		if (mDownloadView == null)
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder, this, false);
 		}
+		if (useFinalSize)
+			mDownloadView.getLayoutParams().height = LayoutParams.MATCH_PARENT;
+		else
+			mDownloadView.getLayoutParams().height = UIHelpers.dpToPx(50, getContext());
+		
 		mDownloadView.setOnClickListener(this);
 		ImageView iv = ((ImageView) mDownloadView.findViewById(R.id.ivDownloadIcon));
 		iv.setImageResource(mMediaViewCollection.isFirstViewVideo() ? R.drawable.ic_load_video : R.drawable.ic_load_photo);
@@ -294,5 +301,44 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	public boolean isMediaLoaded()
 	{
 		return mMediaViewCollection != null && mMediaViewCollection.containsLoadedMedia();
+	}
+	
+	/**
+	 * @return true is this view will create a view for us to look at, i.e. media is
+	 * already loaded or placeholder will be shown. Also if download button is displayed.
+	 */
+	public boolean willCreateView()
+	{
+		if (mMediaViewCollection == null || mMediaViewCollection.getCount() == 0)
+		{
+			if (mShowPlaceholder)
+				return true;
+		}
+		else if (!mMediaViewCollection.containsLoadedMedia())
+		{
+			if (mShowDLButtonForBitWise)
+			{
+				if (mMediaViewCollection.isLoadingMedia())
+					return true;
+				else
+					return true;
+			}
+			else if (mShowPlaceholderWhileLoading)
+				return true;
+		}
+		else if (mMediaViewCollection.getCount() > 1)
+		{
+			return true;
+		}	
+		else if (mMediaViewCollection.getCount() == 1)
+		{
+			return true;
+		}
+		return false;
+	}
+	
+	public void setUseFinalSizeForDownloadView(boolean useFinalSizeForDownloadView)
+	{
+		mUseFinalSizeForDownloadView = useFinalSizeForDownloadView;
 	}
 }
