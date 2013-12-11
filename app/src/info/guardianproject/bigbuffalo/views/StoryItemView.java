@@ -157,6 +157,11 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 				{
 					((StoryMediaContentView) child).setHeightInhibitor(0); // Full bleed
 					((StoryMediaContentView) child).setUseFinalSizeForDownloadView(true);
+					if (currentColumnHeight == 0)
+					{
+						// Allow image to bleed to end of margin!
+						columnHeightMax += ((MarginLayoutParams)_CurrentColumn.getLayoutParams()).bottomMargin;
+					}
 				}
 				else
 					((StoryMediaContentView) child).setHeightInhibitor(1.75f);
