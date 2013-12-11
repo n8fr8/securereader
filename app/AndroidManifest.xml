@@ -94,6 +94,10 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_create_account">
         </activity>
+        <activity 
+            android:name="info.guardianproject.bigbuffalo.DownloadEpubReaderActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize">            
+        </activity>
         <service android:name="info.guardianproject.bigbuffalo.api.SyncService" >
         </service>
 
