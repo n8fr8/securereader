@@ -27,4 +27,8 @@
    
    <color name="grey">#808285</color>
    <color name="claret">@color/button_primary</color>
+   
+   <color name="button_download_epub_reader">#231F20</color>
+   <color name="button_download_epub_reader_selected">#80231F20</color>
+   
 </resources>

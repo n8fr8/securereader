@@ -280,5 +280,11 @@
     <string name="apps_feed_name">Applications</string>
     <string name="epubs_feed_name">Tibet Archive</string>
     
-    <string name="download_epub">Download ePub</string>
+    <string name="download_epub_hint">Download ePub</string>
+    <string name="download_epub_reader_title">Download ePub Reader</string>
+    <string name="download_epub_reader_info">You need an ePub reader to see the story. We recommend FBReader. Get it on:</string>
+    <string name="download_epub_reader_play">Google Play</string>
+    <string name="download_epub_reader_web">FBReader Website</string>
+    <string name="download_epub_reader_close">Close</string>
+    
 </resources>

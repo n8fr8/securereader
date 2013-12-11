@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/ivDownloadIcon"
         android:layout_centerInParent="true"
-        android:text="@string/download_epub"
+        android:text="@string/download_epub_hint"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </RelativeLayout>

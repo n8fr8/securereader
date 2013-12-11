@@ -112,7 +112,7 @@ public class MediaViewCollection implements OnMediaOrientationListener
 			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
 			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
 			if (isEpub)
-				return mContext.getText(R.string.download_epub);
+				return mContext.getText(R.string.download_epub_hint);
 		}
 		return null;
 	}

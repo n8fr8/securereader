@@ -18,6 +18,9 @@ public class PackageHelper {
 	public static final String URI_ORWEB = "info.guardianproject.browser";
 	public static final String URI_ORWEB_PLAY = "market://search?q=pname:info.guardianproject.browser";
 
+	public static final String URI_FBREADER_PLAY = "https://play.google.com/store/apps/details?id=org.geometerplus.zlibrary.ui.android";
+	public static final String URI_FBREADER_WEB = "http://fbreader.org/FBReaderJ";
+	
 	public static boolean isChatSecureInstalled(Context context) {
 		return isAppInstalled(context, URI_CHATSECURE);
 	}
