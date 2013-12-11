@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.TextView;
 
 import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.adapters.StoryItemMediaContentPagerAdapter;
@@ -88,18 +89,10 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			return;
 		}
 
-		if (mMediaViewCollection != null && !mMediaViewCollection.containsLoadedMedia() && !mShowPlaceholderWhileLoading)
+		if (mMediaViewCollection != null && !mMediaViewCollection.containsLoadedMedia() && !mShowPlaceholderWhileLoading && !mShowDLButtonForBitWise)
 		{
-			if (this.mShowDLButtonForBitWise)
-			{
-				Log.v("MediaView", "No cached image, but show DL button");
-				super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-			}
-			else
-			{
-				Log.v("MediaView", "No cached image, set height to 0");
-				setMeasuredDimension(0, 0);
-			}
+			Log.v("MediaView", "No cached image, set height to 0");
+			setMeasuredDimension(0, 0);
 		}
 		else if (mHeightInhibitor == 0)
 		{
@@ -254,18 +247,21 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 
 	private void createDownloadView(boolean useFinalSize)
 	{
-		if (mDownloadView == null)
+		if (useFinalSize || mMediaViewCollection.placeholderUseFinalSize())
+		{
+			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder_large, this, false);
+		}
+		else
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder, this, false);
 		}
-		if (useFinalSize)
-			mDownloadView.getLayoutParams().height = LayoutParams.MATCH_PARENT;
-		else
-			mDownloadView.getLayoutParams().height = UIHelpers.dpToPx(50, getContext());
 		
 		mDownloadView.setOnClickListener(this);
 		ImageView iv = ((ImageView) mDownloadView.findViewById(R.id.ivDownloadIcon));
-		iv.setImageResource(mMediaViewCollection.isFirstViewVideo() ? R.drawable.ic_load_video : R.drawable.ic_load_photo);
+		iv.setImageResource(mMediaViewCollection.placeholderIcon());
+		TextView tv = (TextView) mDownloadView.findViewById(R.id.tvDownload);
+		if (tv != null)
+			tv.setText(mMediaViewCollection.placeholderText());
 		this.addView(mDownloadView);
 		iv.clearAnimation();
 	}
@@ -276,14 +272,17 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder, this, false);
 		}
-		if (useFinalSize)
+		if (useFinalSize || mMediaViewCollection.placeholderUseFinalSize())
 			mDownloadView.getLayoutParams().height = LayoutParams.MATCH_PARENT;
 		else
 			mDownloadView.getLayoutParams().height = UIHelpers.dpToPx(50, getContext());
 
 		mDownloadView.setOnClickListener(null);
 		ImageView iv = ((ImageView) mDownloadView.findViewById(R.id.ivDownloadIcon));
-		iv.setImageResource(mMediaViewCollection.isFirstViewVideo() ? R.drawable.ic_load_video : R.drawable.ic_context_load);
+		iv.setImageResource(R.drawable.ic_context_load);
+		TextView tv = (TextView) mDownloadView.findViewById(R.id.tvDownload);
+		if (tv != null)
+			tv.setText(null);
 		this.addView(mDownloadView);
 		iv.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
 	}

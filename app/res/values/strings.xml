@@ -279,4 +279,6 @@
     	
     <string name="apps_feed_name">Applications</string>
     <string name="epubs_feed_name">Tibet Archive</string>
+    
+    <string name="download_epub">Download ePub</string>
 </resources>

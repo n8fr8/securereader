@@ -1,9 +1,11 @@
 package info.guardianproject.bigbuffalo.ui;
 
+import info.guardianproject.bigbuffalo.R;
 import info.guardianproject.bigbuffalo.models.OnMediaOrientationListener;
 import info.guardianproject.bigbuffalo.views.ApplicationMediaContentPreviewView;
 import info.guardianproject.bigbuffalo.views.EPubMediaContentPreviewView;
 import info.guardianproject.bigbuffalo.views.ImageMediaContentPreviewView;
+import info.guardianproject.bigbuffalo.views.MediaContentPreviewView;
 import info.guardianproject.bigbuffalo.views.VideoMediaContentPreviewView;
 
 import java.util.ArrayList;
@@ -30,10 +32,10 @@ public class MediaViewCollection implements OnMediaOrientationListener
 	private final Context mContext;
 	private boolean mContainsLoadedMedia;
 	private boolean mIsFirstViewPortrait;
-	private boolean mIsFirstViewVideo;
 	private boolean mInCreateViews;
 	private int mInCreateViewsIndex;
 	private ScaleType mDefaultScaleType;
+	private String mFirstContentType;
 
 	public MediaViewCollection(Context context, OnMediaLoadedListener onMediaLoadedListener, Item story, boolean useThisThread)
 	{
@@ -80,16 +82,64 @@ public class MediaViewCollection implements OnMediaOrientationListener
 		return mIsFirstViewPortrait;
 	}
 
-	public boolean isFirstViewVideo()
+	/**
+	 * Returns an icon for the media collection. Currently, this depends on the first item
+	 * in the collection.
+	 * @return An icon resource identifier
+	 */
+	public int placeholderIcon()
 	{
-		return mIsFirstViewVideo;
+		if (mFirstContentType != null)
+		{
+			boolean isVideo = mFirstContentType.startsWith("video/");
+			boolean isAudio = mFirstContentType.startsWith("audio/");
+			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
+			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
+			if (isVideo)
+				return R.drawable.ic_load_video;
+			else if (isEpub)
+				return R.drawable.ic_content_epub;
+		}
+		return R.drawable.ic_load_photo;
 	}
 
+	public CharSequence placeholderText()
+	{
+		if (mFirstContentType != null)
+		{
+			boolean isVideo = mFirstContentType.startsWith("video/");
+			boolean isAudio = mFirstContentType.startsWith("audio/");
+			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
+			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
+			if (isEpub)
+				return mContext.getText(R.string.download_epub);
+		}
+		return null;
+	}
+	
+	/**
+	 * Some media types need a more user friendly download view, use "final size" for these.
+	 * The rest will use default download view height of 50dp.
+	 * @return True if the download view should extend across the whole media content view.
+	 */
+	public boolean placeholderUseFinalSize()
+	{
+		if (mFirstContentType != null)
+		{
+			boolean isVideo = mFirstContentType.startsWith("video/");
+			boolean isAudio = mFirstContentType.startsWith("audio/");
+			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
+			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
+			if (isEpub)
+				return true;
+		}
+		return false;
+	}
+	
 	public void refreshViews(boolean forceBitwiseDownloads, boolean useThisThread)
 	{
 		mInCreateViews = true;
 		mIsFirstViewPortrait = false;
-		mIsFirstViewVideo = false;
 		mContainsLoadedMedia = false;
 
 		mContent = new ArrayList<MediaContent>();
@@ -101,6 +151,9 @@ public class MediaViewCollection implements OnMediaOrientationListener
 			if (mediaContent == null || mediaContent.getUrl() == null || mediaContent.getType() == null)
 				continue;
 
+			if (mInCreateViewsIndex == 0)
+				mFirstContentType = mediaContent.getType();
+			
 			View mediaView = null;
 
 			boolean isVideo = mediaContent.getType().startsWith("video/");
@@ -109,9 +162,6 @@ public class MediaViewCollection implements OnMediaOrientationListener
 			boolean isEpub = mediaContent.getType().startsWith("application/epub+zip"); 
 			if (isVideo)
 			{
-				if (mInCreateViewsIndex == 0)
-					mIsFirstViewVideo = true;
-
 				VideoMediaContentPreviewView vmc = new VideoMediaContentPreviewView(mContext);
 				vmc.setScaleType(mDefaultScaleType);
 				vmc.setOnMediaOrientationListener(this);
@@ -158,13 +208,9 @@ public class MediaViewCollection implements OnMediaOrientationListener
 		for (int i = 0; i < this.getCount(); i++)
 		{
 			View view = this.getView(i);
-			if (view instanceof ImageMediaContentPreviewView)
+			if (view instanceof MediaContentPreviewView)
 			{
-				((ImageMediaContentPreviewView) view).recycle();
-			}
-			else if (view instanceof VideoMediaContentPreviewView)
-			{
-				((VideoMediaContentPreviewView) view).recycle();
+				((MediaContentPreviewView) view).recycle();
 			}
 		}
 		mContentViews.clear();
@@ -226,19 +272,12 @@ public class MediaViewCollection implements OnMediaOrientationListener
 		for (int i = 0; i < this.getCount(); i++)
 		{
 			View view = this.getView(i);
-			if (view instanceof ImageMediaContentPreviewView)
+			if (view instanceof MediaContentPreviewView)
 			{
-				isLoading |= ((ImageMediaContentPreviewView) view).isLoading();
-			}
-			else if (view instanceof VideoMediaContentPreviewView)
-			{
-				isLoading |= ((VideoMediaContentPreviewView) view).isLoading();
-			}
-			else if (view instanceof ApplicationMediaContentPreviewView)
-			{
-				isLoading |= ((ApplicationMediaContentPreviewView) view).isLoading();
+				isLoading |= ((MediaContentPreviewView) view).isLoading();
 			}
 		}
 		return isLoading;
 	}
+
 }

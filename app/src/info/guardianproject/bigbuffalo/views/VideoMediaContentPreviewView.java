@@ -21,7 +21,7 @@ import android.widget.ImageView.ScaleType;
 
 import com.tinymission.rss.MediaContent;
 
-public class VideoMediaContentPreviewView extends FrameLayout implements MediaDownloaderCallback
+public class VideoMediaContentPreviewView extends FrameLayout implements MediaDownloaderCallback, MediaContentPreviewView
 {
 	private MediaContent mMediaContent;
 	private OnMediaOrientationListener mOrientationListener;
