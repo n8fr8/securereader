@@ -279,4 +279,8 @@
     	
     <string name="apps_feed_name">Applications</string>
     <string name="epubs_feed_name">Tibet Archive</string>
+    
+    <string name="cacheword_notification_cached_title">YakReader Unlocked</string>
+    <string name="cacheword_notification_cached">YakReader passcode stored in memory</string>
+    <string name="cacheword_notification_cached_message">YakReader passcode stored in memory</string>
 </resources>
