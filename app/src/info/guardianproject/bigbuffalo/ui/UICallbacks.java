@@ -4,6 +4,7 @@ import info.guardianproject.bigbuffalo.AddFeedActivity;
 import info.guardianproject.bigbuffalo.AddPostActivity;
 import info.guardianproject.bigbuffalo.App;
 import info.guardianproject.bigbuffalo.CreateAccountActivity;
+import info.guardianproject.bigbuffalo.DownloadEpubReaderActivity;
 import info.guardianproject.bigbuffalo.DownloadsActivity;
 import info.guardianproject.bigbuffalo.FragmentActivityWithMenu;
 import info.guardianproject.bigbuffalo.HelpActivity;
@@ -311,9 +312,18 @@ public class UICallbacks
 						    }
 						    else {
 						    	Log.v("UICallbacks", "No application found" + Uri.fromFile(properlyNamed).toString());
+						    	
+						    	// Download epub reader?
+								int numShown = App.getSettings().downloadEpubReaderDialogShown();
+								if (numShown < 1)
+								{
+									App.getSettings().setDownloadEpubReaderDialogShown(numShown + 1);
+									intent = new Intent(context, DownloadEpubReaderActivity.class);
+									intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+									context.startActivity(intent);
+									((Activity) context).overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);
+								}
 						    }
-						    
-						    
 						} catch (FileNotFoundException e) {
 						
 							e.printStackTrace();

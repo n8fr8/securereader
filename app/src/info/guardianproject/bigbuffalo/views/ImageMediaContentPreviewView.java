@@ -24,7 +24,7 @@ import android.widget.ImageView;
 
 import com.tinymission.rss.MediaContent;
 
-public class ImageMediaContentPreviewView extends ImageView implements MediaDownloaderCallback
+public class ImageMediaContentPreviewView extends ImageView implements MediaDownloaderCallback, MediaContentPreviewView
 {
 	private boolean mHasBeenRecycled;
 	private MediaContent mMediaContent;

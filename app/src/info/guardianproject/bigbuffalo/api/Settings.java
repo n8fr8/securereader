@@ -36,6 +36,7 @@ public class Settings
 	public static final String KEY_KILL_PASSPHRASE = "passphrase";
 	public static final String KEY_CHAT_SECURE_DIALOG_SHOWN = "chat_secure_dialog_shown";
 	public static final String KEY_USERNAME_PASSWORD_CHAT_REGISTERED = "chat_username_password_registered";
+	public static final String KEY_DOWNLOAD_EPUB_READER_DIALOG_SHOWN = "download_epub_reader_dialog_shown";
 		
 	public Settings(Context context)
 	{
@@ -522,5 +523,23 @@ public class Settings
 	
 	public void setChatUsernamePasswordSet() {
 		mPrefs.edit().putBoolean(KEY_USERNAME_PASSWORD_CHAT_REGISTERED, true).commit();
+	}
+	
+	/**
+	 * @return number of times we have shown DownloadEpubReader dialog
+	 * 
+	 */
+	public int downloadEpubReaderDialogShown()
+	{
+		return mPrefs.getInt(KEY_DOWNLOAD_EPUB_READER_DIALOG_SHOWN, 0);
+	}
+	
+	/**
+	 * Set number of times we have shown DownloadEpubReader dialog
+	 * 
+	 */
+	public void setDownloadEpubReaderDialogShown(int numTimes)
+	{
+		mPrefs.edit().putInt(KEY_DOWNLOAD_EPUB_READER_DIALOG_SHOWN, numTimes).commit();
 	}
 }

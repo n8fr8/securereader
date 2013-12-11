@@ -17,7 +17,7 @@ import android.widget.FrameLayout;
 
 import com.tinymission.rss.MediaContent;
 
-public class EPubMediaContentPreviewView extends FrameLayout implements MediaDownloaderCallback
+public class EPubMediaContentPreviewView extends FrameLayout implements MediaDownloaderCallback, MediaContentPreviewView
 {
 	private MediaContent mMediaContent;
 	private OnMediaOrientationListener mOrientationListener;
@@ -146,5 +146,11 @@ public class EPubMediaContentPreviewView extends FrameLayout implements MediaDow
 		// TODO Auto-generated method stub
 		// Only non iocipher files for Applications
 		
+	}
+
+	@Override
+	public void recycle()
+	{
+		// Do nothing
 	}
 }
