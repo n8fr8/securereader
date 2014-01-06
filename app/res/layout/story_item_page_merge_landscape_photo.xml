@@ -18,7 +18,7 @@
         android:layout_marginTop="@dimen/source_top_margin"
         layout="@layout/story_item_page_source" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvTitle"
         style="@style/StoryItemTitleStyle"
         android:layout_width="match_parent"

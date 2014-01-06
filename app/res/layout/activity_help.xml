@@ -1,5 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/svRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -20,7 +20,7 @@
             android:background="@drawable/white_with_bottom_shadow"
             android:orientation="vertical" >
 
-            <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+            <info.guardianproject.yakreader.widgets.CustomFontTextView
                 android:id="@+id/tvText1"
                 style="@style/HelpTitleStyle"
                 android:layout_width="match_parent"
@@ -72,7 +72,7 @@
                 android:background="#ffffff"
                 android:orientation="vertical" >
 
-                <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+                <info.guardianproject.yakreader.widgets.CustomFontTextView
                     android:id="@+id/TextView01"
                     style="@style/HelpTitleStyle"
                     android:layout_width="match_parent"
@@ -112,7 +112,7 @@
                 android:background="#ffffff"
                 android:orientation="vertical" >
 
-                <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+                <info.guardianproject.yakreader.widgets.CustomFontTextView
                     android:id="@+id/TextView04"
                     style="@style/HelpTitleStyle"
                     android:layout_width="match_parent"
@@ -148,7 +148,7 @@
             android:background="@drawable/white_with_bottom_shadow"
             android:orientation="vertical" >
 
-            <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+            <info.guardianproject.yakreader.widgets.CustomFontTextView
                 android:id="@+id/TextView05"
                 style="@style/HelpTitleStyle"
                 android:layout_width="match_parent"
@@ -173,7 +173,7 @@
             android:background="@drawable/white_with_bottom_shadow"
             android:orientation="vertical" >
 
-            <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+            <info.guardianproject.yakreader.widgets.CustomFontTextView
                 android:id="@+id/CustomFontTextView01"
                 style="@style/HelpTitleStyle"
                 android:layout_width="match_parent"
@@ -189,7 +189,7 @@
                 android:text="@string/about_guardian_content" />
         </LinearLayout>
 
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupTermsAndLicenses"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -200,7 +200,7 @@
             app:header_layout="@layout/help_group_header_item"
             app:header_text="@string/help_terms_group_title" >
 
-                        <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+                        <info.guardianproject.yakreader.widgets.CustomFontTextView
                             android:id="@+id/tvTermsTitle"
                             style="@style/HelpTitleStyle"
                             android:layout_width="match_parent"
@@ -215,7 +215,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_terms_content" />
 
-        </info.guardianproject.bigbuffalo.widgets.GroupView>
+        </info.guardianproject.yakreader.widgets.GroupView>
 
         <Button
             android:id="@+id/btnDone"

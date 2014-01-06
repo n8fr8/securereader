@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="info.guardianproject.bigbuffalo"
+    package="info.guardianproject.yakreader"
     android:installLocation="preferExternal"
     android:versionCode="3"
     android:versionName="1.0.2" >
@@ -14,17 +14,17 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <permission
-        android:name="info.guardianproject.bigbuffalo.exit.permission"
+        android:name="info.guardianproject.yakreader.exit.permission"
         android:protectionLevel="signature" />
 
-    <uses-permission android:name="info.guardianproject.bigbuffalo.exit.permission" />
+    <uses-permission android:name="info.guardianproject.yakreader.exit.permission" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name="info.guardianproject.bigbuffalo.App"
+        android:name="info.guardianproject.yakreader.App"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:description="@string/app_description"
@@ -34,7 +34,7 @@
 		    android:enabled="true" android:exported="false" />        
         
         <activity
-            android:name="info.guardianproject.bigbuffalo.MainActivity"
+            android:name="info.guardianproject.yakreader.MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_main"
             android:theme="@style/AppThemeNoActionBar" >
@@ -45,73 +45,73 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.HelpActivity"
+            android:name="info.guardianproject.yakreader.HelpActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_help" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.DownloadsActivity"
+            android:name="info.guardianproject.yakreader.DownloadsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_downloads" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.AddFeedActivity"
+            android:name="info.guardianproject.yakreader.AddFeedActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_add_feed" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.PanicActivity"
+            android:name="info.guardianproject.yakreader.PanicActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_panic"
             android:theme="@style/Theme.Transparent" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.ViewMediaActivity"
+            android:name="info.guardianproject.yakreader.ViewMediaActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_view_media" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.SettingsActivity"
+            android:name="info.guardianproject.yakreader.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.LockScreenActivity"
+            android:name="info.guardianproject.yakreader.LockScreenActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_lock_screen" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.KillActivity"
+            android:name="info.guardianproject.yakreader.KillActivity"
             android:excludeFromRecents="true"
             android:noHistory="true" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.installer.HTTPDAppSender"
+            android:name="info.guardinfo.guardianproject.yakreader.installer.HTTPDAppSender"    
             android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.CreateAccountActivity"
+            android:name="info.guardianproject.yakreader.CreateAccountActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_create_account">
         </activity>
         <activity 
-            android:name="info.guardianproject.bigbuffalo.DownloadEpubReaderActivity"
+            android:name="info.guardianproject.yakreader.DownloadEpubReaderActivity"
             android:configChanges="keyboardHidden|orientation|screenSize">            
         </activity>
-        <service android:name="info.guardianproject.bigbuffalo.api.SyncService" >
+        <service android:name="info.guardianproject.securereader.SyncService" >
         </service>
 
         <activity
-            android:name="info.guardianproject.bigbuffalo.installer.SecureBluetoothSenderActivity"
+            android:name="info.guardiainfo.guardianproject.yakreader.installer.SecureBluetoothSenderActivity"
             android:label="@string/title_activity_secure_blue_tooth_sender" >
         </activity>
         <activity
-            android:name="info.guardianproject.bigbuffalo.installer.SecureBluetoothReceiverActivity"
+            android:name="info.guardiainfo.guardianproject.yakreader.installer.SecureBluetoothReceiverActivity"
             android:label="@string/title_activity_secure_blue_tooth_receiver" >
         </activity>
         
         <activity
-            android:name="info.guardianproject.bigbuffalo.installer.SecureShareReceiveActivity"
+            android:name="info.guardiainfo.guardianproject.yakreader.installer.SecureShareReceiveActivity"
             android:label="@string/title_secure_share_receive" >
 			<intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -121,8 +121,8 @@
         </activity>
 
 		<provider 
-   			android:name="info.guardianproject.bigbuffalo.api.SecureShareContentProvider"
-			android:authorities="info.guardianproject.bigbuffalo.secureshareprovider" 
+   			android:name="info.guardianproject.securereader.SecureShareContentProvider"
+			android:authorities="info.guardianproject.securereader.secureshareprovider" 
 			android:exported="true"
 			android:enabled="true"
 		/>

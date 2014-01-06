@@ -1,5 +1,5 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -32,7 +32,7 @@
         android:layout_toRightOf="@id/strut"
         layout="@layout/story_media_content_view" />
 
-        <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        <info.guardianproject.yakreader.widgets.CustomFontTextView
             android:id="@+id/tvTitle"
             style="@style/StoryItemTitleStyle"
             android:layout_width="0dp"

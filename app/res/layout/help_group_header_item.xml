@@ -4,7 +4,7 @@
         android:layout_height="60dp"
         android:background="@drawable/settings_group_header_item_background" >
 
-        <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+        <info.guardianproject.yakreader.widgets.CustomFontTextView
             android:id="@+id/tvTitle"
             style="@style/SettingsHeadingStyle"
             android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-<info.guardianproject.bigbuffalo.views.StoryItemPageView 
+<info.guardianproject.yakreader.views.StoryItemPageView 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"

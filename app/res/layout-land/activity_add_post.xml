@@ -131,21 +131,21 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <info.guardianproject.bigbuffalo.views.PostSignInView
+    <info.guardianproject.yakreader.views.PostSignInView
         android:id="@+id/signIn"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:visibility="gone" >
 
-    </info.guardianproject.bigbuffalo.views.PostSignInView>
+    </info.guardianproject.yakreader.views.PostSignInView>
 
-    <info.guardianproject.bigbuffalo.views.CreateAccountView
+    <info.guardianproject.yakreader.views.CreateAccountView
         android:id="@+id/createAccount"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:visibility="gone" >
 
-    </info.guardianproject.bigbuffalo.views.CreateAccountView>
+    </info.guardianproject.yakreader.views.CreateAccountView>
 </FrameLayout>
