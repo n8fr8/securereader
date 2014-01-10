@@ -1,5 +1,5 @@
 package info.guardianproject.yakreader;
-
+		
 import info.guardianproject.securereader.Settings;
 import info.guardianproject.securereader.Settings.UiLanguage;
 import info.guardianproject.securereader.SocialReader;
@@ -32,6 +32,7 @@ import com.tinymission.rss.Feed;
 public class App extends Application implements OnSharedPreferenceChangeListener
 {
 	public static final boolean UI_ENABLE_POPULAR_ITEMS = false;
+			
 	public static final boolean UI_ENABLE_COMMENTS = false;
 	public static final boolean UI_ENABLE_TAGS = true;
 	public static final boolean UI_ENABLE_POST_LOGIN = false;
