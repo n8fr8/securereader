@@ -4,7 +4,6 @@ import info.guardianproject.securereader.SocialReader;
 import info.guardianproject.securereader.XMLRPCPublisher.XMLRPCPublisherCallback;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
 import info.guardianproject.yakreader.ui.UICallbacks;
-import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers.FadeInFadeOutListener;
 import info.guardianproject.yakreader.views.CreateAccountView;
@@ -69,7 +68,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.tinymission.rss.Item;
 import com.tinymission.rss.MediaContent;
 
-public class AddPostActivity extends FragmentActivityWithMenu implements OnActionListener, OnFocusChangeListener, OnMediaLoadedListener, OnAgreeListener,
+public class AddPostActivity extends FragmentActivityWithMenu implements OnActionListener, OnFocusChangeListener, OnAgreeListener,
 		FadeInFadeOutListener
 {
 	ProgressDialog loadingDialog;
@@ -406,7 +405,7 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 			mEditTags.setText(sb.toString());
 		}
 
-		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), this, mStory, true, true), false, false);
+		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), mStory, true, true), false, false);
 	}
 
 	private ArrayList<String> getTagsFromInput()
@@ -731,7 +730,7 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 		saveDraft(false);
 
 		// Update the media view to show new media as well
-		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), this, mStory, true, true), false, false);
+		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), mStory, true, true), false, false);
 		updateMediaControls();
 	}
 
@@ -1065,12 +1064,6 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 			e.printStackTrace();
 			deleteImageFile();
 		}
-	}
-
-	@Override
-	public void onMediaLoaded()
-	{
-		this.mMediaView.updateView();
 	}
 
 	private void showHideCreateAccount(boolean animate)

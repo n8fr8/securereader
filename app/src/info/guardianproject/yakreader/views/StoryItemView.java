@@ -43,6 +43,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 {
 	private PagedView mPagedView;
 	private final Item mItem;
+	private MediaViewCollection mMediaViewCollection;
 	private ArrayList<View> mBlueprintViews;
 	private ArrayList<View> mPages;
 	private SparseArray<Rect> mStoredPositions;
@@ -377,7 +378,14 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		StoryMediaContentView mediaContent = (StoryMediaContentView) blueprint.findViewById(R.id.ivPhotos);
 		if (mediaContent != null)
 		{
-			mediaContent.setMediaCollection(new MediaViewCollection(blueprint.getContext(), this, story, true), true, true);
+			if (mMediaViewCollection != null)
+			{
+				mMediaViewCollection.removeListener(this);
+				mMediaViewCollection.recycle();
+			}
+			mMediaViewCollection = new MediaViewCollection(mediaContent.getContext(), story, true);
+			mMediaViewCollection.addListener(this);
+			mediaContent.setMediaCollection(mMediaViewCollection, true, true);
 			if (mediaContent.getCount() == 0)
 				mediaContent.setVisibility(View.GONE);
 			else
@@ -544,10 +552,15 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 	}
 
 	@Override
-	public void onMediaLoaded()
+	public void onViewLoaded(MediaViewCollection collection)
 	{
 		Log.v("StoryItemView", "Media content has requested relayout.");
 		mPagedView.recreateViewsForContent(this);
+	}
+
+	@Override
+	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
+	{
 	}
 
 	private class ReadMoreClickListener implements View.OnClickListener

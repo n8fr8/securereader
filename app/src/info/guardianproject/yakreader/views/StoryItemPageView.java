@@ -17,13 +17,13 @@ import info.guardianproject.yakreader.App;
 import info.guardianproject.yakreader.adapters.StoryListAdapter.OnTagClickedListener;
 import info.guardianproject.yakreader.models.FeedFilterType;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
-import info.guardianproject.yakreader.ui.UICallbacks;
 import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
+import info.guardianproject.yakreader.ui.UICallbacks;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 
 import com.tinymission.rss.Item;
 
-public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedListener
+public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedListener 
 {
 	private enum PageMode
 	{
@@ -43,11 +43,11 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 	protected boolean mShowAuthor = true;
 	protected boolean mShowContent = true;
 	protected boolean mShowSource = true;
-	private MediaViewCollection mMediaViewCollection;
 	private boolean mAllowFullScreenMediaViewing;
 	private PageMode mCurrentPageMode;
 	private boolean mShowTags;
 	private OnTagClickedListener mOnTagClickedListener;
+	private MediaViewCollection mMediaViewCollection;
 
 	public StoryItemPageView(Context context)
 	{
@@ -79,6 +79,13 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 			mShowSource = a.getBoolean(R.styleable.StoryItemPageView_show_source, true);
 			a.recycle();
 		}
+	}
+	
+	public void recycle()
+	{
+		if (mMediaViewCollection != null)
+			mMediaViewCollection.recycle();
+		mMediaViewCollection = null;
 	}
 
 	/**
@@ -236,10 +243,14 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 	{
 		if (mStory != story)
 		{
-			if (mMediaViewCollection != null)
-				mMediaViewCollection.recycle();
 			mStory = story;
-			mMediaViewCollection = new MediaViewCollection(getContext(), this, story, forceBitwiseDownloads, false);
+			if (mMediaViewCollection != null)
+			{
+				mMediaViewCollection.removeListener(this);
+				mMediaViewCollection.recycle();
+			}
+			mMediaViewCollection = new MediaViewCollection(getContext(), mStory, false);
+			mMediaViewCollection.addListener(this);
 			mAllowFullScreenMediaViewing = allowFullScreenMediaViewing;
 			recreateViews();
 			populate();
@@ -354,20 +365,22 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 		}
 	}
 
-	@Override
-	public void onMediaLoaded()
-	{
-		recreateViews();
-		populate();
-	}
-
 	public void forceUpdate()
 	{
-		if (mMediaViewCollection != null)
-			mMediaViewCollection.refreshViews(false, true);
 		mCurrentPageMode = PageMode.UNKNOWN; // Force recreation
 		recreateViews();
 		populate();
 	}
 
+	@Override
+	public void onViewLoaded(MediaViewCollection collection)
+	{
+	}
+
+	@Override
+	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
+	{
+		recreateViews();
+		populate();
+	}
 }

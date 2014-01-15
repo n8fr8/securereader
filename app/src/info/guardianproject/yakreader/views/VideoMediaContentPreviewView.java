@@ -1,13 +1,9 @@
 package info.guardianproject.yakreader.views;
 
 import info.guardianproject.yakreader.R;
-import info.guardianproject.securereader.MediaDownloader.MediaDownloaderCallback;
-import info.guardianproject.yakreader.App;
-import info.guardianproject.yakreader.models.OnMediaOrientationListener;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.iocipher.File;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.os.Handler;
@@ -21,19 +17,14 @@ import android.widget.ImageView.ScaleType;
 
 import com.tinymission.rss.MediaContent;
 
-public class VideoMediaContentPreviewView extends FrameLayout implements MediaDownloaderCallback, MediaContentPreviewView
+public class VideoMediaContentPreviewView extends FrameLayout implements MediaContentPreviewView
 {
-	private MediaContent mMediaContent;
-	private OnMediaOrientationListener mOrientationListener;
 	private ImageView mImageView;
 	private View mPlayView;
-	private boolean mHasBeenRecycled;
-	private boolean mIsLoading;
-	private boolean mInSetMediaContent;
-	private boolean mIsCached;
 	private File mMediaFile;
 	private Handler mHandler;
 	private boolean mUseThisThread;
+	private MediaContent mMediaContent;
 
 	public VideoMediaContentPreviewView(Context context, AttributeSet attrs, int defStyle)
 	{
@@ -68,56 +59,15 @@ public class VideoMediaContentPreviewView extends FrameLayout implements MediaDo
 		mPlayView.setVisibility(View.GONE);
 	}
 
-	public void setMediaContent(MediaContent mediaContent, boolean enableInteraction, boolean forceBitwiseDownloads, boolean useThisThread)
+	public void setMediaContent(MediaContent mediaContent, info.guardianproject.iocipher.File mediaFile, java.io.File mediaFileNonVFS, boolean useThisThread)
 	{
 		mMediaContent = mediaContent;
-		mInSetMediaContent = true;
 		mUseThisThread = useThisThread;
-		mIsLoading = App.getInstance().socialReader.loadMediaContent(mMediaContent, this, forceBitwiseDownloads);
-		mInSetMediaContent = false;
-	}
-
-	public boolean isCached()
-	{
-		return mIsCached;
-	}
-
-	public boolean isLoading()
-	{
-		return mIsLoading;
-	}
-
-	/**
-	 * Sets a listener that will be notified when media has been downloaded and
-	 * it is known whether this media is in landscape or portrait mode.
-	 * 
-	 * @param listener
-	 */
-	public void setOnMediaOrientationListener(OnMediaOrientationListener listener)
-	{
-		this.mOrientationListener = listener;
-	}
-
-	@Override
-	public void mediaDownloaded(final File mediaFile)
-	{
-		// If mediaDownloaded is called while we're still in setMediaContent we
-		// are
-		// loading cached data.
-		if (mInSetMediaContent)
-			mIsCached = true;
-
-		mIsLoading = false;
 
 		mMediaFile = mediaFile;
 		if (mMediaFile == null)
 		{
 			Log.v("VideoMediaContentPreviewView", "Failed to download media, no file.");
-			return;
-		}
-		if (mHasBeenRecycled)
-		{
-			Log.v("VideoMediaContentPreviewView", "Media downloaded, but already recycled. Ignoring.");
 			return;
 		}
 
@@ -139,16 +89,12 @@ public class VideoMediaContentPreviewView extends FrameLayout implements MediaDo
 					@Override
 					public void run()
 					{
-						Log.v("VideoMediaContentPreviewView", "reporting orientation");
-
-						boolean isPortrait = false;
 						if (!mUseThisThread)
 							AnimationHelpers.fadeOut(mImageView, 0, 0, false);
 						if (mBitmap != null)
 						{
 							mImageView.setScaleType(ScaleType.CENTER_CROP);
 							mImageView.setImageBitmap(mBitmap);
-							isPortrait = (mBitmap.getHeight() > mBitmap.getWidth());
 						}
 						else
 						{
@@ -159,7 +105,6 @@ public class VideoMediaContentPreviewView extends FrameLayout implements MediaDo
 							AnimationHelpers.fadeIn(mImageView, 500, 0, false);
 						else
 							AnimationHelpers.fadeIn(mImageView, 0, 0, false);
-						notifyBitmapOrientation(isPortrait);
 					}
 
 					private Runnable init(Bitmap bitmap)
@@ -188,23 +133,13 @@ public class VideoMediaContentPreviewView extends FrameLayout implements MediaDo
 		}
 	}
 
+	public MediaContent getMediaContent()
+	{
+		return mMediaContent;
+	}
+	
 	public void recycle()
 	{
-		mHasBeenRecycled = true;
 		mImageView.setImageBitmap(null);
-	}
-
-	private void notifyBitmapOrientation(boolean isPortrait)
-	{
-		if (mOrientationListener != null)
-		{
-			mOrientationListener.onMediaOrientation(this, isPortrait ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		}
-	}
-
-	@Override
-	public void mediaDownloadedNonVFS(java.io.File mediaFile) {
-		// TODO Auto-generated method stub
-		// Not being used for Video content at the moment.
 	}
 }

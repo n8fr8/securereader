@@ -1,7 +1,9 @@
 package info.guardianproject.yakreader.adapters;
 
-import info.guardianproject.yakreader.ui.MediaViewCollection;
+import java.util.ArrayList;
+
 import info.guardianproject.yakreader.ui.OnMediaItemClickedListener;
+import info.guardianproject.yakreader.views.MediaContentPreviewView;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,21 +12,21 @@ import android.view.ViewGroup;
 public class StoryItemMediaContentPagerAdapter extends ObservablePagerAdapter
 {
 	private final Context mContext;
-	private final MediaViewCollection mMediaViewCollection;
+	private ArrayList<MediaContentPreviewView> mMediaViewCollection;
 
-	public StoryItemMediaContentPagerAdapter(Context context, MediaViewCollection mediaViewCollection, boolean allowFullScreenViewing)
+	public StoryItemMediaContentPagerAdapter(Context context, ArrayList<MediaContentPreviewView> mediaViewCollection, boolean allowFullScreenViewing)
 	{
 		super();
 		mContext = context;
 		mMediaViewCollection = mediaViewCollection;
 
 		// Hookup events?
-		for (int i = 0; i < mMediaViewCollection.getCount(); i++)
+		for (int i = 0; i < mMediaViewCollection.size(); i++)
 		{
-			View mediaView = mMediaViewCollection.getView(i);
+			View mediaView = (View) mMediaViewCollection.get(i);
 			if (allowFullScreenViewing)
 			{
-				mediaView.setOnClickListener(new OnMediaItemClickedListener(mMediaViewCollection.getContentForView(mediaView)));
+				mediaView.setOnClickListener(new OnMediaItemClickedListener(((MediaContentPreviewView)mediaView).getMediaContent()));
 			}
 			else
 			{
@@ -42,7 +44,7 @@ public class StoryItemMediaContentPagerAdapter extends ObservablePagerAdapter
 	@Override
 	public Object instantiateItem(ViewGroup container, int position)
 	{
-		View mediaView = mMediaViewCollection.getView(position);
+		View mediaView = (View) mMediaViewCollection.get(position);
 		if (mediaView != null)
 		{
 			if (mediaView.getParent() != null)
@@ -67,12 +69,12 @@ public class StoryItemMediaContentPagerAdapter extends ObservablePagerAdapter
 	@Override
 	public int getCount()
 	{
-		return mMediaViewCollection.getCount();
+		return mMediaViewCollection.size();
 	}
 
 	public View getView(int position)
 	{
-		return mMediaViewCollection.getView(position);
+		return (View) mMediaViewCollection.get(position);
 	}
 
 	public long getItemId(int position)

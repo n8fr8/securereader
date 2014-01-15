@@ -36,6 +36,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView.RecyclerListener;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -45,7 +46,7 @@ import info.guardianproject.yakreader.R;
 
 import com.tinymission.rss.Item;
 
-public class StoryListView extends FrameLayout implements OnTagClickedListener, OnPullDownListener, OnHeaderCreatedListener
+public class StoryListView extends FrameLayout implements OnTagClickedListener, OnPullDownListener, OnHeaderCreatedListener, RecyclerListener
 {
 	public interface StoryListListener
 	{
@@ -125,6 +126,7 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 		});
 
 		mListStories = (SyncableListView) rootView.findViewById(R.id.lvStories);
+		mListStories.setRecyclerListener(this);
 		if (mAdapter == null)
 			createOrUpdateAdapter(getContext(), null, 0);
 		mListStories.setAdapter(mAdapter);
@@ -555,5 +557,14 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 	{
 		if (mFrameError != null)
 			mFrameError.collapse();
+	}
+
+	@Override
+	public void onMovedToScrapHeap(View view)
+	{
+		if (view instanceof StoryItemPageView)
+		{
+			((StoryItemPageView) view).recycle();
+		}
 	}
 }

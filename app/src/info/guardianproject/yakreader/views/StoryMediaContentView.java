@@ -12,16 +12,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
-
 import info.guardianproject.yakreader.R;
 import info.guardianproject.yakreader.adapters.StoryItemMediaContentPagerAdapter;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
+import info.guardianproject.yakreader.ui.MediaViewCollection.MediaContentLoadInfo;
+import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
 import info.guardianproject.yakreader.ui.OnMediaItemClickedListener;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.yakreader.widgets.DottedProgressView;
 import info.guardianproject.yakreader.widgets.NestedViewPager;
 
-public class StoryMediaContentView extends FrameLayout implements View.OnClickListener
+public class StoryMediaContentView extends FrameLayout implements View.OnClickListener, OnMediaLoadedListener 
 {
 	private NestedViewPager mViewPager;
 	private DottedProgressView mCurrentPageIndicator;
@@ -31,9 +32,9 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	private float mHeightInhibitor;
 	private boolean mShowDLButtonForBitWise;
 	private boolean mShowPlaceholderWhileLoading;
-	private MediaViewCollection mMediaViewCollection;
 	private boolean mAllowFullScreenMediaViewing;
 	private boolean mUseFinalSizeForDownloadView;
+	private MediaViewCollection mMediaViewCollection;
 	
 	public StoryMediaContentView(Context context)
 	{
@@ -69,17 +70,11 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		mUseFinalSizeForDownloadView = false;
 	}
 
-	@Override
-	protected void onFinishInflate()
-	{
-		super.onFinishInflate();
-	}
-
 	public void setHeightInhibitor(float heightInhibitor)
 	{
 		mHeightInhibitor = heightInhibitor;
 	}
-
+	
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
 	{
@@ -89,10 +84,18 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			return;
 		}
 
-		if (mMediaViewCollection != null && !mMediaViewCollection.containsLoadedMedia() && !mShowPlaceholderWhileLoading && !mShowDLButtonForBitWise)
+		if (mMediaViewCollection != null && !mMediaViewCollection.containsLoadedMedia() && !mShowPlaceholderWhileLoading)
 		{
-			Log.v("MediaView", "No cached image, set height to 0");
-			setMeasuredDimension(0, 0);
+			if (this.mShowDLButtonForBitWise)
+			{
+				Log.v("MediaView", "No cached image, but show DL button");
+				super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+			}
+			else
+			{
+				Log.v("MediaView", "No cached image, set height to 0");
+				setMeasuredDimension(0, 0);
+			}
 		}
 		else if (mHeightInhibitor == 0)
 		{
@@ -118,12 +121,17 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			Log.v("MediaView", "Contains cached image, set height to " + this.getMeasuredHeight());
 		}
 	}
-
+	
 	public void setMediaCollection(MediaViewCollection mediaViewCollection, boolean allowFullScreenMediaViewing, boolean showDLButtonForBitWise)
 	{
-		mMediaViewCollection = mediaViewCollection;
 		mShowDLButtonForBitWise = showDLButtonForBitWise;
 		mAllowFullScreenMediaViewing = allowFullScreenMediaViewing;
+
+		if (mMediaViewCollection != null)
+			mMediaViewCollection.removeListener(this);
+		mMediaViewCollection = mediaViewCollection;
+		if (mMediaViewCollection != null)
+			mMediaViewCollection.addListener(this);
 		updateView();
 	}
 
@@ -158,11 +166,11 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			else if (mShowPlaceholderWhileLoading)
 				createDownloadingView(true);
 		}
-		else if (mMediaViewCollection.getCount() > 1)
+		else if (mMediaViewCollection.getCountLoaded() > 1)
 		{
 			createMultiImageView();
 		}
-		else if (mMediaViewCollection.getCount() == 1)
+		else if (mMediaViewCollection.getCountLoaded() == 1)
 		{
 			createSingleImageView();
 		}
@@ -203,7 +211,7 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		mCurrentPageIndicator = (DottedProgressView) content.findViewById(R.id.currentPageIndicator);
 		mViewPager = (NestedViewPager) content.findViewById(R.id.contentPager);
 		mViewPager.setViewPagerIndicator(mCurrentPageIndicator);
-		mViewPager.setAdapter(new StoryItemMediaContentPagerAdapter(getContext(), mMediaViewCollection, mAllowFullScreenMediaViewing));
+		mViewPager.setAdapter(new StoryItemMediaContentPagerAdapter(getContext(), mMediaViewCollection.getLoadedViews(), mAllowFullScreenMediaViewing));
 		if (mAllowFullScreenMediaViewing)
 		{
 			mViewPager.setPropagateClicks(false);
@@ -217,12 +225,13 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 
 	private void createSingleImageView()
 	{
-		View view = mMediaViewCollection.getView(0);
+		MediaContentPreviewView contentView = mMediaViewCollection.getFirstView();
+		View view = (View) contentView;
 		if (view.getParent() != null)
 			((ViewGroup) view.getParent()).removeView(view);
 		if (mAllowFullScreenMediaViewing)
 		{
-			view.setOnClickListener(new OnMediaItemClickedListener(mMediaViewCollection.getContentForView(view)));
+			view.setOnClickListener(new OnMediaItemClickedListener(contentView.getMediaContent()));
 		}
 		else
 		{
@@ -247,7 +256,7 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 
 	private void createDownloadView(boolean useFinalSize)
 	{
-		if (useFinalSize || mMediaViewCollection.placeholderUseFinalSize())
+		if (useFinalSize || placeholderUseFinalSize())
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder_large, this, false);
 		}
@@ -258,10 +267,10 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		
 		mDownloadView.setOnClickListener(this);
 		ImageView iv = ((ImageView) mDownloadView.findViewById(R.id.ivDownloadIcon));
-		iv.setImageResource(mMediaViewCollection.placeholderIcon());
+		iv.setImageResource(placeholderIcon());
 		TextView tv = (TextView) mDownloadView.findViewById(R.id.tvDownload);
 		if (tv != null)
-			tv.setText(mMediaViewCollection.placeholderText());
+			tv.setText(placeholderText());
 		this.addView(mDownloadView);
 		iv.clearAnimation();
 	}
@@ -272,7 +281,7 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder, this, false);
 		}
-		if (useFinalSize || mMediaViewCollection.placeholderUseFinalSize())
+		if (useFinalSize || placeholderUseFinalSize())
 			mDownloadView.getLayoutParams().height = LayoutParams.MATCH_PARENT;
 		else
 			mDownloadView.getLayoutParams().height = UIHelpers.dpToPx(50, getContext());
@@ -292,14 +301,9 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	{
 		if (v == mDownloadView)
 		{
-			mMediaViewCollection.refreshViews(true, false);
+			mMediaViewCollection.createViews(true);
 			updateView();
 		}
-	}
-
-	public boolean isMediaLoaded()
-	{
-		return mMediaViewCollection != null && mMediaViewCollection.containsLoadedMedia();
 	}
 	
 	/**
@@ -325,11 +329,11 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 			else if (mShowPlaceholderWhileLoading)
 				return true;
 		}
-		else if (mMediaViewCollection.getCount() > 1)
+		else if (mMediaViewCollection.getCountLoaded() > 1)
 		{
 			return true;
 		}	
-		else if (mMediaViewCollection.getCount() == 1)
+		else if (mMediaViewCollection.getCountLoaded() == 1)
 		{
 			return true;
 		}
@@ -339,5 +343,70 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	public void setUseFinalSizeForDownloadView(boolean useFinalSizeForDownloadView)
 	{
 		mUseFinalSizeForDownloadView = useFinalSizeForDownloadView;
+	}
+	
+	/**
+	 * Returns an icon for the media collection. Currently, this depends on the first item
+	 * in the collection.
+	 * @return An icon resource identifier
+	 */
+	public int placeholderIcon()
+	{
+		if (mMediaViewCollection != null)
+		{
+			MediaContentLoadInfo info = mMediaViewCollection.getFirstLoadInfo();
+			if (info != null)
+			{
+				if (info.isVideo())
+					return R.drawable.ic_load_video;
+				else if (info.isEpub())
+					return R.drawable.ic_content_epub;
+			}
+		}
+		return R.drawable.ic_load_photo;
+	}
+
+	public CharSequence placeholderText()
+	{
+		if (mMediaViewCollection != null)
+		{
+			MediaContentLoadInfo info = mMediaViewCollection.getFirstLoadInfo();
+			if (info != null)
+			{
+				if (info.isEpub())
+					return getContext().getText(R.string.download_epub_hint);
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Some media types need a more user friendly download view, use "final size" for these.
+	 * The rest will use default download view height of 50dp.
+	 * @return True if the download view should extend across the whole media content view.
+	 */
+	public boolean placeholderUseFinalSize()
+	{
+		if (mMediaViewCollection != null)
+		{
+			MediaContentLoadInfo info = mMediaViewCollection.getFirstLoadInfo();
+			if (info != null)
+			{
+				if (info.isEpub())
+					return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
+	{
+	}
+
+	@Override
+	public void onViewLoaded(MediaViewCollection collection)
+	{
+		updateView();
 	}
 }

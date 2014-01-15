@@ -194,7 +194,7 @@ public class DownloadsAdapter extends BaseAdapter
 	private void populateItemCompleteView(View view, Item item)
 	{
 		StoryMediaContentView mediaView = (StoryMediaContentView) view.findViewById(R.id.mediaContentView);
-		MediaViewCollection collection = new MediaViewCollection(mContext, null, item, false);
+		MediaViewCollection collection = new MediaViewCollection(mContext, item, false);
 		mediaView.setMediaCollection(collection, false, true);
 
 		TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
