@@ -117,6 +117,7 @@ public class MediaDownloader extends AsyncTask<MediaContent, Integer, File>
 					inputStream.close();
 					bos.close();
 
+					socialReader.getStoreBitmapDimensions(mediaContent);
 					return savedFile;
 				}
 
@@ -135,6 +136,7 @@ public class MediaDownloader extends AsyncTask<MediaContent, Integer, File>
 						copyFileFromFStoAppFS(existingFile, savedFile);
 					}
 					Log.v(LOGTAG, "Copy should have worked: " + savedFile.getAbsolutePath());
+					socialReader.getStoreBitmapDimensions(mediaContent);
 					return savedFile;
 				}
 
@@ -178,6 +180,7 @@ public class MediaDownloader extends AsyncTask<MediaContent, Integer, File>
 				bos.close();
 				entity.consumeContent();
 
+				socialReader.getStoreBitmapDimensions(mediaContent);
 			}
 			catch (ClientProtocolException e)
 			{

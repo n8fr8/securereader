@@ -23,6 +23,7 @@ import info.guardianproject.securereader.MediaDownloader.MediaDownloaderCallback
 import info.guardianproject.securereader.Settings.UiLanguage;
 import info.guardianproject.securereader.SyncServiceFeedFetcher.SyncServiceFeedFetchedCallback;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Resources;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -1751,4 +1753,32 @@ public class SocialReader implements ICacheWordSubscriber
     	Log.v(LOGTAG,"onCacheWordOpened");
         initialize();
     }
+    
+	public void getStoreBitmapDimensions(MediaContent mediaContent)
+	{
+		try
+		{
+			File mediaFile = new File(getFileSystemDir(), SocialReader.MEDIA_CONTENT_FILE_PREFIX + mediaContent.getDatabaseId());
+
+			BitmapFactory.Options o = new BitmapFactory.Options();
+			o.inJustDecodeBounds = true;
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(mediaFile));
+			BitmapFactory.decodeStream(bis, null, o);
+			bis.close();
+			if (o.outWidth > 0 && o.outHeight > 0)
+			{
+				mediaContent.setWidth(o.outWidth);
+				mediaContent.setHeight(o.outHeight);
+				databaseAdapter.updateItemMedia(mediaContent);
+			}
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }

@@ -7,13 +7,16 @@ import info.guardianproject.iocipher.File;
 import info.guardianproject.iocipher.FileInputStream;
 import info.guardianproject.iocipher.FileOutputStream;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
@@ -157,6 +160,7 @@ public class SyncServiceMediaDownloader implements Runnable
 						}
 					}
 				}
+				SocialReader.getInstance(syncService.getApplicationContext()).getStoreBitmapDimensions(mediaContent);
 			}
 			catch (ClientProtocolException e)
 			{
