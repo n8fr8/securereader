@@ -88,7 +88,6 @@ public class CustomFontTextView extends TextView
 					this.getLineBounds(n - 1, mBounds);
 					bottom = mBounds.bottom;
 				}
-				Log.d("TAG", "Text " + getText() + " is " + getLineCount() + " but visible " + n + " (measured to " + this.getMeasuredWidth() + "," + this.getMeasuredHeight() + ")");
 				super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(bottom + this.getPaddingBottom(), MeasureSpec.EXACTLY));
 			}
 		}
