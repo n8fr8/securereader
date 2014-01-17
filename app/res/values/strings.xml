@@ -290,4 +290,6 @@
     <string name="download_epub_reader_web">FBReader Website</string>
     <string name="download_epub_reader_close">Close</string>
     
+    <string name="chatroom_name">Not being used</string>
+    
 </resources>
