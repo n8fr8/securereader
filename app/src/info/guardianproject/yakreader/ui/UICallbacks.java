@@ -406,7 +406,8 @@ public class UICallbacks
 				/*} else {*/
 				
 					Log.v("UICallbacks", "Start the chat application now!");
-					String roomName = SocialReader.CHAT_ROOM_NAME;
+					String roomName = context.getString(R.string.chatroom_name);
+					
 					if (commandParameters != null && commandParameters.containsKey("room_name"))
 						roomName = commandParameters.getString("room_name");
 					if (roomName == null)
