@@ -7,6 +7,7 @@ good_jar="app/libs/android-support-v4.jar"
 readarray <<END
 external/CacheWord/cachewordlib
 external/OnionKit/libonionkit
+external/HoloEverywhere/contrib/ActionBarSherlock/actionbarsherlock
 END
 
 for project in "${MAPFILE[@]}"; do
@@ -42,3 +43,8 @@ for project in "${MAPFILE[@]}"; do
     echo "updating $good_jar in $project"
     cp -f $good_jar $project/libs
 done
+
+rm external/CacheWord/cachewordlib/libs/guava-11.0.2.jar
+cp app/libs/guava-r09.jar external/CacheWord/cachewordlib/libs/
+
+
