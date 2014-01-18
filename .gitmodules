@@ -1,9 +1,9 @@
 [submodule "external/HoloEverywhere"]
 	path = external/HoloEverywhere
-	url = git://github.com/Prototik/HoloEverywhere.git
+	url = https://github.com/Prototik/HoloEverywhere.git
 [submodule "external/OnionKit"]
 	path = external/OnionKit
-	url = git://github.com/guardianproject/OnionKit.git
+	url = https://github.com/guardianproject/OnionKit.git
 [submodule "external/CacheWord"]
 	path = external/CacheWord
-	url = git@github.com:guardianproject/cacheword.git
+	url = https://github.com/guardianproject/cacheword.git
