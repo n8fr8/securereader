@@ -1389,11 +1389,21 @@ public class SocialReader implements ICacheWordSubscriber
 	}
 	*/
 
+	public boolean isMediaContentLoaded(MediaContent mc)
+	{
+		return loadMediaContent(mc, null, false, false);
+	}
+	
 	public boolean loadMediaContent(MediaContent mc, MediaDownloaderCallback mdc) {
 		return loadMediaContent(mc, mdc, false);
 	}
 
 	public boolean loadMediaContent(MediaContent mc, MediaDownloaderCallback mdc, boolean forceBitwiseDownload)
+	{
+		return loadMediaContent(mc, mdc, true, forceBitwiseDownload);
+	}
+	
+	public boolean loadMediaContent(MediaContent mc, MediaDownloaderCallback mdc, boolean download, boolean forceBitwiseDownload)
 	{
 		Log.v(LOGTAG, "loadImageMediaContent: " + mc.getUrl() + " " + mc.getType());
 		
@@ -1406,10 +1416,11 @@ public class SocialReader implements ICacheWordSubscriber
 			if (possibleFile.exists())
 			{
 				Log.v(LOGTAG, "Already downloaded: " + possibleFile.getAbsolutePath());
-				mdc.mediaDownloadedNonVFS(possibleFile);
+				if (mdc != null)
+					mdc.mediaDownloadedNonVFS(possibleFile);
 				return true;
 			}
-			else if (forceBitwiseDownload && isOnline() == ONLINE)
+			else if (download && forceBitwiseDownload && isOnline() == ONLINE)
 			//else if ((settings.syncMode() != Settings.SyncMode.BitWise || forceBitwiseDownload) && isOnline() == ONLINE)
 			// only want to download this content type if they click it so...
 			{
@@ -1417,7 +1428,8 @@ public class SocialReader implements ICacheWordSubscriber
 	
 				if (forceBitwiseDownload)
 				{
-					mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
+					if (mdc != null)
+						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
 				}
 	
 				NonVFSMediaDownloader mediaDownloader = new NonVFSMediaDownloader(this,possibleFile);
@@ -1443,16 +1455,18 @@ public class SocialReader implements ICacheWordSubscriber
 			if (possibleFile.exists())
 			{
 				Log.v(LOGTAG, "Already downloaded: " + possibleFile.getAbsolutePath());
-				mdc.mediaDownloaded(possibleFile);
+				if (mdc != null)
+					mdc.mediaDownloaded(possibleFile);
 				return true;
 			}
-			else if (forceBitwiseDownload && isOnline() == ONLINE)
+			else if (download && forceBitwiseDownload && isOnline() == ONLINE)
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
 				if (forceBitwiseDownload)
 				{
-					mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
+					if (mdc != null)
+						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
 				}
 	
 				MediaDownloader mediaDownloader = new MediaDownloader(this);
@@ -1474,16 +1488,18 @@ public class SocialReader implements ICacheWordSubscriber
 			if (possibleFile.exists())
 			{
 				Log.v(LOGTAG, "Already downloaded: " + possibleFile.getAbsolutePath());
-				mdc.mediaDownloaded(possibleFile);
+				if (mdc != null)
+						mdc.mediaDownloaded(possibleFile);
 				return true;
 			}
-			else if ((settings.syncMode() != Settings.SyncMode.BitWise || forceBitwiseDownload) && isOnline() == ONLINE)
+			else if (download && (settings.syncMode() != Settings.SyncMode.BitWise || forceBitwiseDownload) && isOnline() == ONLINE)
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
 				if (forceBitwiseDownload)
 				{
-					mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
+					if (mdc != null)
+						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
 				}
 	
 				MediaDownloader mediaDownloader = new MediaDownloader(this);
