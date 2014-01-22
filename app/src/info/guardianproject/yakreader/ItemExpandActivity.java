@@ -10,6 +10,7 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -338,16 +339,10 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 		if (mFullListStories == null || mFullListStories.getCount() == 0)
 			return;
 
-		//TODO - mvp
-//		for (int i = 0; i < mFullListStories.getChildCount(); i++)
-//		{
-//			View view = mFullListStories.getChildAt(i);
-//			if (view instanceof StoryItemPageView)
-//			{
-//				StoryItemPageView storyView = (StoryItemPageView) view;
-//				storyView.forceUpdate();
-//			}
-//		}
+		if (mFullListStories.getAdapter() != null && mFullListStories.getAdapter() instanceof BaseAdapter)
+		{
+			((BaseAdapter) mFullListStories.getAdapter()).notifyDataSetChanged();
+		}
 	}
 
 	@Override
