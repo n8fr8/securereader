@@ -1,15 +1,15 @@
 package info.guardianproject.yakreader.adapters;
 
+import info.guardianproject.yakreader.App;
 import info.guardianproject.yakreader.models.FeedFilterType;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
 import info.guardianproject.yakreader.ui.UICallbacks;
 import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
 import info.guardianproject.yakreader.views.StoryItemPageView;
 import info.guardianproject.yakreader.views.StoryItemPageView.StoryItemPageViewListener;
+import info.guardianproject.yakreader.views.StoryItemPageView.ViewType;
 import info.guardianproject.yakreader.views.StoryListView.StoryListListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,6 +18,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.tinymission.rss.Item;
 import com.tinymission.rss.MediaContent;
 
@@ -45,14 +48,12 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	private boolean mHeaderOnlyIfNoItems;
 	private String mTagFilter;
 	private boolean mDeferMediaLoading;
-	private HashMap<Item, MediaViewCollection> mMediaMap;
 
 	public StoryListAdapter(Context context, ArrayList<Item> stories)
 	{
 		mContext = context;
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mStories = stories;
-		mMediaMap = new HashMap<Item, MediaViewCollection>();
 		mShowTags = false;
 		mOnTagClickedListener = null;
 		mHeaderOnlyIfNoItems = false;
@@ -69,7 +70,6 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	public void updateItems(ArrayList<Item> items)
 	{
 		mStories = items;
-		mMediaMap.clear(); //TODO - recycle?
 		applyFilters();
 		this.notifyDataSetChanged();
 	}
@@ -121,18 +121,6 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	{
 		return (mResIdHeaderView != 0) && (!mHeaderOnlyIfNoItems || mFilteredStories == null || mFilteredStories.size() == 0);
 	}
-
-	private MediaViewCollection getMediaViewCollectionForItem(Item item)
-	{
-		if (!mMediaMap.containsKey(item))
-		{
-			ArrayList<MediaContent> media = item.getMediaContent();
-			if (media == null || media.size() == 0)
-				return null;
-			mMediaMap.put(item, new MediaViewCollection(mContext, item));
-		}
-		return mMediaMap.get(item);
-	}
 	
 	@Override
 	public int getItemViewType(int position)
@@ -141,9 +129,28 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 			return 0; // This is a header type
 		
 		Item item = (Item) getItem(position);
-		MediaViewCollection mvc = getMediaViewCollectionForItem(item);
+
+		int type = 1; // No media
 		
-		return 1 + StoryItemPageView.getViewTypeForMedia(mvc);
+		ArrayList<MediaContent> media = item.getMediaContent();
+		if (media != null && media.size() > 0)
+		{
+			if (Iterables.any(media, new Predicate<MediaContent>()
+				{
+					@Override
+					public boolean apply(MediaContent mc)
+					{
+						return App.getInstance().socialReader.isMediaContentLoaded(mc);
+					}
+				}))
+			{
+				if (media.get(0).getHeight() > media.get(0).getWidth())
+					type = 2;
+				else
+					type = 3;
+			}
+		}
+		return type;
 	}
 
 	@Override
@@ -206,7 +213,14 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	
 	protected View createView(int position, ViewGroup parent)
 	{
+		int type = getItemViewType(position);
 		StoryItemPageView view = new StoryItemPageView(parent.getContext());
+		if (type == 1)
+			view.createViews(ViewType.NO_PHOTO);
+		else if (type == 2)
+			view.createViews(ViewType.PORTRAIT_PHOTO);
+		else
+			view.createViews(ViewType.LANDSCAPE_PHOTO);
 		return view;
 	}
 
@@ -215,7 +229,7 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 		StoryItemPageView pv = (StoryItemPageView) view;
 		pv.showTags(mShowTags);
 		pv.setListener(this);
-		pv.populateWithItem(item, getMediaViewCollectionForItem(item));
+		pv.populateWithItem(item);
 		if (!getDeferMediaLoading())
 			pv.loadMedia(this);
 		view.setOnClickListener(new ItemClickListener(position));
@@ -260,14 +274,11 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 
 
 	@Override
-	public void onViewLoaded(MediaViewCollection collection)
+	public void onViewLoaded(MediaViewCollection collection, int index, boolean wasCached)
 	{
-		notifyDataSetChanged();
-	}
-
-	@Override
-	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
-	{
+		// If it was not cached it means we need to reload cause the layout has changed
+		if (!wasCached)
+			notifyDataSetChanged();
 	}
 
 	@Override

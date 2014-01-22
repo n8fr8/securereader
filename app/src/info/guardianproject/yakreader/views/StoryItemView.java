@@ -560,15 +560,10 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 	}
 
 	@Override
-	public void onViewLoaded(MediaViewCollection collection)
+	public void onViewLoaded(MediaViewCollection collection, int index, boolean wasCached)
 	{
 		Log.v("StoryItemView", "Media content has requested relayout.");
 		mPagedView.recreateViewsForContent(this);
-	}
-
-	@Override
-	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
-	{
 	}
 
 	private class ReadMoreClickListener implements View.OnClickListener

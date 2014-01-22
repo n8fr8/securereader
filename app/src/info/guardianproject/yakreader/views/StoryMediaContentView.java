@@ -330,12 +330,7 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	}
 
 	@Override
-	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
-	{
-	}
-
-	@Override
-	public void onViewLoaded(MediaViewCollection collection)
+	public void onViewLoaded(MediaViewCollection collection, int index, boolean wasCached)
 	{
 		updateView();
 	}

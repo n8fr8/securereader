@@ -27,11 +27,11 @@ public class StoryItemDraftPageView extends StoryItemPageView
 	}
 	
 	@Override
-	protected int getViewResourceByType(int type)
+	protected int getViewResourceByType(ViewType type)
 	{
-		if (type == 0)
+		if (type == ViewType.NO_PHOTO)
 			return R.layout.post_item_draft_no_photo;
-		else if (type == 1)
+		else if (type == ViewType.PORTRAIT_PHOTO)
 			return R.layout.post_item_draft_portrait_photo;
 		return R.layout.post_item_draft_landscape_photo;
 	}
@@ -45,9 +45,9 @@ public class StoryItemDraftPageView extends StoryItemPageView
 	}
 
 	@Override
-	public void populateWithItem(Item item, MediaViewCollection media)
+	public void populateWithItem(Item item)
 	{
-		super.populateWithItem(item, media);
+		super.populateWithItem(item);
 		if (mTvTitle != null && TextUtils.isEmpty(mTvTitle.getText()))
 		{
 			mTvTitle.setText(R.string.post_item_no_title);

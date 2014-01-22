@@ -26,8 +26,13 @@ public class StoryItemPageView extends RelativeLayout
 		void onTagClicked(String tag);
 	}
 	
+	public enum ViewType
+	{
+		NO_PHOTO, PORTRAIT_PHOTO, LANDSCAPE_PHOTO
+	}
+	
 	protected Item mItem;
-	protected int mCurrentViewType;	
+	protected ViewType mCurrentViewType;	
 	protected StoryMediaContentView mMediaContentView;
 	protected TextView mTvTitle;
 	protected TextView mTvContent;
@@ -63,7 +68,7 @@ public class StoryItemPageView extends RelativeLayout
 
 	private void init(AttributeSet attrs)
 	{
-		mCurrentViewType = -1;
+		mCurrentViewType = null;
 		setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		setBackgroundResource(R.drawable.story_item_background_selector);
 //		if (attrs != null && !this.isInEditMode())
@@ -84,38 +89,46 @@ public class StoryItemPageView extends RelativeLayout
 		}
 	}
 
-	public static int getViewTypeForMedia(MediaViewCollection mediaViewCollection)
+	public static ViewType getViewTypeForMedia(MediaViewCollection mediaViewCollection)
 	{
 		// No media
 		if (mediaViewCollection == null || mediaViewCollection.getCount() == 0)
-			return 0;
+			return ViewType.NO_PHOTO;
 	
 		if (mediaViewCollection.containsLoadedMedia())
 		{
 			if (mediaViewCollection.isFirstViewPortrait())
-				return 1; // Portrait mode
-			return 2; // Landscape mode
+				return ViewType.PORTRAIT_PHOTO; // Portrait mode
+			return ViewType.LANDSCAPE_PHOTO; // Landscape mode
 		}
-		return 0; // Nothing loaded
+		return ViewType.NO_PHOTO; // Nothing loaded
 	}
 	
-	protected int getViewResourceByType(int type)
+	protected int getViewResourceByType(ViewType type)
 	{
-		if (type == 0)
+		if (type == ViewType.NO_PHOTO)
 			return R.layout.story_item_page_merge_no_photo;
-		else if (type == 1)
+		else if (type == ViewType.PORTRAIT_PHOTO)
 			return R.layout.story_item_page_merge_portrait_photo;
 		return R.layout.story_item_page_merge_landscape_photo;
 	}
-	
+
 	private void createViews()
+	{
+		ViewType type = getViewTypeForMedia(mMediaViewCollection);
+		createViews(type);
+	}
+	
+	public void createViews(ViewType type)
 	{
 		if (mItem == null || mMediaViewCollection == null)
 			return;
 
-		int type = getViewTypeForMedia(mMediaViewCollection);
 		if (type == mCurrentViewType)
 			return;
+		
+		if (mCurrentViewType != null)
+			removeAllViews();
 		
 		mCurrentViewType = type;
 
@@ -136,18 +149,13 @@ public class StoryItemPageView extends RelativeLayout
 		if (mTvContent != null)
 			mTvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTvContent.getTextSize() + App.getSettings().getContentFontSizeAdjustment());
 	}
-		
+
 	public void populateWithItem(Item item)
-	{
-		populateWithItem(item, null);
-	}	
-	
-	public void populateWithItem(Item item, MediaViewCollection media)
 	{
 		if (mItem != item)
 		{
 			mItem = item;
-			mMediaViewCollection = media;
+			mMediaViewCollection = null;
 			if (mMediaViewCollection == null && item.getNumberOfMediaContent() > 0)
 				mMediaViewCollection = new MediaViewCollection(getContext(), item);
 			

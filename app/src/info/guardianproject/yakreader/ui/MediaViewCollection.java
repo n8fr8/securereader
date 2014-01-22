@@ -24,8 +24,7 @@ public class MediaViewCollection
 {
 	public interface OnMediaLoadedListener
 	{
-		void onViewLoaded(MediaViewCollection collection);
-		void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait);
+		void onViewLoaded(MediaViewCollection collection, int index, boolean wasCached);
 	}
 
 	public static final String LOG = "MediaContentLoader";
@@ -34,7 +33,6 @@ public class MediaViewCollection
 	private Item mStory;
 	private ArrayList<MediaContentLoadInfo> mLoadInfos;
 	private ArrayList<MediaContentPreviewView> mViews;
-	private boolean mIsFirstViewPortrait;
 	private ArrayList<OnMediaLoadedListener> mListeners;
 	private boolean mHasBeenRecycled;
 	private ScaleType mDefaultScaleType;
@@ -47,7 +45,6 @@ public class MediaViewCollection
 		mStory = story;
 		mForceBitwiseDownloads = false;
 		mUseThisThread = false;
-		mIsFirstViewPortrait = false;
 		mDefaultScaleType = ScaleType.CENTER_CROP;
 		mLoadInfos = new ArrayList<MediaContentLoadInfo>();
 		mViews = new ArrayList<MediaContentPreviewView>();
@@ -144,7 +141,6 @@ public class MediaViewCollection
 			imc.setScaleType(mDefaultScaleType);
 			mediaView = imc;
 		}
-		
 		mViews.add(mediaView);
 	}
 	
@@ -209,12 +205,16 @@ public class MediaViewCollection
 		private int mIndex;
 		private boolean mIsLoading;
 		private boolean mIsLoaded;
+		private boolean mWasCached;
+		private boolean mInConstructor;
 		
 		public MediaContentLoadInfo(MediaContent content, int index)
 		{
 			mContent = content;
 			mIndex = index;
-			mIsLoaded = App.getInstance().socialReader.isMediaContentLoaded(mContent);
+			mInConstructor = true;
+			mIsLoaded = mWasCached = App.getInstance().socialReader.loadMediaContent(content, this, false, false);
+			mInConstructor = false;
 		}
 		
 		public void load(boolean forceBitwiseDownloads)
@@ -223,7 +223,7 @@ public class MediaViewCollection
 			{
 				if (mFile != null || mFileNonVFS != null)
 				{
-					onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
 				}
 				else
 				{
@@ -275,7 +275,8 @@ public class MediaViewCollection
 				mFile = mediaFile;
 				mIsLoading = false;
 				mIsLoaded = true;
-				onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
+				if (!mInConstructor)
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
 			}
 		}
 
@@ -287,7 +288,8 @@ public class MediaViewCollection
 				mFileNonVFS = mediaFile;
 				mIsLoading = false;
 				mIsLoaded = true;
-				onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
+				if (!mInConstructor)
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
 			};
 		}
 
@@ -310,7 +312,7 @@ public class MediaViewCollection
 			});
 	}
 
-	public void onMediaAvailable(MediaContent content, int index, java.io.File mediaFileNonVFS, info.guardianproject.iocipher.File mediaFile)
+	public void onMediaAvailable(MediaContent content, int index, boolean wasCached, java.io.File mediaFileNonVFS, info.guardianproject.iocipher.File mediaFile)
 	{
 		if (mHasBeenRecycled)
 		{
@@ -327,15 +329,7 @@ public class MediaViewCollection
 			listeners = new ArrayList<OnMediaLoadedListener>(mListeners);
 		}
 		for (OnMediaLoadedListener listener : listeners)
-			listener.onViewLoaded(this);
-		
-		boolean isFirstViewPortrait = isFirstViewPortrait();
-		if (mIsFirstViewPortrait != isFirstViewPortrait)
-		{
-			mIsFirstViewPortrait = isFirstViewPortrait;
-			for (OnMediaLoadedListener listener : listeners)
-				listener.onIsFirstViewPortraitChanged(this, mIsFirstViewPortrait);
-		}
+			listener.onViewLoaded(this, index, wasCached);
 	}
 
 	public boolean isLoadingMedia()
