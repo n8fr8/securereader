@@ -3,15 +3,8 @@ package info.guardianproject.yakreader.views;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.iocipher.File;
-import info.guardianproject.iocipher.FileInputStream;
-
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;

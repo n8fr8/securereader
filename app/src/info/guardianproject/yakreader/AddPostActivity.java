@@ -405,7 +405,9 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 			mEditTags.setText(sb.toString());
 		}
 
-		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), mStory, true, true), false, false);
+		MediaViewCollection collection = new MediaViewCollection(mMediaView.getContext(), mStory);
+		collection.load(true, true);
+		mMediaView.setMediaCollection(collection, false, false);
 	}
 
 	private ArrayList<String> getTagsFromInput()
@@ -730,7 +732,9 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 		saveDraft(false);
 
 		// Update the media view to show new media as well
-		mMediaView.setMediaCollection(new MediaViewCollection(mMediaView.getContext(), mStory, true, true), false, false);
+		MediaViewCollection collection = new MediaViewCollection(mMediaView.getContext(), mStory);
+		collection.load(true, true);
+		mMediaView.setMediaCollection(collection, false, false);
 		updateMediaControls();
 	}
 

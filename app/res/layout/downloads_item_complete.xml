@@ -12,7 +12,6 @@
         android:layout_height="70dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        app:height_inhibitor="1"
         app:show_placeholder="true" >
     </info.guardianproject.yakreader.views.StoryMediaContentView>
         

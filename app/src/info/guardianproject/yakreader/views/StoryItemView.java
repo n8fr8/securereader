@@ -12,6 +12,7 @@ import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListen
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.yakreader.widgets.AnimatedRelativeLayout;
 import info.guardianproject.yakreader.widgets.CustomFontTextView;
+import info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout;
 import info.guardianproject.yakreader.widgets.PagedView;
 import info.guardianproject.yakreader.widgets.UpdatingTextView;
 import info.guardianproject.yakreader.widgets.UpdatingTextView.OnUpdateListener;
@@ -122,6 +123,13 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		return _CurrentColumn != _NextColumn;
 	}
 
+	private boolean willCreateMediaView()
+	{
+		if (mMediaViewCollection != null && mMediaViewCollection.getCount() > 0)
+			return true;
+		return false;
+	}
+	
 	private ArrayList<View> relayout()
 	{
 		updateTextSize();
@@ -152,12 +160,14 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			if (child.getParent() != null)
 				((ViewGroup) child.getParent()).removeView(child);
 	
-			if (child.getId() == R.id.ivPhotos)
+			if (child.getId() == R.id.layout_content)
 			{
+				HeightLimitedRelativeLayout hlrl = (HeightLimitedRelativeLayout) child;
+				StoryMediaContentView mcv = (StoryMediaContentView) child.findViewById(R.id.ivPhotos);
 				if (isTwoColumnMode())
 				{
-					((StoryMediaContentView) child).setHeightInhibitor(0); // Full bleed
-					((StoryMediaContentView) child).setUseFinalSizeForDownloadView(true);
+					hlrl.setHeightLimit(0); // Full bleed
+					mcv.setUseFinalSizeForDownloadView(true);
 					if (currentColumnHeight == 0)
 					{
 						// Allow image to bleed to end of margin!
@@ -165,10 +175,10 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 					}
 				}
 				else
-					((StoryMediaContentView) child).setHeightInhibitor(1.75f);
-
-				((StoryMediaContentView) child).setScaleType(!isTwoColumnMode());
-				((StoryMediaContentView) child).updateView();
+				{
+					hlrl.setHeightLimit(1.75f);
+				}
+				mcv.setScaleType(!isTwoColumnMode());
 			}
 			else if (child instanceof CustomFontTextView)
 			{
@@ -201,12 +211,12 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			}
 			
 			// If at top of column and child is not photo, add margin
-			if (currentColumnHeight == 0 && child.getId() != R.id.ivPhotos)
+			if (currentColumnHeight == 0 && child.getId() != R.id.layout_content)
 				currentColumnHeight += fullMarginTop;
 			else if (currentColumnHeight != 0)
 				currentColumnHeight += lpChild.topMargin;
 			
-			if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && currentColumnHeight != 0 && ((StoryMediaContentView) child).willCreateView())
+			if (child.getId() == R.id.layout_content && isTwoColumnMode() && currentColumnHeight != 0 && willCreateMediaView())
 			{
 				// Do nothing. This will pull up a new column for us, in which we will be topmost!
 			}
@@ -216,7 +226,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 
 				// Adjust to column
 				int widthChild = column.getWidth() - lpChild.leftMargin - lpChild.rightMargin;
-				if (child.getId() == R.id.ivPhotos && isTwoColumnMode() && ((StoryMediaContentView) child).willCreateView())
+				if (child.getId() == R.id.layout_content && isTwoColumnMode() && willCreateMediaView())
 					child.measure(View.MeasureSpec.makeMeasureSpec(widthChild, View.MeasureSpec.EXACTLY),
 							View.MeasureSpec.makeMeasureSpec(columnHeightMax - currentColumnHeight - lpChild.bottomMargin, View.MeasureSpec.EXACTLY));
 				else
@@ -378,13 +388,6 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		StoryMediaContentView mediaContent = (StoryMediaContentView) blueprint.findViewById(R.id.ivPhotos);
 		if (mediaContent != null)
 		{
-			if (mMediaViewCollection != null)
-			{
-				mMediaViewCollection.removeListener(this);
-				mMediaViewCollection.recycle();
-			}
-			mMediaViewCollection = new MediaViewCollection(mediaContent.getContext(), story, true);
-			mMediaViewCollection.addListener(this);
 			mediaContent.setMediaCollection(mMediaViewCollection, true, true);
 			if (mediaContent.getCount() == 0)
 				mediaContent.setVisibility(View.GONE);
@@ -508,10 +511,15 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 	public ArrayList<View> createPages(PagedView parent)
 	{
 		mPagedView = parent;
-		//if (mPages == null)
-		//{
-			this.createBlueprintViews(parent);
-		//}
+		if (mMediaViewCollection != null)
+		{
+			mMediaViewCollection.removeListener(this);
+			mMediaViewCollection.recycle();
+		}
+		mMediaViewCollection = new MediaViewCollection(parent.getContext(), mItem);
+		mMediaViewCollection.load(false, true);
+		mMediaViewCollection.addListener(this);
+		createBlueprintViews(parent);
 		relayout();
 		return mPages;
 	}

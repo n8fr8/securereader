@@ -3,7 +3,6 @@ package info.guardianproject.yakreader.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	private ImageView mImageView;
 	private View mDownloadView;
 	private boolean mShowPlaceholder;
-	private float mHeightInhibitor;
 	private boolean mShowDLButtonForBitWise;
 	private boolean mShowPlaceholderWhileLoading;
 	private boolean mAllowFullScreenMediaViewing;
@@ -57,69 +55,15 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	private void initView(Context context, AttributeSet attrs)
 	{
 		mShowPlaceholder = false;
-		mHeightInhibitor = 1.75f;
 		if (attrs != null)
 		{
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.StoryMediaContentView);
 			mShowPlaceholder = a.getBoolean(R.styleable.StoryMediaContentView_show_placeholder, false);
-			mHeightInhibitor = a.getFloat(R.styleable.StoryMediaContentView_height_inhibitor, 1.75f);
 			a.recycle();
 		}
 		if (this.isInEditMode())
 			mShowPlaceholder = true;
 		mUseFinalSizeForDownloadView = false;
-	}
-
-	public void setHeightInhibitor(float heightInhibitor)
-	{
-		mHeightInhibitor = heightInhibitor;
-	}
-	
-	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
-	{
-		if (!mShowPlaceholder && (mMediaViewCollection == null || mMediaViewCollection.getCount() == 0))
-		{
-			setMeasuredDimension(0, 0);
-			return;
-		}
-
-		if (mMediaViewCollection != null && !mMediaViewCollection.containsLoadedMedia() && !mShowPlaceholderWhileLoading)
-		{
-			if (this.mShowDLButtonForBitWise)
-			{
-				Log.v("MediaView", "No cached image, but show DL button");
-				super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-			}
-			else
-			{
-				Log.v("MediaView", "No cached image, set height to 0");
-				setMeasuredDimension(0, 0);
-			}
-		}
-		else if (mHeightInhibitor == 0)
-		{
-			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-			Log.v("MediaView", "Contains cached image, no constraints, set height to " + this.getMeasuredHeight());
-		}
-		else if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED)
-		{
-			int inhibitedHeightSpec = MeasureSpec.makeMeasureSpec((int) (MeasureSpec.getSize(widthMeasureSpec) / mHeightInhibitor),
-					MeasureSpec.getMode(widthMeasureSpec));
-			super.onMeasure(widthMeasureSpec, inhibitedHeightSpec);
-			Log.v("MediaView", "Cached image, set height to " + this.getMeasuredHeight());
-		}
-		else
-		{
-			super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-			int width = this.getMeasuredWidth();
-			if (mHeightInhibitor != 0)
-			{
-				int height = (int) (width / mHeightInhibitor);
-				super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
-			}
-			Log.v("MediaView", "Contains cached image, set height to " + this.getMeasuredHeight());
-		}
 	}
 	
 	public void setMediaCollection(MediaViewCollection mediaViewCollection, boolean allowFullScreenMediaViewing, boolean showDLButtonForBitWise)
@@ -135,6 +79,11 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		updateView();
 	}
 
+	public MediaViewCollection getMediaCollection()
+	{
+		return mMediaViewCollection;
+	}
+	
 	public void setScaleType(boolean setToFitIfFirstPhotoIsPortrait)
 	{
 		if (mMediaViewCollection != null)
@@ -152,30 +101,46 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		if (mMediaViewCollection == null || mMediaViewCollection.getCount() == 0)
 		{
 			if (mShowPlaceholder)
+			{
+				setWrapContent(false);
 				createPlaceholderView();
+			}
 		}
 		else if (!mMediaViewCollection.containsLoadedMedia())
 		{
 			if (mShowDLButtonForBitWise)
 			{
+				setWrapContent(true);
 				if (mMediaViewCollection.isLoadingMedia())
 					createDownloadingView(mUseFinalSizeForDownloadView);
 				else
 					createDownloadView(mUseFinalSizeForDownloadView);
 			}
 			else if (mShowPlaceholderWhileLoading)
+			{
+				setWrapContent(false);
 				createDownloadingView(true);
+			}
 		}
 		else if (mMediaViewCollection.getCountLoaded() > 1)
 		{
+			setWrapContent(false);
 			createMultiImageView();
 		}
 		else if (mMediaViewCollection.getCountLoaded() == 1)
 		{
+			setWrapContent(false);
 			createSingleImageView();
 		}
 	}
 
+	private void setWrapContent(boolean wrapContent)
+	{
+		ViewGroup.LayoutParams lp = getLayoutParams();
+		lp.height = (wrapContent ? LayoutParams.WRAP_CONTENT : LayoutParams.MATCH_PARENT);
+		setLayoutParams(lp);
+	}
+	
 	public int getCount()
 	{
 		if (mMediaViewCollection == null)
@@ -264,7 +229,6 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 		{
 			mDownloadView = LayoutInflater.from(getContext()).inflate(R.layout.story_media_bitwise_placeholder, this, false);
 		}
-		
 		mDownloadView.setOnClickListener(this);
 		ImageView iv = ((ImageView) mDownloadView.findViewById(R.id.ivDownloadIcon));
 		iv.setImageResource(placeholderIcon());
@@ -301,43 +265,9 @@ public class StoryMediaContentView extends FrameLayout implements View.OnClickLi
 	{
 		if (v == mDownloadView)
 		{
-			mMediaViewCollection.createViews(true);
+			mMediaViewCollection.load(true, false);
 			updateView();
 		}
-	}
-	
-	/**
-	 * @return true is this view will create a view for us to look at, i.e. media is
-	 * already loaded or placeholder will be shown. Also if download button is displayed.
-	 */
-	public boolean willCreateView()
-	{
-		if (mMediaViewCollection == null || mMediaViewCollection.getCount() == 0)
-		{
-			if (mShowPlaceholder)
-				return true;
-		}
-		else if (!mMediaViewCollection.containsLoadedMedia())
-		{
-			if (mShowDLButtonForBitWise)
-			{
-				if (mMediaViewCollection.isLoadingMedia())
-					return true;
-				else
-					return true;
-			}
-			else if (mShowPlaceholderWhileLoading)
-				return true;
-		}
-		else if (mMediaViewCollection.getCountLoaded() > 1)
-		{
-			return true;
-		}	
-		else if (mMediaViewCollection.getCountLoaded() == 1)
-		{
-			return true;
-		}
-		return false;
 	}
 	
 	public void setUseFinalSizeForDownloadView(boolean useFinalSizeForDownloadView)

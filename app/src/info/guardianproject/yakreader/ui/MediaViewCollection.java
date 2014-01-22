@@ -12,7 +12,6 @@ import info.guardianproject.yakreader.views.VideoMediaContentPreviewView;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView.ScaleType;
 
@@ -42,24 +41,30 @@ public class MediaViewCollection
 	private boolean mForceBitwiseDownloads;
 	private boolean mUseThisThread;
 	
-	public MediaViewCollection(Context context, Item story, boolean useThisThread)
-	{
-		this(context, story, false, useThisThread);
-	}
-	
-	public MediaViewCollection(Context context, Item story, boolean forceBitwiseDownloads, boolean useThisThread)
+	public MediaViewCollection(Context context, Item story)
 	{
 		mContext = context;
 		mStory = story;
-		mForceBitwiseDownloads = forceBitwiseDownloads;
-		mUseThisThread = useThisThread;
+		mForceBitwiseDownloads = false;
+		mUseThisThread = false;
 		mIsFirstViewPortrait = false;
 		mDefaultScaleType = ScaleType.CENTER_CROP;
 		mLoadInfos = new ArrayList<MediaContentLoadInfo>();
 		mViews = new ArrayList<MediaContentPreviewView>();
 		mListeners = new ArrayList<OnMediaLoadedListener>();
-		create();
-		createViews(mForceBitwiseDownloads);
+		createLoadInfos();
+	}	
+	
+	public void load(boolean forceBitwiseDownloads, boolean useThisThread)
+	{
+		mHasBeenRecycled = false;
+		mForceBitwiseDownloads = forceBitwiseDownloads;
+		mUseThisThread = useThisThread;
+		createMediaViews();
+		for (MediaContentLoadInfo info : mLoadInfos)
+		{
+			info.load(mForceBitwiseDownloads);
+		}
 	}
 	
 	public void addListener(OnMediaLoadedListener listener)
@@ -80,7 +85,7 @@ public class MediaViewCollection
 		}
 	}
 	
-	private void create()
+	private void createLoadInfos()
 	{
 		if (mStory != null)
 		{
@@ -92,7 +97,16 @@ public class MediaViewCollection
 
 				MediaContentLoadInfo info = new MediaContentLoadInfo(mediaContent, i);
 				mLoadInfos.add(info);
-				
+			}
+		}
+	}
+	
+	private void createMediaViews()
+	{
+		if (mViews == null || mViews.size() == 0)
+		{
+			for (MediaContentLoadInfo info : mLoadInfos)
+			{
 				createMediaView(info);
 			}
 		}
@@ -134,14 +148,6 @@ public class MediaViewCollection
 		mViews.add(mediaView);
 	}
 	
-	public void createViews(boolean forceBitwiseDownloads)
-	{
-		for (MediaContentLoadInfo info : mLoadInfos)
-		{
-			info.load(forceBitwiseDownloads);
-		}
-	}
-	
 	public ArrayList<MediaContentPreviewView> getViews()
 	{
 		return mViews;
@@ -170,11 +176,11 @@ public class MediaViewCollection
 	public int getCountLoaded()
 	{
 		int n = 0;
-		if (mLoadInfos != null)
+		if (mViews != null && mViews.size() > 0)
 		{
-			for (MediaContentLoadInfo info : mLoadInfos)
+			for (MediaContentPreviewView view : mViews)
 			{
-				if (info.isLoaded())
+				if (view.getMediaContent() != null)
 					n++;
 			}
 		}
@@ -192,7 +198,6 @@ public class MediaViewCollection
 			view.recycle();
 		}
 		mViews.clear();
-		mLoadInfos.clear();
 	}
 	
 	public class MediaContentLoadInfo implements MediaDownloaderCallback
@@ -203,18 +208,20 @@ public class MediaViewCollection
 		private MediaContent mContent;
 		private int mIndex;
 		private boolean mIsLoading;
+		private boolean mIsLoaded;
 		
 		public MediaContentLoadInfo(MediaContent content, int index)
 		{
 			mContent = content;
 			mIndex = index;
+			mIsLoaded = App.getInstance().socialReader.isMediaContentLoaded(mContent);
 		}
 		
 		public void load(boolean forceBitwiseDownloads)
 		{
 			synchronized (this)
 			{
-				if (isLoaded())
+				if (mFile != null || mFileNonVFS != null)
 				{
 					onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
 				}
@@ -222,7 +229,9 @@ public class MediaViewCollection
 				{
 					if (!isLoading())
 					{
-						mIsLoading = App.getInstance().socialReader.loadMediaContent(mContent, this, forceBitwiseDownloads);
+						mIsLoading = true;
+						if (!App.getInstance().socialReader.loadMediaContent(mContent, this, forceBitwiseDownloads))
+							mIsLoading = false; // Already loaded
 					}
 				}
 			}
@@ -230,7 +239,7 @@ public class MediaViewCollection
 
 		public boolean isLoaded()
 		{
-			return mFile != null || mFileNonVFS != null;
+			return mIsLoaded;
 		}
 		
 		public boolean isLoading()
@@ -265,6 +274,7 @@ public class MediaViewCollection
 			{
 				mFile = mediaFile;
 				mIsLoading = false;
+				mIsLoaded = true;
 				onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
 			}
 		}
@@ -276,6 +286,7 @@ public class MediaViewCollection
 			{
 				mFileNonVFS = mediaFile;
 				mIsLoading = false;
+				mIsLoaded = true;
 				onMediaAvailable(mContent, mIndex, mFileNonVFS, mFile);
 			};
 		}

@@ -338,20 +338,16 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 		if (mFullListStories == null || mFullListStories.getCount() == 0)
 			return;
 
-		int first = this.mFullListStories.getFirstVisiblePosition();
-		int last = this.mFullListStories.getLastVisiblePosition();
-		for (int i = first; i <= last; i++)
-		{
-			View view = mFullListStories.getChildAt(i - first);
-			if (mFullListStories.getAdapter() instanceof StoryListAdapter)
-			{
-				((StoryListAdapter) mFullListStories.getAdapter()).updateVisibleView(i, view);
-			}
-			else
-			{
-				mFullListStories.getAdapter().getView(i, view, mFullListStories);
-			}
-		}
+		//TODO - mvp
+//		for (int i = 0; i < mFullListStories.getChildCount(); i++)
+//		{
+//			View view = mFullListStories.getChildAt(i);
+//			if (view instanceof StoryItemPageView)
+//			{
+//				StoryItemPageView storyView = (StoryItemPageView) view;
+//				storyView.forceUpdate();
+//			}
+//		}
 	}
 
 	@Override

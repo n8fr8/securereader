@@ -1,20 +1,27 @@
 package info.guardianproject.yakreader.adapters;
 
-import info.guardianproject.yakreader.R;
+import info.guardianproject.yakreader.models.FeedFilterType;
+import info.guardianproject.yakreader.ui.MediaViewCollection;
+import info.guardianproject.yakreader.ui.UICallbacks;
+import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
 import info.guardianproject.yakreader.views.StoryItemPageView;
+import info.guardianproject.yakreader.views.StoryItemPageView.StoryItemPageViewListener;
 import info.guardianproject.yakreader.views.StoryListView.StoryListListener;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-
+import android.widget.Filter;
+import android.widget.Filterable;
 import com.tinymission.rss.Item;
+import com.tinymission.rss.MediaContent;
 
-public class StoryListAdapter extends BaseAdapter
+public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListener, Filterable, StoryItemPageViewListener
 {
 	public interface OnTagClickedListener
 	{
@@ -37,17 +44,19 @@ public class StoryListAdapter extends BaseAdapter
 	private int mResIdHeaderView;
 	private boolean mHeaderOnlyIfNoItems;
 	private String mTagFilter;
-	private int mCurrentOrientation;
+	private boolean mDeferMediaLoading;
+	private HashMap<Item, MediaViewCollection> mMediaMap;
 
 	public StoryListAdapter(Context context, ArrayList<Item> stories)
 	{
 		mContext = context;
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mStories = stories;
-		mFilteredStories = (ArrayList<Item>) ((stories == null) ? null : stories.clone());
+		mMediaMap = new HashMap<Item, MediaViewCollection>();
 		mShowTags = false;
 		mOnTagClickedListener = null;
 		mHeaderOnlyIfNoItems = false;
+		applyFilters();
 	}
 
 	public void setHeaderView(int resIdHeaderView, boolean onlyIfNoItems)
@@ -60,6 +69,7 @@ public class StoryListAdapter extends BaseAdapter
 	public void updateItems(ArrayList<Item> items)
 	{
 		mStories = items;
+		mMediaMap.clear(); //TODO - recycle?
 		applyFilters();
 		this.notifyDataSetChanged();
 	}
@@ -72,35 +82,7 @@ public class StoryListAdapter extends BaseAdapter
 
 	private void applyFilters()
 	{
-		if (mStories != null)
-		{
-			mFilteredStories = new ArrayList<Item>();
-			for (Item item : mStories)
-			{
-				if (mTagFilter != null)
-				{
-					if (item.getTags() != null)
-					{
-						boolean bFoundTag = false;
-						for (String tag : item.getTags())
-						{
-							if (tag.contains(mTagFilter))
-							{
-								bFoundTag = true;
-								break;
-							}
-						}
-						if (!bFoundTag)
-							continue; // Don't add this, i.e. filter it
-					}
-				}
-				mFilteredStories.add(item);
-			}
-		}
-		else
-		{
-			mFilteredStories = null;
-		}
+		getFilter().filter(mTagFilter);
 	}
 
 	public void setListener(StoryListListener listener)
@@ -128,28 +110,47 @@ public class StoryListAdapter extends BaseAdapter
 		mOnHeaderCreatedListener = listener;
 	}
 
+	
+	@Override
+	public boolean hasStableIds()
+	{
+		return true;
+	}
+
 	private boolean hasHeaderView()
 	{
 		return (mResIdHeaderView != 0) && (!mHeaderOnlyIfNoItems || mFilteredStories == null || mFilteredStories.size() == 0);
 	}
 
+	private MediaViewCollection getMediaViewCollectionForItem(Item item)
+	{
+		if (!mMediaMap.containsKey(item))
+		{
+			ArrayList<MediaContent> media = item.getMediaContent();
+			if (media == null || media.size() == 0)
+				return null;
+			mMediaMap.put(item, new MediaViewCollection(mContext, item));
+		}
+		return mMediaMap.get(item);
+	}
+	
 	@Override
 	public int getItemViewType(int position)
 	{
 		if (position == 0 && hasHeaderView())
-			return 1; // This is a header type
+			return 0; // This is a header type
+		
 		Item item = (Item) getItem(position);
-		if (item != null && item.getNumberOfMediaContent() > 1)
-			return 2; // Multi media item type
-		return 0; // Normal item type
+		MediaViewCollection mvc = getMediaViewCollectionForItem(item);
+		
+		return 1 + StoryItemPageView.getViewTypeForMedia(mvc);
 	}
 
 	@Override
 	public int getViewTypeCount()
 	{
-		// We have an (optional) header and two types of items (one/zero image
-		// and multi image)
-		return 3;
+		// We have an (optional) header and three types of items
+		return 4;
 	}
 
 	@Override
@@ -184,81 +185,59 @@ public class StoryListAdapter extends BaseAdapter
 	}
 
 	@Override
-	public void notifyDataSetChanged()
-	{
-		mCurrentOrientation = mContext.getResources().getConfiguration().orientation;
-		super.notifyDataSetChanged();
-	}
-
-	private class ConvertViewInfo
-	{
-		int viewType;
-		int orientation;
-
-		public ConvertViewInfo(int viewType, int orientation)
-		{
-			this.viewType = viewType;
-			this.orientation = orientation;
-		}
-	}
-
-	@Override
 	public View getView(final int position, View convertView, ViewGroup parent)
 	{
-		// Buggy android does not always hone view type when sending in a
-		// convertView
-		//
-		int viewType = getItemViewType(position);
-		if (convertView != null)
-		{
-			ConvertViewInfo info = (ConvertViewInfo) convertView.getTag();
-			if (info == null || info.viewType != viewType || info.orientation != mCurrentOrientation)
-				convertView = null;
-		}
-
 		if (position == 0 && hasHeaderView())
 		{
 			View headerView = convertView;
-			if (headerView == null)
+			if (headerView == null || Integer.valueOf(mResIdHeaderView).compareTo((Integer) headerView.getTag()) != 0)
+			{
 				headerView = mInflater.inflate(mResIdHeaderView, parent, false);
-			storeTag(headerView, viewType);
+				headerView.setTag(Integer.valueOf(mResIdHeaderView));
+			}
 			if (this.mOnHeaderCreatedListener != null)
 				this.mOnHeaderCreatedListener.onHeaderCreated(headerView, mResIdHeaderView);
 			return headerView;
 		}
-		View view = (convertView != null) ? convertView : createView(parent);
+		View view = (convertView != null) ? convertView : createView(position, parent);
 		bindView(view, position, (Item) getItem(position));
-		storeTag(view, viewType);
 		return view;
 	}
-
-	private void storeTag(View view, int viewType)
+	
+	protected View createView(int position, ViewGroup parent)
 	{
-		ConvertViewInfo info = (ConvertViewInfo) view.getTag();
-		if (info == null)
-			info = new ConvertViewInfo(viewType, mCurrentOrientation);
-		else
-		{
-			info.orientation = mCurrentOrientation;
-			info.viewType = viewType;
-		}
-		view.setTag(info);
-	}
-
-	protected View createView(ViewGroup parent)
-	{
-		StoryItemPageView item = (StoryItemPageView) mInflater.inflate(R.layout.story_item_page, parent, false);
-		return item;
+		StoryItemPageView view = new StoryItemPageView(parent.getContext());
+		return view;
 	}
 
 	protected void bindView(View view, int position, Item item)
 	{
-		StoryItemPageView storyView = (StoryItemPageView) view;
-		storyView.setStory(item, false, false);
-		storyView.showAuthor(true);
-		storyView.showContent(true);
-		storyView.showTags(this.showTags(), mOnTagClickedListener);
-		storyView.setOnClickListener(new ItemClickListener(position));
+		StoryItemPageView pv = (StoryItemPageView) view;
+		pv.showTags(mShowTags);
+		pv.setListener(this);
+		pv.populateWithItem(item, getMediaViewCollectionForItem(item));
+		if (!getDeferMediaLoading())
+			pv.loadMedia(this);
+		view.setOnClickListener(new ItemClickListener(position));
+	}
+	
+//	public void recycleView(View view)
+//	{
+//		if (view != null && view instanceof StoryItemPageView)
+//			((StoryItemPageView) view).recycle();
+//	}
+
+	public void setDeferMediaLoading(boolean deferMediaLoading)
+	{
+		if (mDeferMediaLoading != deferMediaLoading)
+		{
+			mDeferMediaLoading = deferMediaLoading;
+		}
+	}
+	
+	public boolean getDeferMediaLoading()
+	{
+		return mDeferMediaLoading;
 	}
 
 	protected class ItemClickListener implements View.OnClickListener
@@ -279,14 +258,88 @@ public class StoryListAdapter extends BaseAdapter
 		}
 	}
 
-	public void updateVisibleView(int visiblePosition, View view)
+
+	@Override
+	public void onViewLoaded(MediaViewCollection collection)
 	{
-		if (view instanceof StoryItemPageView)
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public void onIsFirstViewPortraitChanged(MediaViewCollection collection, boolean isFirstViewPortrait)
+	{
+	}
+
+	@Override
+	public Filter getFilter()
+	{
+		Filter filter = new Filter()
 		{
-			StoryItemPageView storyView = (StoryItemPageView) view;
-			storyView.forceUpdate();
-			storyView.showAuthor(true);
-			storyView.showContent(true);
-		}
+			@Override
+			protected FilterResults performFiltering(CharSequence constraint)
+			{
+				if (mStories != null)
+				{
+					mFilteredStories = new ArrayList<Item>();
+					for (Item item : mStories)
+					{
+						if (constraint != null)
+						{
+							if (item.getTags() != null)
+							{
+								boolean bFoundTag = false;
+								for (String tag : item.getTags())
+								{
+									if (tag.contains(constraint))
+									{
+										bFoundTag = true;
+										break;
+									}
+								}
+								if (!bFoundTag)
+									continue; // Don't add this, i.e. filter it
+							}
+						}
+						mFilteredStories.add(item);
+					}
+				}
+				else
+				{
+					mFilteredStories = null;
+				}
+				FilterResults results = new FilterResults();
+				results.count = (mFilteredStories != null) ? mFilteredStories.size() : 0;
+				results.values = mFilteredStories;
+				return results;
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			protected void publishResults(CharSequence constraint, FilterResults results)
+			{
+				if (TextUtils.isEmpty(constraint))
+					mFilteredStories = mStories;
+				else if (results.count > 0)
+					mFilteredStories = (ArrayList<Item>) results.values;
+				else
+					mFilteredStories = null;
+				notifyDataSetChanged();
+			}
+		};
+		
+		return filter;
+	}
+	
+	@Override
+	public void onSourceClicked(long feedId)
+	{
+		UICallbacks.setFeedFilter(FeedFilterType.SINGLE_FEED, feedId, this);
+	}
+
+	@Override
+	public void onTagClicked(String tag)
+	{
+		if (mOnTagClickedListener != null)
+			mOnTagClickedListener.onTagClicked(tag);
 	}
 }
