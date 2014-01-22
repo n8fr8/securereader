@@ -190,7 +190,7 @@ public class AnimatedRelativeLayout extends RelativeLayout
 		{
 			if (child.getId() != View.NO_ID)
 			{
-				if (mStartPositions.indexOfKey(child.getId()) >= 0)
+				if (mStartPositions != null && mStartPositions.indexOfKey(child.getId()) >= 0)
 				{
 					Rect startRect = mStartPositions.get(child.getId());
 					Rect endRect = mEndPositions.get(child.getId());
