@@ -25,11 +25,11 @@ public class HeightLimitedRelativeLayout extends RelativeLayout
 
 	private void initView(Context context, AttributeSet attrs)
 	{
-		mHeightLimit = 1.75f;
+		mHeightLimit = 0f;
 		if (attrs != null)
 		{
 			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.HeightLimitedRelativeLayout);
-			mHeightLimit = a.getFloat(R.styleable.HeightLimitedRelativeLayout_height_limit, 1.75f);
+			mHeightLimit = a.getFloat(R.styleable.HeightLimitedRelativeLayout_height_limit, 0f);
 			a.recycle();
 		}
 	}
@@ -48,9 +48,20 @@ public class HeightLimitedRelativeLayout extends RelativeLayout
 		}
 		else if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED)
 		{
-			int inhibitedHeightSpec = MeasureSpec.makeMeasureSpec((int) (MeasureSpec.getSize(widthMeasureSpec) / mHeightLimit),
+			if (MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.UNSPECIFIED)
+			{
+				int height = MeasureSpec.getSize(heightMeasureSpec);
+				int limitedHeight = (int) (MeasureSpec.getSize(widthMeasureSpec) / mHeightLimit);
+				int inhibitedHeightSpec = MeasureSpec.makeMeasureSpec(Math.min(height, limitedHeight),
+						MeasureSpec.getMode(heightMeasureSpec));
+				super.onMeasure(widthMeasureSpec, inhibitedHeightSpec);
+			}
+			else
+			{
+				int inhibitedHeightSpec = MeasureSpec.makeMeasureSpec((int) (MeasureSpec.getSize(widthMeasureSpec) / mHeightLimit),
 					MeasureSpec.AT_MOST);
-			super.onMeasure(widthMeasureSpec, inhibitedHeightSpec);
+				super.onMeasure(widthMeasureSpec, inhibitedHeightSpec);
+			}
 		}
 		else
 		{

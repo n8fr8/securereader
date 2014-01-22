@@ -32,7 +32,7 @@ public class StoryItemPageView extends RelativeLayout
 	}
 	
 	protected Item mItem;
-	protected ViewType mCurrentViewType;	
+	protected ViewType mCurrentViewType;
 	protected StoryMediaContentView mMediaContentView;
 	protected TextView mTvTitle;
 	protected TextView mTvContent;
@@ -121,7 +121,7 @@ public class StoryItemPageView extends RelativeLayout
 	
 	public void createViews(ViewType type)
 	{
-		if (mItem == null || mMediaViewCollection == null)
+		if (mItem == null)
 			return;
 
 		if (type == mCurrentViewType)

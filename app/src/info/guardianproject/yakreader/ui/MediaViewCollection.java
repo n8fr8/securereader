@@ -3,6 +3,7 @@ package info.guardianproject.yakreader.ui;
 import info.guardianproject.iocipher.File;
 import info.guardianproject.securereader.MediaDownloader.MediaDownloaderCallback;
 import info.guardianproject.yakreader.App;
+import info.guardianproject.yakreader.adapters.DownloadsAdapter;
 import info.guardianproject.yakreader.views.ApplicationMediaContentPreviewView;
 import info.guardianproject.yakreader.views.EPubMediaContentPreviewView;
 import info.guardianproject.yakreader.views.ImageMediaContentPreviewView;
@@ -232,6 +233,8 @@ public class MediaViewCollection
 						mIsLoading = true;
 						if (!App.getInstance().socialReader.loadMediaContent(mContent, this, forceBitwiseDownloads))
 							mIsLoading = false; // Already loaded
+						else
+							DownloadsAdapter.downloading(mContent.getItemDatabaseId());
 					}
 				}
 			}
@@ -277,6 +280,7 @@ public class MediaViewCollection
 				mIsLoaded = true;
 				if (!mInConstructor)
 					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+				DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
 			}
 		}
 
@@ -290,6 +294,7 @@ public class MediaViewCollection
 				mIsLoaded = true;
 				if (!mInConstructor)
 					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+				DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
 			};
 		}
 
