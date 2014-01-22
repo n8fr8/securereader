@@ -15,4 +15,7 @@ for project in "${MAPFILE[@]}"; do
     cp -f $good_jar $project/libs
 done
 
-
+rm external/bho/TbChat/libs/guava-r09.jar
+rm external/CacheWord/cachewordlib/libs/guava-r09.jar
+cp SecureReaderLibrary/libs/guava-11.0.2.jar external/bho/TbChat/libs/
+cp SecureReaderLibrary/libs/guava-11.0.2.jar external/CacheWord/cachewordlib/libs/
