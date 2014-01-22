@@ -1426,12 +1426,6 @@ public class SocialReader implements ICacheWordSubscriber
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
-				if (forceBitwiseDownload)
-				{
-					if (mdc != null)
-						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
-				}
-	
 				NonVFSMediaDownloader mediaDownloader = new NonVFSMediaDownloader(this,possibleFile);
 				mediaDownloader.setMediaDownloaderCallback(new NonVFSMediaDownloader.MediaDownloaderCallback() {
 					@Override
@@ -1463,12 +1457,6 @@ public class SocialReader implements ICacheWordSubscriber
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
-				if (forceBitwiseDownload)
-				{
-					if (mdc != null)
-						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
-				}
-	
 				MediaDownloader mediaDownloader = new MediaDownloader(this);
 				mediaDownloader.setMediaDownloaderCallback(mdc);
 	
@@ -1496,12 +1484,6 @@ public class SocialReader implements ICacheWordSubscriber
 			{
 				Log.v(LOGTAG, "File doesn't exist, downloading");
 	
-				if (forceBitwiseDownload)
-				{
-					if (mdc != null)
-						mdc = new DownloadsNotifierMediaDownloaderCallback(mc.getItemDatabaseId(), mdc);
-				}
-	
 				MediaDownloader mediaDownloader = new MediaDownloader(this);
 				mediaDownloader.setMediaDownloaderCallback(mdc);
 	
@@ -1517,35 +1499,6 @@ public class SocialReader implements ICacheWordSubscriber
 		} else {
 			Log.v(LOGTAG,"Not a media type we support");
 			return false;
-		}
-	}
-
-
-	private class DownloadsNotifierMediaDownloaderCallback implements MediaDownloaderCallback
-	{
-		private final MediaDownloaderCallback mWrapped;
-		private final long mItemId;
-
-		public DownloadsNotifierMediaDownloaderCallback(long itemId, MediaDownloaderCallback wrapped)
-		{
-			mItemId = itemId;
-			mWrapped = wrapped;
-			//DownloadsAdapter.downloading(mItemId);
-		}
-
-		@Override
-		public void mediaDownloaded(File mediaFile)
-		{
-			//DownloadsAdapter.downloaded(mItemId);
-			if (mWrapped != null)
-				mWrapped.mediaDownloaded(mediaFile);
-		}
-
-		@Override
-		public void mediaDownloadedNonVFS(java.io.File mediaFile) {
-			//DownloadsAdapter.downloaded(mItemId);
-			if (mWrapped != null)
-				mWrapped.mediaDownloadedNonVFS(mediaFile);
 		}
 	}
 
