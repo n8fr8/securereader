@@ -10,7 +10,7 @@
     android:paddingTop="10dp" >
 
     <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
-        android:id="@+id/layout_content"
+        android:id="@+id/layout_media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:height_limit="1.75" >

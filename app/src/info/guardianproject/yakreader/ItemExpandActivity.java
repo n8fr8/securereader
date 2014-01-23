@@ -18,7 +18,6 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import info.guardianproject.yakreader.R;
-import info.guardianproject.yakreader.adapters.StoryListAdapter;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.yakreader.views.ExpandingFrameLayout;
@@ -181,7 +180,7 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 
 		SparseArray<Rect> positions = new SparseArray<Rect>();
 
-		getStoredPositionForViewWithId(viewGroup, R.id.ivPhotos, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.layout_media, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.tvTitle, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.tvContent, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.layout_source, positions);

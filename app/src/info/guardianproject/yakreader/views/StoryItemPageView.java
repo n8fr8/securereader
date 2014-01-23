@@ -13,8 +13,11 @@ import android.widget.TextView;
 
 import info.guardianproject.yakreader.R;
 import info.guardianproject.yakreader.App;
+import info.guardianproject.yakreader.adapters.StoryItemMediaContentPagerAdapter;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
+import info.guardianproject.yakreader.widgets.DottedProgressView;
+import info.guardianproject.yakreader.widgets.NestedViewPager;
 
 import com.tinymission.rss.Item;
 
@@ -33,7 +36,8 @@ public class StoryItemPageView extends RelativeLayout
 	
 	protected Item mItem;
 	protected ViewType mCurrentViewType;
-	protected StoryMediaContentView mMediaContentView;
+	protected NestedViewPager mMediaPager;
+	protected DottedProgressView mMediaPagerIndicator;
 	protected TextView mTvTitle;
 	protected TextView mTvContent;
 	protected TextView mTvTime;
@@ -81,14 +85,6 @@ public class StoryItemPageView extends RelativeLayout
 //		}
 	}
 	
-	public void recycle()
-	{
-		if (mMediaContentView != null && mMediaContentView.getMediaCollection() != null)
-		{
-			mMediaContentView.getMediaCollection().recycle();
-		}
-	}
-
 	public static ViewType getViewTypeForMedia(MediaViewCollection mediaViewCollection)
 	{
 		// No media
@@ -139,7 +135,8 @@ public class StoryItemPageView extends RelativeLayout
 	
 	protected void findViews(View view)
 	{
-		mMediaContentView = (StoryMediaContentView) view.findViewById(R.id.ivPhotos);
+		mMediaPager = (NestedViewPager) view.findViewById(R.id.mediaPager);
+		mMediaPagerIndicator = (DottedProgressView) view.findViewById(R.id.mediaPagerIndicator);
 		mTvTitle = (TextView) view.findViewById(R.id.tvTitle);
 		mTvContent = (TextView) view.findViewById(R.id.tvContent);
 		mTvTime = (TextView) view.findViewById(R.id.tvTime);
@@ -148,6 +145,13 @@ public class StoryItemPageView extends RelativeLayout
 		mLlTags = (LinearLayout) view.findViewById(R.id.llTags);
 		if (mTvContent != null)
 			mTvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTvContent.getTextSize() + App.getSettings().getContentFontSizeAdjustment());
+		
+		// Additional one-time configuration
+		if (mMediaPager != null)
+		{
+			mMediaPager.setViewPagerIndicator(mMediaPagerIndicator);
+			mMediaPager.setPropagateClicks(true);
+		}
 	}
 
 	public void populateWithItem(Item item)
@@ -161,8 +165,8 @@ public class StoryItemPageView extends RelativeLayout
 			
 			createViews();
 
-			if (mMediaContentView != null)
-				mMediaContentView.setMediaCollection(mMediaViewCollection, false, false);
+			if (mMediaPager != null)
+				mMediaPager.setAdapter(null);
 			if (mTvTitle != null)
 				mTvTitle.setText(item.getTitle());
 			if (mTvContent != null)
@@ -220,12 +224,13 @@ public class StoryItemPageView extends RelativeLayout
 	
 	public void loadMedia(MediaViewCollection.OnMediaLoadedListener listener)
 	{
-		if (mMediaContentView != null && mMediaContentView.getMediaCollection() != null)
+		if (mMediaViewCollection != null)
 		{
-			MediaViewCollection mvc = mMediaContentView.getMediaCollection();
 			if (listener != null)
-				mvc.addListener(listener);
-			mvc.load(false, false);
+				mMediaViewCollection.addListener(listener);
+			mMediaViewCollection.load(false, false);
+			if (mMediaPager != null && mMediaViewCollection.getCountLoaded() > 0)
+				mMediaPager.setAdapter(new StoryItemMediaContentPagerAdapter(getContext(), mMediaViewCollection.getLoadedViews(), false));
 		}
 	}
 	

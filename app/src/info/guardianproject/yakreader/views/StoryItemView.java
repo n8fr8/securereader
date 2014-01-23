@@ -160,7 +160,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			if (child.getParent() != null)
 				((ViewGroup) child.getParent()).removeView(child);
 	
-			if (child.getId() == R.id.layout_content)
+			if (child.getId() == R.id.layout_media)
 			{
 				HeightLimitedRelativeLayout hlrl = (HeightLimitedRelativeLayout) child;
 				StoryMediaContentView mcv = (StoryMediaContentView) child.findViewById(R.id.ivPhotos);
@@ -211,12 +211,12 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			}
 			
 			// If at top of column and child is not photo, add margin
-			if (currentColumnHeight == 0 && child.getId() != R.id.layout_content)
+			if (currentColumnHeight == 0 && child.getId() != R.id.layout_media)
 				currentColumnHeight += fullMarginTop;
 			else if (currentColumnHeight != 0)
 				currentColumnHeight += lpChild.topMargin;
 			
-			if (child.getId() == R.id.layout_content && isTwoColumnMode() && currentColumnHeight != 0 && willCreateMediaView())
+			if (child.getId() == R.id.layout_media && isTwoColumnMode() && currentColumnHeight != 0 && willCreateMediaView())
 			{
 				// Do nothing. This will pull up a new column for us, in which we will be topmost!
 			}
@@ -226,7 +226,7 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 
 				// Adjust to column
 				int widthChild = column.getWidth() - lpChild.leftMargin - lpChild.rightMargin;
-				if (child.getId() == R.id.layout_content && isTwoColumnMode() && willCreateMediaView())
+				if (child.getId() == R.id.layout_media && isTwoColumnMode() && willCreateMediaView())
 					child.measure(View.MeasureSpec.makeMeasureSpec(widthChild, View.MeasureSpec.EXACTLY),
 							View.MeasureSpec.makeMeasureSpec(columnHeightMax - currentColumnHeight - lpChild.bottomMargin, View.MeasureSpec.EXACTLY));
 				else
@@ -386,13 +386,17 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 		// Set image(s)
 		//
 		StoryMediaContentView mediaContent = (StoryMediaContentView) blueprint.findViewById(R.id.ivPhotos);
-		if (mediaContent != null)
+		if (mediaContent != null && mMediaViewCollection != null)
 		{
 			mediaContent.setMediaCollection(mMediaViewCollection, true, true);
-			if (mediaContent.getCount() == 0)
-				mediaContent.setVisibility(View.GONE);
+		}
+		View mediaContainer = blueprint.findViewById(R.id.layout_media);
+		if (mediaContainer != null)
+		{
+			if (!willCreateMediaView())
+				mediaContainer.setVisibility(View.GONE);
 			else
-				mediaContent.setVisibility(View.VISIBLE);
+				mediaContainer.setVisibility(View.VISIBLE);
 		}
 
 		// Author
@@ -516,9 +520,13 @@ public class StoryItemView implements PagedViewContent, OnUpdateListener, OnMedi
 			mMediaViewCollection.removeListener(this);
 			mMediaViewCollection.recycle();
 		}
-		mMediaViewCollection = new MediaViewCollection(parent.getContext(), mItem);
-		mMediaViewCollection.load(false, true);
-		mMediaViewCollection.addListener(this);
+		mMediaViewCollection = null;
+		if (mItem.getMediaContent() != null && mItem.getMediaContent().size()> 0)
+		{
+			mMediaViewCollection  = new MediaViewCollection(parent.getContext(), mItem);
+			mMediaViewCollection.load(false, true);
+			mMediaViewCollection.addListener(this);
+		}
 		createBlueprintViews(parent);
 		relayout();
 		return mPages;
