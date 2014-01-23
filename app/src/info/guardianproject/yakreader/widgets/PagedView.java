@@ -290,7 +290,7 @@ public class PagedView extends NestedViewPager
 					pos -= scrollToThisIndexInThis;
 				else
 					pos += scrollToThisIndexInThis;
-				setCurrentItem(pos);
+				setCurrentItem(pos, false);
 			}
 		}
 		updateViewPagerIndicator();
