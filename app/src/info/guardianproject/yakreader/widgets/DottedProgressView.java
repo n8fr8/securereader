@@ -203,6 +203,13 @@ public class DottedProgressView extends View implements ViewPagerIndicator
 	public void onTotalChanged(int total)
 	{
 		this.setNumberOfDots(total);
+		if (mHideIfOnlyOne)
+		{
+			if (total <= 1)
+				setVisibility(View.INVISIBLE);
+			else
+				setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
