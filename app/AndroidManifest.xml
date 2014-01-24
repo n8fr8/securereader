@@ -40,7 +40,6 @@
             android:theme="@style/AppThemeNoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -58,6 +57,18 @@
             android:name="info.guardianproject.yakreader.AddFeedActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_add_feed" >
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/rss+xml" />
+            </intent-filter>
+			<intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/html" />
+            </intent-filter>            
+            
         </activity>
         <activity
             android:name="info.guardianproject.yakreader.PanicActivity"
