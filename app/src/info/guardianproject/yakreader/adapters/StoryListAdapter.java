@@ -70,8 +70,7 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	public void updateItems(ArrayList<Item> items)
 	{
 		mStories = items;
-		applyFilters();
-		this.notifyDataSetChanged();
+		applyFilters(); // Will call NotifyDataSetChanged when complete
 	}
 
 	public void setTagFilter(String tagFilter)
@@ -176,7 +175,7 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	{
 		if (position == 0 && hasHeaderView())
 			return mResIdHeaderView;
-		if (mFilteredStories == null)
+		if (mFilteredStories == null || mFilteredStories.size() == 0)
 			return null;
 		return mFilteredStories.get(position - (hasHeaderView() ? 1 : 0));
 	}
@@ -289,9 +288,10 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 			@Override
 			protected FilterResults performFiltering(CharSequence constraint)
 			{
+				ArrayList<Item> filteredStories = null;
 				if (mStories != null)
 				{
-					mFilteredStories = new ArrayList<Item>();
+					filteredStories = new ArrayList<Item>();
 					for (Item item : mStories)
 					{
 						if (constraint != null)
@@ -311,16 +311,12 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 									continue; // Don't add this, i.e. filter it
 							}
 						}
-						mFilteredStories.add(item);
+						filteredStories.add(item);
 					}
 				}
-				else
-				{
-					mFilteredStories = null;
-				}
 				FilterResults results = new FilterResults();
-				results.count = (mFilteredStories != null) ? mFilteredStories.size() : 0;
-				results.values = mFilteredStories;
+				results.count = (filteredStories != null) ? filteredStories.size() : 0;
+				results.values = filteredStories;
 				return results;
 			}
 
