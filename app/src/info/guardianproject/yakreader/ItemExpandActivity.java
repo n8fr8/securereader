@@ -10,6 +10,7 @@ import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -17,7 +18,6 @@ import android.widget.ListView;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import info.guardianproject.yakreader.R;
-import info.guardianproject.yakreader.adapters.StoryListAdapter;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.yakreader.views.ExpandingFrameLayout;
@@ -180,7 +180,7 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 
 		SparseArray<Rect> positions = new SparseArray<Rect>();
 
-		getStoredPositionForViewWithId(viewGroup, R.id.ivPhotos, positions);
+		getStoredPositionForViewWithId(viewGroup, R.id.layout_media, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.tvTitle, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.tvContent, positions);
 		getStoredPositionForViewWithId(viewGroup, R.id.layout_source, positions);
@@ -338,19 +338,9 @@ public class ItemExpandActivity extends FragmentActivityWithMenu implements Stor
 		if (mFullListStories == null || mFullListStories.getCount() == 0)
 			return;
 
-		int first = this.mFullListStories.getFirstVisiblePosition();
-		int last = this.mFullListStories.getLastVisiblePosition();
-		for (int i = first; i <= last; i++)
+		if (mFullListStories.getAdapter() != null && mFullListStories.getAdapter() instanceof BaseAdapter)
 		{
-			View view = mFullListStories.getChildAt(i - first);
-			if (mFullListStories.getAdapter() instanceof StoryListAdapter)
-			{
-				((StoryListAdapter) mFullListStories.getAdapter()).updateVisibleView(i, view);
-			}
-			else
-			{
-				mFullListStories.getAdapter().getView(i, view, mFullListStories);
-			}
+			((BaseAdapter) mFullListStories.getAdapter()).notifyDataSetChanged();
 		}
 	}
 

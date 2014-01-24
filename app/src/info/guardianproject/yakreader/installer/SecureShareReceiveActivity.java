@@ -288,7 +288,7 @@ public class SecureShareReceiveActivity extends FragmentActivityWithMenu
 			mLLReceive.setVisibility(View.GONE);
 
 			StoryItemPageView storyView = (StoryItemPageView) mLLSharedStory.findViewById(R.id.sharedItemView);
-			storyView.setStory(mItemReceived, false, false);
+			storyView.populateWithItem(mItemReceived);
 			mLLSharedStory.setVisibility(View.VISIBLE);
 
 			// Intent mainIntent = new Intent(SecureShareReceiveActivity.this,

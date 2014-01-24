@@ -6,24 +6,32 @@
     android:background="#ffffffff"
     android:orientation="vertical" >
 
-    <info.guardianproject.yakreader.views.StoryMediaContentView
-        android:id="@+id/mediaContentView"
+    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+        android:id="@+id/layout_media"
         android:layout_width="70dp"
         android:layout_height="70dp"
+        >    
+
+    <info.guardianproject.yakreader.views.StoryMediaContentView
+        android:id="@+id/mediaContentView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        app:height_inhibitor="1"
         app:show_placeholder="true" >
+
     </info.guardianproject.yakreader.views.StoryMediaContentView>
-        
+    
+    </info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+    
     <info.guardianproject.yakreader.widgets.CustomFontTextView        
         android:id="@+id/tvTitle"
         style="@style/DownloadsItemTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/mediaContentView"
+        android:layout_alignBottom="@id/layout_media"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/mediaContentView"
+        android:layout_toRightOf="@id/layout_media"
         android:background="#ffffff"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"

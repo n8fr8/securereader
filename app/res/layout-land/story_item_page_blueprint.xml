@@ -3,7 +3,9 @@
     android:layout_height="wrap_content"
     android:background="@drawable/story_item_background_selector"
     android:gravity="top"
-    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:orientation="vertical"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader">
 
     <include
         android:id="@+id/layout_source"
@@ -33,11 +35,19 @@
         android:layout_marginTop="@dimen/author_top_margin"
         layout="@layout/story_item_page_author" />
 
-    <include
-        android:id="@+id/ivPhotos"
+    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+        android:id="@+id/layout_media"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/story_media_content_view" />
+        android:layout_height="wrap_content"
+        app:height_limit="1.75" >
+        
+        <include
+            android:id="@+id/ivPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/story_media_content_view" />
+
+	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>    
 
     <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvContent"

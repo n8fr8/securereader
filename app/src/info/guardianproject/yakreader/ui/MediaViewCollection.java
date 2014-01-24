@@ -1,7 +1,9 @@
 package info.guardianproject.yakreader.ui;
 
-import info.guardianproject.yakreader.R;
-import info.guardianproject.yakreader.models.OnMediaOrientationListener;
+import info.guardianproject.iocipher.File;
+import info.guardianproject.securereader.MediaDownloader.MediaDownloaderCallback;
+import info.guardianproject.yakreader.App;
+import info.guardianproject.yakreader.adapters.DownloadsAdapter;
 import info.guardianproject.yakreader.views.ApplicationMediaContentPreviewView;
 import info.guardianproject.yakreader.views.EPubMediaContentPreviewView;
 import info.guardianproject.yakreader.views.ImageMediaContentPreviewView;
@@ -11,45 +13,374 @@ import info.guardianproject.yakreader.views.VideoMediaContentPreviewView;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.pm.ActivityInfo;
-import android.view.View;
+import android.util.Log;
 import android.widget.ImageView.ScaleType;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.tinymission.rss.Item;
 import com.tinymission.rss.MediaContent;
 
-public class MediaViewCollection implements OnMediaOrientationListener
+public class MediaViewCollection 
 {
 	public interface OnMediaLoadedListener
 	{
-		void onMediaLoaded();
+		void onViewLoaded(MediaViewCollection collection, int index, boolean wasCached);
 	}
 
-	Item mStory;
-	private ArrayList<MediaContent> mContent;
-	private ArrayList<View> mContentViews;
-	private final OnMediaLoadedListener mOnMediaLoadedListener;
-	private final Context mContext;
-	private boolean mContainsLoadedMedia;
-	private boolean mIsFirstViewPortrait;
-	private boolean mInCreateViews;
-	private int mInCreateViewsIndex;
+	public static final String LOG = "MediaContentLoader";
+	
+	private Context mContext;
+	private Item mStory;
+	private ArrayList<MediaContentLoadInfo> mLoadInfos;
+	private ArrayList<MediaContentPreviewView> mViews;
+	private ArrayList<OnMediaLoadedListener> mListeners;
+	private boolean mHasBeenRecycled;
 	private ScaleType mDefaultScaleType;
-	private String mFirstContentType;
-
-	public MediaViewCollection(Context context, OnMediaLoadedListener onMediaLoadedListener, Item story, boolean useThisThread)
+	private boolean mForceBitwiseDownloads;
+	private boolean mUseThisThread;
+	
+	public MediaViewCollection(Context context, Item story)
 	{
-		this(context, onMediaLoadedListener, story, false, useThisThread);
+		mContext = context;
+		mStory = story;
+		mForceBitwiseDownloads = false;
+		mUseThisThread = false;
+		mDefaultScaleType = ScaleType.CENTER_CROP;
+		mLoadInfos = new ArrayList<MediaContentLoadInfo>();
+		mViews = new ArrayList<MediaContentPreviewView>();
+		mListeners = new ArrayList<OnMediaLoadedListener>();
+		createLoadInfos();
+	}	
+	
+	public void load(boolean forceBitwiseDownloads, boolean useThisThread)
+	{
+		mHasBeenRecycled = false;
+		mForceBitwiseDownloads = forceBitwiseDownloads;
+		mUseThisThread = useThisThread;
+		createMediaViews();
+		for (MediaContentLoadInfo info : mLoadInfos)
+		{
+			info.load(mForceBitwiseDownloads);
+		}
+	}
+	
+	public void addListener(OnMediaLoadedListener listener)
+	{
+		synchronized(this)
+		{
+			if (!mListeners.contains(listener))
+				mListeners.add(listener);
+		}
+	}
+	
+	public void removeListener(OnMediaLoadedListener listener)
+	{
+		synchronized(this)
+		{
+			if (mListeners.contains(listener))
+				mListeners.remove(listener);
+		}
+	}
+	
+	private void createLoadInfos()
+	{
+		if (mStory != null)
+		{
+			for (int i = 0; i < mStory.getNumberOfMediaContent(); i++)
+			{
+				MediaContent mediaContent = mStory.getMediaContent(i);
+				if (mediaContent == null || mediaContent.getUrl() == null || mediaContent.getType() == null)
+					continue;
+
+				MediaContentLoadInfo info = new MediaContentLoadInfo(mediaContent, i);
+				mLoadInfos.add(info);
+			}
+		}
+	}
+	
+	private void createMediaViews()
+	{
+		if (mViews == null || mViews.size() == 0)
+		{
+			for (MediaContentLoadInfo info : mLoadInfos)
+			{
+				createMediaView(info);
+			}
+		}
+	}
+	
+	private void createMediaView(MediaContentLoadInfo content)
+	{
+		MediaContentPreviewView mediaView = null;
+		
+		// Create a view for it
+		if (content.isVideo())
+		{
+			VideoMediaContentPreviewView vmc = new VideoMediaContentPreviewView(mContext);
+			vmc.setScaleType(mDefaultScaleType);
+			mediaView = vmc;
+		}
+		else if (content.isApplication())
+		{
+			ApplicationMediaContentPreviewView amc = new ApplicationMediaContentPreviewView(mContext);
+			mediaView = amc;
+		}
+		else if (content.isEpub())
+		{
+			EPubMediaContentPreviewView amc = new EPubMediaContentPreviewView(mContext);
+			mediaView = amc;
+		}
+		else if (content.isAudio())
+		{
+			VideoMediaContentPreviewView vmc = new VideoMediaContentPreviewView(mContext);
+			mediaView = vmc;
+		}
+		else
+		{
+			ImageMediaContentPreviewView imc = new ImageMediaContentPreviewView(mContext);
+			imc.setScaleType(mDefaultScaleType);
+			mediaView = imc;
+		}
+		mViews.add(mediaView);
+	}
+	
+	public ArrayList<MediaContentPreviewView> getViews()
+	{
+		return mViews;
+	}
+	
+	public ArrayList<MediaContentPreviewView> getLoadedViews()
+	{
+		ArrayList<MediaContentPreviewView> views = null;
+		if (mViews != null && mViews.size() > 0)
+		{
+			views = new ArrayList<MediaContentPreviewView>();
+			for (MediaContentPreviewView view : mViews)
+			{
+				if (view.getMediaContent() != null)
+					views.add(view);
+			}
+		}
+		return views;
+	}
+	
+	public int getCount()
+	{
+		return mLoadInfos.size();
+	}
+	
+	public int getCountLoaded()
+	{
+		int n = 0;
+		if (mViews != null && mViews.size() > 0)
+		{
+			for (MediaContentPreviewView view : mViews)
+			{
+				if (view.getMediaContent() != null)
+					n++;
+			}
+		}
+		return n;
+	}
+	
+	/**
+	 * Stop loading
+	 */
+	public void recycle()
+	{
+		mHasBeenRecycled = true;
+		for (MediaContentPreviewView view : getViews())
+		{
+			view.recycle();
+		}
+		mViews.clear();
+	}
+	
+	public class MediaContentLoadInfo implements MediaDownloaderCallback
+	{
+		public info.guardianproject.iocipher.File mFile;
+		public java.io.File mFileNonVFS;
+		
+		private MediaContent mContent;
+		private int mIndex;
+		private boolean mIsLoading;
+		private boolean mIsLoaded;
+		private boolean mWasCached;
+		private boolean mInConstructor;
+		private boolean mNotifyDownloadsAdapter;
+		
+		public MediaContentLoadInfo(MediaContent content, int index)
+		{
+			mContent = content;
+			mIndex = index;
+			mInConstructor = true;
+			mIsLoaded = mWasCached = App.getInstance().socialReader.loadMediaContent(content, this, false, false);
+			mInConstructor = false;
+			mNotifyDownloadsAdapter = false;
+		}
+		
+		public void load(boolean forceBitwiseDownloads)
+		{
+			synchronized (this)
+			{
+				if (mFile != null || mFileNonVFS != null)
+				{
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+				}
+				else
+				{
+					if (!isLoading())
+					{
+						mIsLoading = true;
+						if (!App.getInstance().socialReader.loadMediaContent(mContent, this, forceBitwiseDownloads))
+							mIsLoading = false; // Already loaded
+						else if (forceBitwiseDownloads)
+						{
+							DownloadsAdapter.downloading(mContent.getItemDatabaseId());
+							mNotifyDownloadsAdapter = true;
+						}
+					}
+				}
+			}
+		}
+
+		public boolean isLoaded()
+		{
+			return mIsLoaded;
+		}
+		
+		public boolean isLoading()
+		{
+			return mIsLoading;
+		}
+
+		public boolean isVideo()
+		{
+			return mContent.getType().startsWith("video/");
+		}
+		
+		public boolean isAudio()
+		{
+			return mContent.getType().startsWith("audio/");
+		}
+		
+		public boolean isApplication()
+		{
+			return mContent.getType().startsWith("application/vnd.android.package-archive");
+		}
+		
+		public boolean isEpub()
+		{
+			return mContent.getType().startsWith("application/epub+zip"); 
+		}
+		
+		@Override
+		public void mediaDownloaded(File mediaFile)
+		{
+			synchronized (this)
+			{
+				mFile = mediaFile;
+				mIsLoading = false;
+				mIsLoaded = true;
+				if (!mInConstructor)
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+				if (mNotifyDownloadsAdapter)
+					DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
+			}
+		}
+
+		@Override
+		public void mediaDownloadedNonVFS(java.io.File mediaFile)
+		{
+			synchronized (this)
+			{
+				mFileNonVFS = mediaFile;
+				mIsLoading = false;
+				mIsLoaded = true;
+				if (!mInConstructor)
+					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+				if (mNotifyDownloadsAdapter)
+					DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
+			};
+		}
+
+		
+		public MediaContent getMediaContent()
+		{
+			return mContent;
+		}
 	}
 
-	public MediaViewCollection(Context context, OnMediaLoadedListener onMediaLoadedListener, Item story, boolean forceBitwiseDownloads, boolean useThisThread)
+	public boolean containsLoadedMedia()
 	{
-		super();
-		mContext = context;
-		mOnMediaLoadedListener = onMediaLoadedListener;
-		mStory = story;
-		mDefaultScaleType = ScaleType.CENTER_CROP;
-		refreshViews(forceBitwiseDownloads, useThisThread);
+		return Iterables.any(mLoadInfos, new Predicate<MediaContentLoadInfo>()
+			{
+				@Override
+				public boolean apply(MediaContentLoadInfo info)
+				{
+					return info.isLoaded();
+				}
+			});
+	}
+
+	public void onMediaAvailable(MediaContent content, int index, boolean wasCached, java.io.File mediaFileNonVFS, info.guardianproject.iocipher.File mediaFile)
+	{
+		if (mHasBeenRecycled)
+		{
+			Log.v(LOG, "Media downloaded, but already recycled. Ignoring.");
+			return;
+		}
+		
+		MediaContentPreviewView mediaView = mViews.get(index);
+		mediaView.setMediaContent(content, mediaFile, mediaFileNonVFS, mUseThisThread);		
+
+		ArrayList<OnMediaLoadedListener> listeners;
+		synchronized(this)
+		{
+			listeners = new ArrayList<OnMediaLoadedListener>(mListeners);
+		}
+		for (OnMediaLoadedListener listener : listeners)
+			listener.onViewLoaded(this, index, wasCached);
+	}
+
+	public boolean isLoadingMedia()
+	{
+		return Iterables.any(mLoadInfos, new Predicate<MediaContentLoadInfo>()
+				{
+					@Override
+					public boolean apply(MediaContentLoadInfo info)
+					{
+						return info.isLoading();
+					}
+				});
+	}
+	
+	public MediaContentPreviewView getFirstView()
+	{
+		for (MediaContentPreviewView v : mViews)
+		{
+			if (v != null)
+				return v;
+		}
+		return null;
+	}
+	
+	public MediaContentLoadInfo getFirstLoadInfo()
+	{
+		if (mLoadInfos != null && mLoadInfos.size() > 0)
+			return mLoadInfos.get(0);
+		return null;
+	}
+	
+	public boolean isFirstViewPortrait()
+	{
+		MediaContentPreviewView first = getFirstView();
+		if (first != null && first.getMediaContent() != null)
+		{
+			return (first.getMediaContent().getHeight() > first.getMediaContent().getWidth());
+		}
+		return false;
 	}
 
 	public void setScaleType(ScaleType scaleType)
@@ -57,227 +388,22 @@ public class MediaViewCollection implements OnMediaOrientationListener
 		if (scaleType != mDefaultScaleType)
 		{
 			mDefaultScaleType = scaleType;
-			for (int i = 0; i < this.getCount(); i++)
-			{
-				View view = this.getView(i);
-				if (view instanceof ImageMediaContentPreviewView)
-				{
-					((ImageMediaContentPreviewView) view).setScaleType(mDefaultScaleType);
-				}
-				else if (view instanceof VideoMediaContentPreviewView)
-				{
-					((VideoMediaContentPreviewView) view).setScaleType(mDefaultScaleType);
-				}
-			}
-		}
-	}
-
-	public boolean containsLoadedMedia()
-	{
-		return mContainsLoadedMedia;
-	}
-
-	public boolean isFirstViewPortrait()
-	{
-		return mIsFirstViewPortrait;
-	}
-
-	/**
-	 * Returns an icon for the media collection. Currently, this depends on the first item
-	 * in the collection.
-	 * @return An icon resource identifier
-	 */
-	public int placeholderIcon()
-	{
-		if (mFirstContentType != null)
-		{
-			boolean isVideo = mFirstContentType.startsWith("video/");
-			boolean isAudio = mFirstContentType.startsWith("audio/");
-			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
-			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
-			if (isVideo)
-				return R.drawable.ic_load_video;
-			else if (isEpub)
-				return R.drawable.ic_content_epub;
-		}
-		return R.drawable.ic_load_photo;
-	}
-
-	public CharSequence placeholderText()
-	{
-		if (mFirstContentType != null)
-		{
-			boolean isVideo = mFirstContentType.startsWith("video/");
-			boolean isAudio = mFirstContentType.startsWith("audio/");
-			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
-			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
-			if (isEpub)
-				return mContext.getText(R.string.download_epub_hint);
-		}
-		return null;
-	}
-	
-	/**
-	 * Some media types need a more user friendly download view, use "final size" for these.
-	 * The rest will use default download view height of 50dp.
-	 * @return True if the download view should extend across the whole media content view.
-	 */
-	public boolean placeholderUseFinalSize()
-	{
-		if (mFirstContentType != null)
-		{
-			boolean isVideo = mFirstContentType.startsWith("video/");
-			boolean isAudio = mFirstContentType.startsWith("audio/");
-			boolean isApplication = mFirstContentType.startsWith("application/vnd.android.package-archive");
-			boolean isEpub = mFirstContentType.startsWith("application/epub+zip");
-			if (isEpub)
-				return true;
-		}
-		return false;
-	}
-	
-	public void refreshViews(boolean forceBitwiseDownloads, boolean useThisThread)
-	{
-		mInCreateViews = true;
-		mIsFirstViewPortrait = false;
-		mContainsLoadedMedia = false;
-
-		mContent = new ArrayList<MediaContent>();
-		mContentViews = new ArrayList<View>();
-
-		for (mInCreateViewsIndex = 0; mInCreateViewsIndex < mStory.getNumberOfMediaContent(); mInCreateViewsIndex++)
-		{
-			MediaContent mediaContent = mStory.getMediaContent(mInCreateViewsIndex);
-			if (mediaContent == null || mediaContent.getUrl() == null || mediaContent.getType() == null)
-				continue;
-
-			if (mInCreateViewsIndex == 0)
-				mFirstContentType = mediaContent.getType();
 			
-			View mediaView = null;
-
-			boolean isVideo = mediaContent.getType().startsWith("video/");
-			boolean isAudio = mediaContent.getType().startsWith("audio/");
-			boolean isApplication = mediaContent.getType().startsWith("application/vnd.android.package-archive");
-			boolean isEpub = mediaContent.getType().startsWith("application/epub+zip"); 
-			if (isVideo)
+			for (MediaContentPreviewView view : mViews)
 			{
-				VideoMediaContentPreviewView vmc = new VideoMediaContentPreviewView(mContext);
-				vmc.setScaleType(mDefaultScaleType);
-				vmc.setOnMediaOrientationListener(this);
-				vmc.setMediaContent(mediaContent, false, forceBitwiseDownloads, useThisThread);
-				if (vmc.isCached())
-					mContainsLoadedMedia = true;
-				mediaView = vmc;
-			}
-			else if (isApplication)
-			{
-				ApplicationMediaContentPreviewView amc = new ApplicationMediaContentPreviewView(mContext);
-				amc.setOnMediaOrientationListener(this);
-				amc.setMediaContent(mediaContent, false, forceBitwiseDownloads, useThisThread);
-				if (amc.isCached())
-					mContainsLoadedMedia = true;
-				mediaView = amc;
-			}
-			else if (isEpub) {
-				EPubMediaContentPreviewView amc = new EPubMediaContentPreviewView(mContext);
-				amc.setOnMediaOrientationListener(this);
-				amc.setMediaContent(mediaContent, false, forceBitwiseDownloads, useThisThread);
-				if (amc.isCached())
-					mContainsLoadedMedia = true;
-				mediaView = amc;				
-			}
-			else
-			{
-				ImageMediaContentPreviewView imc = new ImageMediaContentPreviewView(mContext);
-				imc.setScaleType(mDefaultScaleType);
-				imc.setOnMediaOrientationListener(this);
-				imc.setMediaContent(mediaContent, false, forceBitwiseDownloads, useThisThread);
-				if (imc.isCached())
-					mContainsLoadedMedia = true;
-				mediaView = imc;
-			}
-			mContent.add(mediaContent);
-			mContentViews.add(mediaView);
-		}
-		mInCreateViews = false;
-	}
-
-	public void recycle()
-	{
-		for (int i = 0; i < this.getCount(); i++)
-		{
-			View view = this.getView(i);
-			if (view instanceof MediaContentPreviewView)
-			{
-				((MediaContentPreviewView) view).recycle();
+				if (view != null)
+				{
+					if (view instanceof ImageMediaContentPreviewView)
+					{
+						((ImageMediaContentPreviewView) view).setScaleType(mDefaultScaleType);
+					}
+					else if (view instanceof VideoMediaContentPreviewView)
+					{
+						((VideoMediaContentPreviewView) view).setScaleType(mDefaultScaleType);
+					}
+				}
 			}
 		}
-		mContentViews.clear();
-	}
-
-	public int getCount()
-	{
-		return mContentViews.size();
-	}
-
-	public View getView(int position)
-	{
-		if (position < mContentViews.size())
-			return mContentViews.get(position);
-		return null;
-	}
-
-	public MediaContent getContentForView(View view)
-	{
-		for (int i = 0; i < mContentViews.size(); i++)
-		{
-			if (view == mContentViews.get(i))
-				return mContent.get(i);
-		}
-		return null;
-	}
-
-	public View getViewForContent(MediaContent content)
-	{
-		for (int i = 0; i < mContent.size(); i++)
-		{
-			if (content == mContent.get(i))
-				return mContentViews.get(i);
-		}
-		return null;
-	}
-
-	@Override
-	public void onMediaOrientation(View view, int orientation)
-	{
-		if (view != null && orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-		{
-			if ((mInCreateViews && mInCreateViewsIndex == 0) || (!mInCreateViews && view.equals(getView(0))))
-				mIsFirstViewPortrait = true;
-		}
-
-		mContainsLoadedMedia = true;
-		if (!mInCreateViews)
-		{
-			if (mOnMediaLoadedListener != null)
-				mOnMediaLoadedListener.onMediaLoaded();
-		}
-	}
-
-	public boolean isLoadingMedia()
-	{
-		boolean isLoading = false;
-
-		for (int i = 0; i < this.getCount(); i++)
-		{
-			View view = this.getView(i);
-			if (view instanceof MediaContentPreviewView)
-			{
-				isLoading |= ((MediaContentPreviewView) view).isLoading();
-			}
-		}
-		return isLoading;
 	}
 
 }

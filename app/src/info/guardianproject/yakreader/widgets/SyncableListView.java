@@ -2,15 +2,11 @@ package info.guardianproject.yakreader.widgets;
 
 import info.guardianproject.yakreader.R;
 import android.content.Context;
-import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public class SyncableListView extends ListView
@@ -39,7 +35,6 @@ public class SyncableListView extends ListView
 	private boolean mDragging;
 	private final Interpolator mDragInterpolator = new LinearInterpolator();
 	private OnPullDownListener mListener;
-	private ListAdapter mAdapter;
 
 	public SyncableListView(Context context, AttributeSet attrs, int defStyle)
 	{
@@ -63,12 +58,11 @@ public class SyncableListView extends ListView
 	{
 		this.setOverScrollMode(OVER_SCROLL_ALWAYS);
 		this.setAdapter(null);
-	}
-
-	@Override
-	public void setAdapter(ListAdapter adapter)
-	{
-		super.setAdapter(new ListAdapterWrapper(adapter));
+		
+		View emptyView = new View(getContext());
+		emptyView.setBackgroundColor(getContext().getResources().getColor(R.color.grey_dark));
+		emptyView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 1));
+		setEmptyView(emptyView);
 	}
 
 	public void setPullDownListener(OnPullDownListener listener)
@@ -156,77 +150,6 @@ public class SyncableListView extends ListView
 		return super.dispatchTouchEvent(ev);
 	}
 
-	private class ListAdapterWrapper extends BaseAdapter
-	{
-		private final ListAdapter mOriginalAdapter;
-		private View mEmptyView;
-
-		public ListAdapterWrapper(ListAdapter originalAdapter)
-		{
-			mOriginalAdapter = originalAdapter;
-			if (mOriginalAdapter != null)
-			{
-				mOriginalAdapter.registerDataSetObserver(new DataSetObserver()
-				{
-					@Override
-					public void onChanged()
-					{
-						super.onChanged();
-						ListAdapterWrapper.this.notifyDataSetChanged();
-					}
-
-					@Override
-					public void onInvalidated()
-					{
-						super.onInvalidated();
-						ListAdapterWrapper.this.notifyDataSetInvalidated();
-					}
-
-				});
-			}
-		}
-
-		@Override
-		public int getCount()
-		{
-			if (mOriginalAdapter != null && mOriginalAdapter.getCount() > 0)
-				return mOriginalAdapter.getCount();
-			return 1;
-		}
-
-		@Override
-		public Object getItem(int position)
-		{
-			if (mOriginalAdapter != null && mOriginalAdapter.getCount() > 0)
-				return mOriginalAdapter.getItem(position);
-			return mEmptyView;
-		}
-
-		@Override
-		public long getItemId(int position)
-		{
-			if (mOriginalAdapter != null && mOriginalAdapter.getCount() > 0)
-				return mOriginalAdapter.getItemId(position);
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
-		{
-			if (mOriginalAdapter != null && mOriginalAdapter.getCount() > 0)
-				return mOriginalAdapter.getView(position, convertView, parent);
-
-			if (mEmptyView == null)
-			{
-				mEmptyView = new View(getContext());
-				mEmptyView.setBackgroundColor(getContext().getResources().getColor(R.color.grey_dark));
-				mEmptyView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, 1));
-			}
-			return mEmptyView;
-		}
-
-	}
-
 	@Override
 	public int pointToPosition(int x, int y)
 	{
@@ -235,5 +158,4 @@ public class SyncableListView extends ListView
 			position = this.getAdapter().getCount() - 1;
 		return position;
 	}
-
 }

@@ -5,12 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
 import info.guardianproject.yakreader.R;
-import info.guardianproject.yakreader.adapters.StoryListAdapter.ItemClickListener;
 import info.guardianproject.yakreader.views.StoryItemDraftPageView;
-
 import com.tinymission.rss.Item;
 
 public class PostDraftsListAdapter extends PostPublishedListAdapter
@@ -37,66 +33,53 @@ public class PostDraftsListAdapter extends PostPublishedListAdapter
 	}
 
 	@Override
-	protected View createView(ViewGroup parent)
+	protected View createView(int position, ViewGroup parent)
 	{
-		LinearLayout item = (LinearLayout) mInflater.inflate(R.layout.post_item_draft, parent, false);
-		return item;
+		StoryItemDraftPageView view = new StoryItemDraftPageView(parent.getContext());
+		return view;
 	}
-
+	
 	@Override
-	protected void bindView(View view, int position, Item story)
+	protected void bindView(View view, int position, Item item)
 	{
-		StoryItemDraftPageView page = (StoryItemDraftPageView) view.findViewById(R.id.llRoot);
-		page.setStory(story, true, false);
-		page.showTags(this.showTags(), mOnTagClickedListener);
-		page.showAuthor(false);
-		page.showSource(false);
-		page.showContent(false);
-
-		View btnDelete = view.findViewById(R.id.btnDelete);
-		btnDelete.setOnClickListener(new DeleteButtonClickListener(mContext, story));
-
-		View btnEdit = view.findViewById(R.id.btnEdit);
-		btnEdit.setOnClickListener(new EditButtonClickListener(mContext, story));
-
-		view.setOnClickListener(new ItemClickListener(position));
+		super.bindView(view, position, item);
+		
+		StoryItemDraftPageView pv = (StoryItemDraftPageView) view;
+		pv.setButtonClickListeners(new DeleteButtonClickListener(item), new EditButtonClickListener(item));
 	}
+
 
 	private class EditButtonClickListener implements View.OnClickListener
 	{
-		private final Context mContext;
-		private final Item mStory;
+		private final Item mItem;
 
-		public EditButtonClickListener(Context context, Item story)
+		public EditButtonClickListener(Item item)
 		{
-			mContext = context;
-			mStory = story;
+			mItem = item;
 		}
 
 		@Override
 		public void onClick(View v)
 		{
 			if (mPostDraftsListAdapterListener != null)
-				mPostDraftsListAdapterListener.onEditDraft(mStory);
+				mPostDraftsListAdapterListener.onEditDraft(mItem);
 		}
 	}
 
 	private class DeleteButtonClickListener implements View.OnClickListener
 	{
-		private final Context mContext;
-		private final Item mStory;
+		private final Item mItem;
 
-		public DeleteButtonClickListener(Context context, Item story)
+		public DeleteButtonClickListener(Item item)
 		{
-			mContext = context;
-			mStory = story;
+			mItem = item;
 		}
 
 		@Override
 		public void onClick(View v)
 		{
 			if (mPostDraftsListAdapterListener != null)
-				mPostDraftsListAdapterListener.onDeleteDraft(mStory);
+				mPostDraftsListAdapterListener.onDeleteDraft(mItem);
 		}
 	}
 }

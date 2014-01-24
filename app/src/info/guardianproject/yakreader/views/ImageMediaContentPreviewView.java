@@ -1,22 +1,10 @@
 package info.guardianproject.yakreader.views;
 
-import info.guardianproject.securereader.MediaDownloader.MediaDownloaderCallback;
-import info.guardianproject.yakreader.App;
-import info.guardianproject.yakreader.models.OnMediaOrientationListener;
 import info.guardianproject.yakreader.uiutil.AnimationHelpers;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
 import info.guardianproject.iocipher.File;
-import info.guardianproject.iocipher.FileInputStream;
-
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -24,18 +12,11 @@ import android.widget.ImageView;
 
 import com.tinymission.rss.MediaContent;
 
-public class ImageMediaContentPreviewView extends ImageView implements MediaDownloaderCallback, MediaContentPreviewView
+public class ImageMediaContentPreviewView extends ImageView implements MediaContentPreviewView
 {
-	private boolean mHasBeenRecycled;
 	private MediaContent mMediaContent;
-	private OnMediaOrientationListener mOrientationListener;
 	private File mMediaFile;
 	private Bitmap mRealBitmap;
-	private int mMediaFileWidth;
-	private int mMediaFileHeight;
-	private boolean mIsLoading;
-	private boolean mInSetMediaContent;
-	private boolean mIsCached;
 	private Thread mSetImageThread;
 	private Handler mHandler;
 	private boolean mUseThisThread;
@@ -61,145 +42,6 @@ public class ImageMediaContentPreviewView extends ImageView implements MediaDown
 	private void initView(Context context)
 	{
 		this.setScaleType(ScaleType.CENTER_CROP);
-	}
-
-	public void setMediaContent(MediaContent mediaContent, boolean enableInteraction, boolean forceBitwiseDownloads, boolean useThisThread)
-	{
-		mMediaContent = mediaContent;
-		mInSetMediaContent = true;
-		mUseThisThread = useThisThread;
-		mIsLoading = App.getInstance().socialReader.loadMediaContent(mMediaContent, this, forceBitwiseDownloads);
-		mInSetMediaContent = false;
-	}
-
-	public boolean isCached()
-	{
-		return mIsCached;
-	}
-
-	public boolean isLoading()
-	{
-		return mIsLoading;
-	}
-
-	/**
-	 * Sets a listener that will be notified when media has been downloaded and
-	 * it is known whether this media is in landscape or portrait mode.
-	 * 
-	 * @param listener
-	 */
-	public void setOnMediaOrientationListener(OnMediaOrientationListener listener)
-	{
-		this.mOrientationListener = listener;
-	}
-
-	@SuppressLint("NewApi")
-	@Override
-	public void mediaDownloaded(final File mediaFile)
-	{
-		// If mediaDownloaded is called while we're still in setMediaContent we
-		// are
-		// loading cached data.
-		if (mInSetMediaContent)
-			mIsCached = true;
-
-		mIsLoading = false;
-
-		mMediaFile = mediaFile;
-		if (mMediaFile == null)
-		{
-			Log.v("ImageMediaContentPreviewView", "Failed to download media, no file.");
-			return;
-		}
-		if (mHasBeenRecycled)
-		{
-			Log.v("ImageMediaContentPreviewView", "Media downloaded, but already recycled. Ignoring.");
-			return;
-		}
-
-		if (mHandler == null && !mUseThisThread)
-			mHandler = new Handler();
-
-		Runnable getOrientationRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Log.v("ImageMediaContentPreviewView", "getOrientationThread");
-
-				int w = getWidth();
-				int h = getHeight();
-
-				boolean isPortrait = false;
-				if (w > 0 && h > 0)
-				{
-					mRealBitmap = UIHelpers.scaleToMaxGLSize(mMediaFile, w, h);
-					if (mRealBitmap != null)
-						isPortrait = mRealBitmap.getHeight() > mRealBitmap.getWidth();
-				}
-				else
-				{
-					try
-					{
-						BitmapFactory.Options o = new BitmapFactory.Options();
-						o.inJustDecodeBounds = true;
-						BufferedInputStream bis = new BufferedInputStream(new FileInputStream(mMediaFile));
-						// BitmapFactory.decodeFile(mMediaFile.getAbsolutePath(),
-						// o);
-						BitmapFactory.decodeStream(bis, null, o);
-						bis.close();
-						isPortrait = o.outWidth < o.outHeight;
-						mMediaFileWidth = o.outWidth;
-						mMediaFileHeight = o.outHeight;
-					}
-					catch (FileNotFoundException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					catch (IOException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-
-				Runnable reportRunnable = new Runnable()
-				{
-					private boolean mIsPortrait;
-
-					@Override
-					public void run()
-					{
-						Log.v("ImageMediaContentPreviewView", "reporting orientation");
-						if (mRealBitmap != null)
-							setImageBitmap(mRealBitmap);
-						notifyBitmapOrientation(mIsPortrait);
-					}
-
-					private Runnable init(boolean isPortrait)
-					{
-						mIsPortrait = isPortrait;
-						return this;
-					}
-				}.init(isPortrait);
-
-				if (mUseThisThread)
-					reportRunnable.run();
-				else
-					mHandler.post(reportRunnable);
-			}
-		};
-
-		if (mUseThisThread)
-		{
-			getOrientationRunnable.run();
-		}
-		else
-		{
-			Thread getOrientationThread = new Thread(getOrientationRunnable);
-			getOrientationThread.start();
-		}
 	}
 
 	@Override
@@ -228,7 +70,6 @@ public class ImageMediaContentPreviewView extends ImageView implements MediaDown
 
 	public void recycle()
 	{
-		mHasBeenRecycled = true;
 		setImageBitmap(null);
 		if (mRealBitmap != null)
 		{
@@ -294,31 +135,43 @@ public class ImageMediaContentPreviewView extends ImageView implements MediaDown
 	@Override
 	protected int getSuggestedMinimumHeight()
 	{
-		if (mMediaFile != null && mRealBitmap == null)
-			return mMediaFileHeight;
+		if (mMediaContent != null && mRealBitmap == null)
+			return mMediaContent.getHeight();
 		return super.getSuggestedMinimumHeight();
 	}
 
 	@Override
 	protected int getSuggestedMinimumWidth()
 	{
-		if (mMediaFile != null && mRealBitmap == null)
-			return mMediaFileWidth;
+		if (mMediaContent != null && mRealBitmap == null)
+			return mMediaContent.getWidth();
 		return super.getSuggestedMinimumWidth();
 	}
 
-	private void notifyBitmapOrientation(boolean isPortrait)
+	@Override
+	public void setMediaContent(MediaContent mediaContent, File mediaFile, java.io.File mediaFileNonVFS, boolean useThisThread)
 	{
-		if (mOrientationListener != null)
+		mMediaContent = mediaContent;
+		mMediaFile = mediaFile;
+		mUseThisThread = useThisThread;
+		if (mMediaFile == null)
 		{
-			mOrientationListener.onMediaOrientation(this, isPortrait ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			Log.v("ImageMediaContentPreviewView", "Failed to download media, no file.");
+			return;
+		}
+		
+		int w = getWidth();
+		int h = getHeight();
+		if (w > 0 && h > 0)
+		{
+			setBitmapIfDownloaded();
 		}
 	}
 
 	@Override
-	public void mediaDownloadedNonVFS(java.io.File mediaFile) {
-		// TODO Auto-generated method stub
-		// Not being used for image content at the moment
+	public MediaContent getMediaContent()
+	{
+		return mMediaContent;
 	}
 
 }

@@ -130,19 +130,22 @@ public class AnimatedRelativeLayout extends RelativeLayout
 	private void resetAnimatedProperties()
 	{
 		mAnimating = false;
-		for (int index = 0; index < mStartPositions.size(); index++)
+		if (mStartPositions != null)
 		{
-			int id = mStartPositions.keyAt(index);
-
-			View view = findViewById(id);
-			if (view != null)
+			for (int index = 0; index < mStartPositions.size(); index++)
 			{
-				Rect endRect = mEndPositions.get(id);
-				LayoutParams lp = (LayoutParams) view.getLayoutParams();
-				lp.height = endRect.height();
-				lp.leftMargin = endRect.left;
-				lp.topMargin = endRect.top;
-				view.setLayoutParams(lp);
+				int id = mStartPositions.keyAt(index);
+
+				View view = findViewById(id);
+				if (view != null)
+				{
+					Rect endRect = mEndPositions.get(id);
+					LayoutParams lp = (LayoutParams) view.getLayoutParams();
+					lp.height = endRect.height();
+					lp.leftMargin = endRect.left;
+					lp.topMargin = endRect.top;
+					view.setLayoutParams(lp);
+				}
 			}
 		}
 		if (mOriginalStartPositions == null)
@@ -190,7 +193,7 @@ public class AnimatedRelativeLayout extends RelativeLayout
 		{
 			if (child.getId() != View.NO_ID)
 			{
-				if (mStartPositions.indexOfKey(child.getId()) >= 0)
+				if (mStartPositions != null && mStartPositions.indexOfKey(child.getId()) >= 0)
 				{
 					Rect startRect = mStartPositions.get(child.getId());
 					Rect endRect = mEndPositions.get(child.getId());

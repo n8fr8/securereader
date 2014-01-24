@@ -1,10 +1,5 @@
 package info.guardianproject.yakreader.views;
 
-import info.guardianproject.yakreader.R.anim;
-import info.guardianproject.yakreader.R.color;
-import info.guardianproject.yakreader.R.id;
-import info.guardianproject.yakreader.R.layout;
-import info.guardianproject.yakreader.R.string;
 import info.guardianproject.securereader.SocialReader;
 import info.guardianproject.yakreader.App;
 import info.guardianproject.yakreader.MainActivity;
@@ -36,6 +31,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -45,7 +42,7 @@ import info.guardianproject.yakreader.R;
 
 import com.tinymission.rss.Item;
 
-public class StoryListView extends FrameLayout implements OnTagClickedListener, OnPullDownListener, OnHeaderCreatedListener
+public class StoryListView extends FrameLayout implements OnTagClickedListener, OnPullDownListener, OnHeaderCreatedListener 
 {
 	public interface StoryListListener
 	{
@@ -137,6 +134,35 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 
 		mListStories.setPullDownListener(this);
 
+		mListStories.setOnScrollListener(new AbsListView.OnScrollListener()
+		{
+			private boolean isFlinging = false;
+			
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState)
+			{
+				if (scrollState == OnScrollListener.SCROLL_STATE_FLING)
+				{
+					isFlinging = true;
+					mAdapter.setDeferMediaLoading(true);
+				}
+				else
+				{
+					mAdapter.setDeferMediaLoading(false);
+					if (isFlinging)
+					{
+						isFlinging = false;
+						mAdapter.notifyDataSetChanged();
+					}
+				}
+			}
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount)
+			{
+			}
+		});
+		
 		searchByTag(null);
 	}
 
@@ -306,7 +332,7 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 			arrow.setVisibility(View.VISIBLE);
 			sadface.setVisibility(View.GONE);
 		}
-		float degrees = 180.0f * (heightVisible / (float) mListHeader.getHeight());
+		//float degrees = 180.0f * (heightVisible / (float) mListHeader.getHeight());
 		mListHeader.setDrawHeightLimit(heightVisible);
 		// AnimationHelpers.rotate(arrow, degrees, degrees, 0);
 	}
@@ -439,28 +465,6 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 		}
 	}
 
-	private class ScrollToRunnable implements Runnable
-	{
-		private final ListView mView;
-		private final int mIndex;
-		private final int mOffset;
-
-		ScrollToRunnable(ListView view, int index, int offset)
-		{
-			mView = view;
-			mIndex = index;
-			mOffset = offset;
-		}
-
-		@Override
-		public void run()
-		{
-			Log.v(MainActivity.LOGTAG, "Scrolling list back to " + mIndex + "," + mOffset);
-			if (mIndex != -1 && mIndex < mListStories.getCount())
-				mView.setSelectionFromTop(mIndex, mOffset);
-		}
-	}
-
 	public void setIsLoading(boolean loading)
 	{
 		mIsLoading = loading;
@@ -556,4 +560,11 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 		if (mFrameError != null)
 			mFrameError.collapse();
 	}
+
+//	@Override
+//	public void onMovedToScrapHeap(View view)
+//	{
+//		if (mAdapter != null)
+//			mAdapter.recycleView(view);
+//	}
 }

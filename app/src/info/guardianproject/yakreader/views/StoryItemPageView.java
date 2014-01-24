@@ -1,53 +1,56 @@
 package info.guardianproject.yakreader.views;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import info.guardianproject.yakreader.R;
 import info.guardianproject.yakreader.App;
-import info.guardianproject.yakreader.adapters.StoryListAdapter.OnTagClickedListener;
-import info.guardianproject.yakreader.models.FeedFilterType;
+import info.guardianproject.yakreader.adapters.StoryItemMediaContentPagerAdapter;
 import info.guardianproject.yakreader.ui.MediaViewCollection;
-import info.guardianproject.yakreader.ui.UICallbacks;
-import info.guardianproject.yakreader.ui.MediaViewCollection.OnMediaLoadedListener;
 import info.guardianproject.yakreader.uiutil.UIHelpers;
+import info.guardianproject.yakreader.widgets.DottedProgressView;
+import info.guardianproject.yakreader.widgets.NestedViewPager;
 
 import com.tinymission.rss.Item;
 
-public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedListener
+public class StoryItemPageView extends RelativeLayout 
 {
-	private enum PageMode
+	public interface StoryItemPageViewListener
 	{
-		UNKNOWN, NO_PHOTO, LANDSCAPE_PHOTO, PORTRAIT_PHOTO
+		void onSourceClicked(long feedId);
+		void onTagClicked(String tag);
 	}
-
+	
+	public enum ViewType
+	{
+		NO_PHOTO, PORTRAIT_PHOTO, LANDSCAPE_PHOTO
+	}
+	
+	protected Item mItem;
+	protected ViewType mCurrentViewType;
+	protected NestedViewPager mMediaPager;
+	protected DottedProgressView mMediaPagerIndicator;
 	protected TextView mTvTitle;
-	protected TextView mTvAuthor;
 	protected TextView mTvContent;
-	protected StoryMediaContentView mMediaContentView;
 	protected TextView mTvTime;
 	protected TextView mTvSource;
-
-	protected Item mStory = null;
-	protected float mDefaultTextSize = 10;
-	protected float mDefaultAuthorTextSize = 10;
-	protected boolean mShowAuthor = true;
-	protected boolean mShowContent = true;
-	protected boolean mShowSource = true;
-	private MediaViewCollection mMediaViewCollection;
-	private boolean mAllowFullScreenMediaViewing;
-	private PageMode mCurrentPageMode;
+	protected View mLayoutTags;
+	protected LinearLayout mLlTags;
+	
+	protected StoryItemPageViewListener mListener;
+	
+	// Configuration
+	//
 	private boolean mShowTags;
-	private OnTagClickedListener mOnTagClickedListener;
+	private MediaViewCollection mMediaViewCollection;
 
 	public StoryItemPageView(Context context)
 	{
@@ -69,259 +72,175 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 
 	private void init(AttributeSet attrs)
 	{
-		mCurrentPageMode = PageMode.UNKNOWN;
-
-		if (attrs != null && !this.isInEditMode())
+		mCurrentViewType = null;
+		setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+		setBackgroundResource(R.drawable.story_item_background_selector);
+//		if (attrs != null && !this.isInEditMode())
+//		{
+//			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.StoryItemPageView);
+//			mShowAuthor = a.getBoolean(R.styleable.StoryItemPageView_show_author, true);
+//			mShowContent = a.getBoolean(R.styleable.StoryItemPageView_show_content, true);
+//			mShowSource = a.getBoolean(R.styleable.StoryItemPageView_show_source, true);
+//			a.recycle();
+//		}
+	}
+	
+	public static ViewType getViewTypeForMedia(MediaViewCollection mediaViewCollection)
+	{
+		// No media
+		if (mediaViewCollection == null || mediaViewCollection.getCount() == 0)
+			return ViewType.NO_PHOTO;
+	
+		if (mediaViewCollection.containsLoadedMedia())
 		{
-			TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.StoryItemPageView);
-			mShowAuthor = a.getBoolean(R.styleable.StoryItemPageView_show_author, true);
-			mShowContent = a.getBoolean(R.styleable.StoryItemPageView_show_content, true);
-			mShowSource = a.getBoolean(R.styleable.StoryItemPageView_show_source, true);
-			a.recycle();
+			if (mediaViewCollection.isFirstViewPortrait())
+				return ViewType.PORTRAIT_PHOTO; // Portrait mode
+			return ViewType.LANDSCAPE_PHOTO; // Landscape mode
 		}
+		return ViewType.NO_PHOTO; // Nothing loaded
+	}
+	
+	protected int getViewResourceByType(ViewType type)
+	{
+		if (type == ViewType.NO_PHOTO)
+			return R.layout.story_item_page_merge_no_photo;
+		else if (type == ViewType.PORTRAIT_PHOTO)
+			return R.layout.story_item_page_merge_portrait_photo;
+		return R.layout.story_item_page_merge_landscape_photo;
 	}
 
-	/**
-	 * Based on the media this Item contains, determine which kind of layout we
-	 * need for the display.
-	 */
-	private PageMode getRequiredPageMode()
+	private void createViews()
 	{
-		if (mMediaViewCollection != null && (mMediaViewCollection.getCount() == 0 || !mMediaViewCollection.containsLoadedMedia()))
-			return PageMode.NO_PHOTO;
-		else if (mMediaViewCollection != null && mMediaViewCollection.isFirstViewPortrait())
-			return PageMode.PORTRAIT_PHOTO;
-		return PageMode.LANDSCAPE_PHOTO;
+		ViewType type = getViewTypeForMedia(mMediaViewCollection);
+		createViews(type);
 	}
-
-	public void recreateViews()
+	
+	public void createViews(ViewType type)
 	{
-		PageMode requiredPageMode = getRequiredPageMode();
-		if (mCurrentPageMode == requiredPageMode)
-			return; // No change
-		mCurrentPageMode = requiredPageMode;
+		if (mItem == null)
+			return;
 
-		this.removeAllViews();
-
-		if (requiredPageMode == PageMode.NO_PHOTO)
-			LayoutInflater.from(getContext()).inflate(R.layout.story_item_page_merge_no_photo, this, true);
-		else if (requiredPageMode == PageMode.PORTRAIT_PHOTO)
-			LayoutInflater.from(getContext()).inflate(R.layout.story_item_page_merge_portrait_photo, this, true);
-		else
-			LayoutInflater.from(getContext()).inflate(R.layout.story_item_page_merge_landscape_photo, this, true);
-
-		mTvTitle = (TextView) findViewById(R.id.tvTitle);
-		mTvAuthor = (TextView) findViewById(R.id.tvAuthor);
-		mTvContent = (TextView) findViewById(R.id.tvContent);
-		mMediaContentView = (StoryMediaContentView) findViewById(R.id.ivPhotos);
-		mTvTime = (TextView) findViewById(R.id.tvTime);
-		mTvSource = (TextView) findViewById(R.id.tvSource);
-
-		if (!this.isInEditMode() && mTvContent != null)
-			mDefaultTextSize = mTvContent.getTextSize();
-		if (!this.isInEditMode() && mTvAuthor != null)
-			mDefaultAuthorTextSize = mTvAuthor.getTextSize();
-
-		updateTextSize();
-		showAuthor(mShowAuthor);
-		showContent(mShowContent);
-		showSource(mShowSource);
-		showTags(mShowTags, mOnTagClickedListener);
-	}
-
-	public void updateTextSize()
-	{
-		if (!this.isInEditMode() && mTvContent != null)
-			mTvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, mDefaultTextSize + App.getSettings().getContentFontSizeAdjustment());
-		if (!this.isInEditMode() && mTvAuthor != null)
-			mTvAuthor.setTextSize(TypedValue.COMPLEX_UNIT_PX, mDefaultAuthorTextSize + App.getSettings().getContentFontSizeAdjustment());
-	}
-
-	public void showContent(boolean show)
-	{
-		if (mTvContent != null)
-		{
-			if (show)
-			{
-				if (mTvContent.getText() != null && mTvContent.getText().length() > 0)
-					mTvContent.setVisibility(View.VISIBLE);
-				else
-					mTvContent.setVisibility(View.GONE);
-			}
-			else
-			{
-				mTvContent.setVisibility(View.GONE);
-			}
-		}
-	}
-
-	public void showAuthor(boolean show)
-	{
-		if (mTvAuthor != null)
-		{
-			if (show)
-			{
-				if (mTvAuthor.getText() != null && mTvAuthor.getText().length() > 0)
-					mTvAuthor.setVisibility(View.VISIBLE);
-				else
-					mTvAuthor.setVisibility(View.GONE);
-			}
-			else
-			{
-				mTvAuthor.setVisibility(View.GONE);
-			}
-		}
-	}
-
-	public void showSource(boolean show)
-	{
-		if (mTvSource != null)
-		{
-			if (show)
-			{
-				mTvSource.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				mTvSource.setVisibility(View.GONE);
-			}
-		}
-	}
-
-	public void showTags(boolean showTags, OnTagClickedListener onTagClickedListener)
-	{
-		mShowTags = showTags;
-		mOnTagClickedListener = onTagClickedListener;
+		if (type == mCurrentViewType)
+			return;
 		
-		View svTags = findViewById(R.id.svTags);
-		if (showTags && mStory.getNumberOfTags() > 0)
+		if (mCurrentViewType != null)
+			removeAllViews();
+		
+		mCurrentViewType = type;
+
+		LayoutInflater inflater = LayoutInflater.from(getContext());
+		View view = inflater.inflate(getViewResourceByType(mCurrentViewType), this, true);
+		findViews(view);
+	}
+	
+	protected void findViews(View view)
+	{
+		mMediaPager = (NestedViewPager) view.findViewById(R.id.mediaPager);
+		mMediaPagerIndicator = (DottedProgressView) view.findViewById(R.id.mediaPagerIndicator);
+		mTvTitle = (TextView) view.findViewById(R.id.tvTitle);
+		mTvContent = (TextView) view.findViewById(R.id.tvContent);
+		mTvTime = (TextView) view.findViewById(R.id.tvTime);
+		mTvSource = (TextView) view.findViewById(R.id.tvSource);
+		mLayoutTags = view.findViewById(R.id.layout_tags);
+		mLlTags = (LinearLayout) view.findViewById(R.id.llTags);
+		if (mTvContent != null)
+			mTvContent.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTvContent.getTextSize() + App.getSettings().getContentFontSizeAdjustment());
+		
+		// Additional one-time configuration
+		if (mMediaPager != null)
 		{
-			if (svTags == null)
-				svTags = ((ViewStub) findViewById(R.id.viewStubTags)).inflate().findViewById(R.id.svTags);
+			mMediaPager.setViewPagerIndicator(mMediaPagerIndicator);
+			mMediaPager.setPropagateClicks(true);
+		}
+	}
 
-			LinearLayout llTags = (LinearLayout) findViewById(R.id.llTags);
-			llTags.removeAllViews();
+	public void populateWithItem(Item item)
+	{
+		if (mItem != item)
+		{
+			mItem = item;
+			mMediaViewCollection = null;
+			if (mMediaViewCollection == null && item.getNumberOfMediaContent() > 0)
+				mMediaViewCollection = new MediaViewCollection(getContext(), item);
+			
+			createViews();
 
-			LayoutInflater inflater = LayoutInflater.from(getContext());
-
-			for (final String tag : mStory.getTags())
+			if (mMediaPager != null)
+				mMediaPager.setAdapter(null);
+			if (mTvTitle != null)
+				mTvTitle.setText(item.getTitle());
+			if (mTvContent != null)
+				mTvContent.setText(item.getCleanMainContent());
+			if (mTvSource != null)
 			{
-				View item = inflater.inflate(R.layout.story_item_short_tag_item, llTags, false);
-				TextView tv = (TextView) item.findViewById(R.id.tvTag);
-				tv.setText(tag);
-				item.setOnClickListener(new OnClickListener()
+				mTvSource.setText(item.getSource());
+				mTvSource.setTag(Long.valueOf(item.getFeedId()));
+				mTvSource.setOnClickListener(new OnClickListener()
 				{
 					@Override
 					public void onClick(View v)
 					{
-						if (mOnTagClickedListener != null)
-							mOnTagClickedListener.onTagClicked(tag);
+						long feedId = ((Long) v.getTag()).longValue();
+						if (feedId != -1)
+						{
+							if (mListener != null)
+								mListener.onSourceClicked(feedId);
+						}
 					}
 				});
-				llTags.addView(item);
 			}
-			svTags.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			LinearLayout llTags = (LinearLayout) findViewById(R.id.llTags);
-			if (llTags != null)
-				llTags.removeAllViews();
-			if (svTags != null)
-				svTags.setVisibility(View.GONE);
-		}
-	}
-
-	public void setStory(Item story, boolean forceBitwiseDownloads, boolean allowFullScreenMediaViewing)
-	{
-		if (mStory != story)
-		{
-			if (mMediaViewCollection != null)
-				mMediaViewCollection.recycle();
-			mStory = story;
-			mMediaViewCollection = new MediaViewCollection(getContext(), this, story, forceBitwiseDownloads, false);
-			mAllowFullScreenMediaViewing = allowFullScreenMediaViewing;
-			recreateViews();
-			populate();
-		}
-	}
-
-	protected void populate()
-	{
-		// Set title
-		//
-		mTvTitle.setText(mStory.getTitle());
-
-		// Set image(s)
-		//
-		if (mMediaContentView != null)
-		{
-			mMediaContentView.setMediaCollection(mMediaViewCollection, mAllowFullScreenMediaViewing, false);
-			if (mMediaContentView.getCount() == 0)
-				mMediaContentView.setVisibility(View.GONE);
-			else
-				mMediaContentView.setVisibility(View.VISIBLE);
-		}
-
-		// Author
-		if (mTvAuthor != null)
-		{
-			if (mStory.getAuthor() != null)
-				mTvAuthor.setText(getContext().getString(R.string.story_item_short_author, mStory.getAuthor()));
-			else
-				mTvAuthor.setText(null);
-		}
-
-		// Content
-		if (mTvContent != null)
-			mTvContent.setText(mStory.getCleanMainContent());
-
-		// Set publication time (and add timer for updating it every minute)
-		//
-		updateTime();
-
-		// Set source
-		//
-		mTvSource.setText(mStory.getSource());
-		mTvSource.setTag(Long.valueOf(mStory.getFeedId()));
-		mTvSource.setOnClickListener(new OnClickListener()
-		{
-			@Override
-			public void onClick(View v)
+			if (mLlTags != null && mShowTags && item.getNumberOfTags() > 0)
 			{
-				long feedId = ((Long) v.getTag()).longValue();
-				if (feedId != -1)
+				mLlTags.removeAllViews();
+				for (final String tag : item.getTags())
 				{
-					UICallbacks.setFeedFilter(FeedFilterType.SINGLE_FEED, feedId, this);
+					View tagItem = LayoutInflater.from(getContext()).inflate(R.layout.story_item_short_tag_item, mLlTags, false);
+					TextView tv = (TextView) tagItem.findViewById(R.id.tvTag);
+					tv.setText(tag);
+					tagItem.setOnClickListener(new OnClickListener()
+					{
+						@Override
+						public void onClick(View v)
+						{
+							if (mListener != null)
+								mListener.onTagClicked(tag);
+						}
+					});
+					mLlTags.addView(tagItem);
 				}
 			}
-		});
-	}
+		}
 
-	public Item getStory()
-	{
-		return mStory;
-	}
-
-	protected void updateTime()
-	{
-		if (mStory != null)
+		populateTime();
+		
+		if (mLayoutTags != null)
 		{
-			if (mTvTime != null)
-			{
-				mTvTime.setText(UIHelpers.dateDiffDisplayString(mStory.getPublicationTime(), getContext(), R.string.story_item_short_published_never,
+			if (mShowTags && item.getNumberOfTags() > 0)
+				mLayoutTags.setVisibility(View.VISIBLE);
+			else
+				mLayoutTags.setVisibility(View.GONE);
+		}
+	}
+	
+	public void loadMedia(MediaViewCollection.OnMediaLoadedListener listener)
+	{
+		if (mMediaViewCollection != null)
+		{
+			if (listener != null)
+				mMediaViewCollection.addListener(listener);
+			mMediaViewCollection.load(false, false);
+			if (mMediaPager != null && mMediaViewCollection.getCountLoaded() > 0)
+				mMediaPager.setAdapter(new StoryItemMediaContentPagerAdapter(getContext(), mMediaViewCollection.getLoadedViews(), false));
+		}
+	}
+	
+	protected void populateTime()
+	{
+		if (mTvTime != null)
+			mTvTime.setText(UIHelpers.dateDiffDisplayString(mItem.getPublicationTime(), getContext(), R.string.story_item_short_published_never,
 						R.string.story_item_short_published_recently, R.string.story_item_short_published_minutes, R.string.story_item_short_published_minute,
 						R.string.story_item_short_published_hours, R.string.story_item_short_published_hour, R.string.story_item_short_published_days,
 						R.string.story_item_short_published_day));
-			}
-		}
-		else
-		{
-			if (mTvTime != null)
-			{
-				mTvTime.setText(R.string.story_item_short_published_never);
-			}
-		}
 	}
 
 	private final Runnable mUpdateTimestamp = new Runnable()
@@ -330,7 +249,7 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 		public void run()
 		{
 			// Every minute
-			updateTime();
+			populateTime();
 
 			Handler handler = getHandler();
 			if (handler != null)
@@ -355,19 +274,29 @@ public class StoryItemPageView extends RelativeLayout implements OnMediaLoadedLi
 	}
 
 	@Override
-	public void onMediaLoaded()
+	protected void onDetachedFromWindow()
 	{
-		recreateViews();
-		populate();
-	}
+		super.onDetachedFromWindow();
 
-	public void forceUpdate()
+		Handler handler = getHandler();
+		if (handler != null)
+		{
+			handler.removeCallbacks(mUpdateTimestamp);
+		}
+	}
+	
+	public boolean showTags()
 	{
-		if (mMediaViewCollection != null)
-			mMediaViewCollection.refreshViews(false, true);
-		mCurrentPageMode = PageMode.UNKNOWN; // Force recreation
-		recreateViews();
-		populate();
+		return mShowTags;
 	}
-
+	
+	public void showTags(boolean showTags)
+	{
+		mShowTags = showTags;
+	}
+	
+	public void setListener(StoryItemPageViewListener listener)
+	{
+		mListener = listener;
+	}
 }

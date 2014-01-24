@@ -1,41 +1,13 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"   
+    android:layout_height="match_parent"
     >
     
-    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
-        android:id="@+id/layout_media"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:height_limit="1.75" >
-        
-        <info.guardianproject.yakreader.widgets.NestedViewPager
-        	android:id="@+id/mediaPager"
-        	android:layout_width="match_parent"
-        	android:layout_height="match_parent" />
-
-    	<info.guardianproject.yakreader.widgets.DottedProgressView
-        	android:id="@+id/mediaPagerIndicator"
-        	android:layout_width="match_parent"
-        	android:layout_height="30dp"
-        	android:layout_gravity="bottom"
-        	android:background="#cdefefef"
-        	app:dot_color="@color/grey_light_medium"
-        	app:dot_color_current="@color/button_primary"
-        	app:dot_distance="25"
-        	app:dot_radius="6"
-        	app:dot_rim_color="@color/grey_light_medium"
-        	app:dot_rim_color_current="@color/button_primary" />
-        
-
-	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
-
     <include
         android:id="@+id/layout_source"
         android:layout_width="match_parent"
         android:layout_height="@dimen/source_height"
-        android:layout_below="@id/layout_media"
         android:layout_marginLeft="@dimen/card_left_margin"
         android:layout_marginRight="@dimen/card_right_margin"
         android:layout_marginTop="@dimen/source_top_margin"

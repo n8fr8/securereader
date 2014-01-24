@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -8,12 +9,20 @@
     android:paddingBottom="10dp"
     android:paddingTop="10dp" >
 
-    <include
-        android:id="@+id/ivPhotos"
+    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+        android:id="@+id/layout_media"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/story_media_content_view" />
+        android:layout_height="wrap_content"
+        app:height_limit="1.75" >
+        
+        <include
+            android:id="@+id/ivPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/story_media_content_view" />
 
+	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+    
     <include
         android:id="@+id/layout_source"
         android:layout_width="match_parent"

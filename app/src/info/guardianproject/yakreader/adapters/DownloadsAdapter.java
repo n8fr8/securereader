@@ -50,20 +50,20 @@ public class DownloadsAdapter extends BaseAdapter
 	public int getCount()
 	{
 		int num = 0;
-		if (this.getNumComplete() > 0)
+		if (getNumComplete() > 0)
 		{
-			num += this.getNumComplete() + 1;
+			num += getNumComplete() + 1;
 		}
 		num += 1; // For "In progress" header
-		num += this.getNumInProgress();
+		num += getNumInProgress();
 		return num;
 	}
 
 	@Override
 	public int getItemViewType(int position)
 	{
-		int numComplete = this.getNumComplete();
-		int numInProgress = this.getNumInProgress();
+		int numComplete = getNumComplete();
+		int numInProgress = getNumInProgress();
 		if (numComplete > 0)
 		{
 			if (position == 0)
@@ -84,14 +84,14 @@ public class DownloadsAdapter extends BaseAdapter
 	@Override
 	public int getViewTypeCount()
 	{
-		return 4;
+		return 5;
 	}
 
 	@Override
 	public Object getItem(int position)
 	{
-		int numComplete = this.getNumComplete();
-		int numInProgress = this.getNumInProgress();
+		int numComplete = getNumComplete();
+		int numInProgress = getNumInProgress();
 
 		if (numComplete > 0)
 		{
@@ -122,54 +122,43 @@ public class DownloadsAdapter extends BaseAdapter
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
-		int type = this.getItemViewType(position);
-		if (convertView != null
-				&& (convertView.getTag() == null || !(convertView.getTag() instanceof Integer) || ((Integer) convertView.getTag()).intValue() != type))
-			convertView = null;
-
-		View returnView = null;
+		int type = getItemViewType(position);
+		View returnView = convertView;
 
 		switch (type)
 		{
 		case VIEW_TYPE_HEADER_COMPLETE:
 		{
-			if (convertView == null)
-				convertView = createHeaderView();
-			TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+			if (returnView == null)
+				returnView = createHeaderView();
+			TextView tvTitle = (TextView) returnView.findViewById(R.id.tvTitle);
 			tvTitle.setText(R.string.downloads_complete);
-			returnView = convertView;
 			break;
 		}
 		case VIEW_TYPE_HEADER_IN_PROGRESS:
 		{
-			if (convertView == null)
-				convertView = createHeaderView();
-			TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
+			if (returnView == null)
+				returnView = createHeaderView();
+			TextView tvTitle = (TextView) returnView.findViewById(R.id.tvTitle);
 			tvTitle.setText(R.string.downloads_in_progress);
-			returnView = convertView;
 			break;
 		}
 		case VIEW_TYPE_ITEM_COMPLETE:
 		{
-			if (convertView == null)
-				convertView = createItemCompleteView();
-			populateItemCompleteView(convertView, (Item) getItem(position));
-			returnView = convertView;
+			if (returnView == null)
+				returnView = createItemCompleteView();
+			populateItemCompleteView(returnView, (Item) getItem(position));
 			break;
 		}
 		case VIEW_TYPE_ITEM_IN_PROGRESS:
 		{
-			if (convertView == null)
-				convertView = createItemInProgressView();
-			populateItemInProgressView(convertView, (Item) getItem(position));
-			returnView = convertView;
+			if (returnView == null)
+				returnView = createItemInProgressView();
+			populateItemInProgressView(returnView, (Item) getItem(position));
 			break;
 		}
 
 		}
-
-		if (returnView != null)
-			returnView.setTag(Integer.valueOf(type));
 		return returnView;
 	}
 
@@ -194,7 +183,8 @@ public class DownloadsAdapter extends BaseAdapter
 	private void populateItemCompleteView(View view, Item item)
 	{
 		StoryMediaContentView mediaView = (StoryMediaContentView) view.findViewById(R.id.mediaContentView);
-		MediaViewCollection collection = new MediaViewCollection(mContext, null, item, false);
+		MediaViewCollection collection = new MediaViewCollection(mContext, item);
+		collection.load(false, false);
 		mediaView.setMediaCollection(collection, false, true);
 
 		TextView tvTitle = (TextView) view.findViewById(R.id.tvTitle);
