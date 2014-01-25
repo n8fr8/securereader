@@ -9,8 +9,9 @@ good_jar="app/libs/android-support-v4.jar"
 #external/CacheWord/cachewordlib
 #END
 
-MAPFILE[0]='external/ActionBarSherlock/actionbarsherlock'
+MAPFILE[0]='external/HoloEverywhere/ActionBarSherlock/actionbarsherlock'
 MAPFILE[1]='external/CacheWord/cachewordlib'
+MAPFILE[2]='external/OnionKit/libonionkit'
 
 
 for project in "${MAPFILE[@]}"; do
