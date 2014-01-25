@@ -1,6 +1,3 @@
-[submodule "external/HoloEverywhere"]
-	path = external/HoloEverywhere
-	url = https://github.com/Prototik/HoloEverywhere.git
 [submodule "external/OnionKit"]
 	path = external/OnionKit
 	url = https://github.com/guardianproject/OnionKit.git
@@ -17,3 +14,6 @@
 [submodule "external/ActionBarSherlock"]
 	path = external/ActionBarSherlock
 	url = https://github.com/JakeWharton/ActionBarSherlock
+[submodule "external/HoloEverywhere"]
+	path = external/HoloEverywhere
+	url = https://github.com/Prototik/HoloEverywhere.git
