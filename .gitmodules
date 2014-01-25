@@ -11,9 +11,6 @@
 [submodule "external/securereaderlibrary"]
 	path = external/securereaderlibrary
 	url = https://github.com/guardianproject/securereaderlibrary.git
-[submodule "external/ActionBarSherlock"]
-	path = external/ActionBarSherlock
-	url = https://github.com/JakeWharton/ActionBarSherlock
 [submodule "external/HoloEverywhere"]
 	path = external/HoloEverywhere
 	url = https://github.com/Prototik/HoloEverywhere.git
