@@ -6,11 +6,14 @@
 	url = https://github.com/guardianproject/OnionKit.git
 [submodule "external/CacheWord"]
 	path = external/CacheWord
-	url = https://ithub.com/guardianproject/cacheword.git
+	url = https://github.com/guardianproject/cacheword.git
 [submodule "external/bho"]
 	path = external/bho
 	url = https://code.google.com/p/bho/
+
 [submodule "external/securereaderlibrary"]
 	path = external/securereaderlibrary
 	url = https://github.com/guardianproject/securereaderlibrary.git
-
+[submodule "external/ActionBarSherlock"]
+	path = external/ActionBarSherlock
+	url = https://github.com/JakeWharton/ActionBarSherlock
