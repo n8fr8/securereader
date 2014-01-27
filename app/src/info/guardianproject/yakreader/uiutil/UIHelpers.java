@@ -21,6 +21,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -209,7 +211,45 @@ public class UIHelpers
 			drawable.setColorFilter(null);
 	}
 
-	public static Bitmap scaleToMaxGLSize(File mediaFile, int width, int height)
+	private static Point gMaxGLSize;
+	
+	@SuppressLint("NewApi")
+	private static Point getMaxGLSize(Context context)
+	{
+		if (gMaxGLSize == null)
+		{
+// TODO - getMaximumBitmapWidth returns width for a software rendered canvas below, so no use to us.
+//			if (Build.VERSION.SDK_INT >= 14)
+//			{
+//				Bitmap bmp = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+//				Canvas c = new Canvas(bmp);
+//				gMaxGLSize = new Point(c.getMaximumBitmapWidth(), c.getMaximumBitmapHeight());
+//			}
+//			else
+			{
+				// Try the GL approach
+				//
+				int[] buf = new int[1];
+				EGLContext.getEGL();
+				GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_SIZE, buf, 0);
+				int glSize = buf[0];
+				if (glSize < 1)
+				{
+					Log.v("UIHelpers", "GL Max texture size returned 0!");
+					
+					int rounded = (int)(2048f / context.getResources().getDisplayMetrics().density);
+					gMaxGLSize = new Point(rounded, rounded);
+				}
+				else
+				{
+					gMaxGLSize = new Point(glSize, glSize);
+				}
+			}
+		}
+		return gMaxGLSize;
+	}
+	
+	public static Bitmap scaleToMaxGLSize(Context context, File mediaFile, int width, int height)
 	{
 		try {
 
@@ -221,28 +261,16 @@ public class UIHelpers
 			BitmapFactory.decodeStream(bis, null, o);
 			bis.close();
 			
-			//BitmapFactory.decodeFile(mediaFile.getAbsolutePath(), o);
-
-			int[] buf = new int[1];
-			EGLContext.getEGL();
-			GLES20.glGetIntegerv(GLES20.GL_MAX_TEXTURE_SIZE, buf, 0);
-
-			// The new size we want to scale to
-			int REQUIRED_SIZE = buf[0];
-			if (REQUIRED_SIZE < 1)
-			{
-				Log.v("UIHelpers", "GL Max texture size returned 0!");
-				REQUIRED_SIZE = 640;
-			}
+			Point maxSize = getMaxGLSize(context);
 
 			int scale = 1;
-			if (o.outWidth > REQUIRED_SIZE || o.outHeight > REQUIRED_SIZE)
+			if (o.outWidth > maxSize.x || o.outHeight > maxSize.y)
 			{
 				// Find the correct scale value. It should be the power of 2.
 				int width_tmp = o.outWidth, height_tmp = o.outHeight;
 				while (true)
 				{
-					if (width_tmp < REQUIRED_SIZE && height_tmp < REQUIRED_SIZE)
+					if (width_tmp < maxSize.x && height_tmp < maxSize.y)
 					{
 						break;
 					}
