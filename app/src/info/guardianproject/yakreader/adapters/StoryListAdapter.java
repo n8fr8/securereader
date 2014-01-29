@@ -66,7 +66,6 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 		{
 			mResIdHeaderView = resIdHeaderView;
 			mHeaderOnlyIfNoItems = onlyIfNoItems;
-			this.notifyDataSetChanged();
 		}
 	}
 

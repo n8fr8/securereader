@@ -1,9 +1,9 @@
 package info.guardianproject.yakreader;
 
-import info.guardianproject.securereader.FeedFetcher.FeedFetchedCallback;
 import info.guardianproject.securereader.Settings.SyncMode;
 import info.guardianproject.securereader.SocialReader;
 import info.guardianproject.securereader.SyncService;
+import info.guardianproject.securereader.FeedFetcher.FeedFetchedCallback;
 import info.guardianproject.yakreader.models.FeedFilterType;
 import info.guardianproject.yakreader.ui.ActionProviderFeedFilter;
 import info.guardianproject.yakreader.ui.UICallbackListener;
@@ -79,19 +79,9 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 
 	ActionProviderFeedFilter mAPFeedFilter;
 	FeedFilterType mFeedFilterType;
+	Feed mFeed;
 
 	StoryListView mStoryListView;
-	ArrayList<Item> mRecentItems;
-
-	ArrayList<Item> mPopularItems;
-	boolean mPopularItemsAreFaked; // True if the popular stories are only
-									// "examples"
-
-	ArrayList<Item> mFavoriteItems;
-	boolean mFavoriteItemsAreFaked; // True if it is only "examples", not
-									// our real favorites
-
-	ArrayList<Item> mSharedItems;
 
 	boolean mIsLoading;
 	private SyncMode mCurrentSyncMode;
@@ -131,14 +121,13 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 				Log.v(LOGTAG, "Got a syncEvent");
 				if (syncTask.type == SyncService.SyncTask.TYPE_FEED && syncTask.status == SyncService.SyncTask.FINISHED)
 				{
-					refreshSelectedFeedOrAll(false);
+					refreshListIfCurrent(syncTask.feed);
 				}
 			}
 		});
 
-		// socialReader.goOnline(this);
-		showRecent(false);
 		createFeedSpinner();
+		updateList(FeedFilterType.ALL_FEEDS, null);
 	}
 
 	private void createFeedSpinner()
@@ -253,13 +242,13 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 						@Override
 						public void run()
 						{
-							refreshSelectedFeedOrAll(true);
+							refreshList();
 						}
 					}, 6000);
 				}
 				else
 				{
-					refreshSelectedFeedOrAll(true);
+					refreshList();
 				}
 			}
 		}
@@ -283,8 +272,10 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			mAPFeedFilter.setCurrentTitle(getString(R.string.feed_filter_shared_stories));
 		else if (mFeedFilterType == FeedFilterType.FAVORITES)
 			mAPFeedFilter.setCurrentTitle(getString(R.string.feed_filter_favorites));
+		else if (mFeed != null)
+			mAPFeedFilter.setCurrentTitle(mFeed.getTitle());
 		else
-			mAPFeedFilter.setCurrentTitle(App.getInstance().m_activeFeed.getTitle());
+			mAPFeedFilter.setCurrentTitle(getString(R.string.feed_filter_all_feeds));
 	}
 
 	private Feed getFeedById(long idFeed)
@@ -355,57 +346,18 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			@Override
 			public void onFeedSelect(FeedFilterType type, long feedId, Object source)
 			{
-				if (type == FeedFilterType.ALL_FEEDS)
+				Feed feed = null;
+				boolean visibleTags = false;
+				if (type == FeedFilterType.SINGLE_FEED)
 				{
-					setTagItemVisible(false);
-					App.getInstance().m_activeFeed = null;
-					showRecent(false);
-					refreshSelectedFeedOrAll(true);
-				}
-				else if (type == FeedFilterType.POPULAR)
-				{
-					setTagItemVisible(false);
-					App.getInstance().m_activeFeed = null;
-					showPopular(false);
-				}
-				else if (type == FeedFilterType.FAVORITES)
-				{
-					setTagItemVisible(false);
-					App.getInstance().m_activeFeed = null;
-					showFavorites(false);
-				}
-				else if (type == FeedFilterType.SHARED)
-				{
-					setTagItemVisible(false);
-					App.getInstance().m_activeFeed = null;
-					showShared(false);
-					refreshSelectedFeedOrAll(true);
-				}
-				else if (type == FeedFilterType.SINGLE_FEED)
-				{
-					Feed feed = getFeedById(feedId);
+					feed = getFeedById(feedId);
 					if (feed != null)
 					{
-						setTagItemVisible(true);
-						App.getInstance().m_activeFeed = feed;
-						if (mFeedFilterType != FeedFilterType.SINGLE_FEED)
-							showRecent(false);
-						refreshSelectedFeedOrAll(true);
-					}
-					else
-					{
-						// Null and show all feeds
-						setTagItemVisible(false);
-						App.getInstance().m_activeFeed = null;
-						mRecentItems = null;
-						showRecent(false);
-						mFeedFilterType = FeedFilterType.ALL_FEEDS;
+						visibleTags = true;
 					}
 				}
-				syncSpinnerToCurrentItem();
-
-				// TEMP TEMP TEMP
-				// showError("Error message!!!");
+				setTagItemVisible(visibleTags);
+				updateList(type, feed);
 			}
 
 			@Override
@@ -414,7 +366,8 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 				// An item has been marked/unmarked as favorite. Update the list
 				// of favorites to pick
 				// up this change!
-				updateFavoriteItems();
+				if (mFeedFilterType == FeedFilterType.FAVORITES)
+					refreshList();
 			}
 
 			@Override
@@ -426,7 +379,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 				{
 					// First add it to reader!
 					App.getInstance().socialReader.addFeedByURL(commandParameters.getString("uri"), MainActivity.this.mFeedFetchedCallback);
-					showRecent(false);
+					refreshList();
 					break;
 				}
 				}
@@ -436,7 +389,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			public void onRequestResync(Feed feed)
 			{
 				onResync(feed, (mFeedFilterType == FeedFilterType.ALL_FEEDS || mFeedFilterType == FeedFilterType.SINGLE_FEED)
-						&& App.getInstance().m_activeFeed == feed); // Only show
+						&& mFeed == feed); // Only show
 																	// spinner
 																	// if
 																	// updating
@@ -531,9 +484,9 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 	public void onResync()
 	{
 		if (mFeedFilterType == FeedFilterType.SHARED)
-			this.refreshSelectedFeedOrAll(true);
+			refreshList();
 		else
-			onResync(App.getInstance().m_activeFeed, true);
+			onResync(mFeed, true);
 	}
 
 	private void onResync(Feed feed, boolean showLoadingSpinner)
@@ -573,92 +526,6 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		}
 	}
 
-	class RefreshFeedsTask extends AsyncTask<Object, Void, Void>
-	{
-		FeedFilterType type;
-		ArrayList<Feed> listOfFeeds;
-
-		@Override
-		protected Void doInBackground(Object... values)
-		{
-			type = (FeedFilterType) values[0];
-
-			Log.v(LOGTAG, "RefreshFeedsTask: doInBackground");
-			if (type == FeedFilterType.SHARED)
-			{
-				listOfFeeds = socialReader.getAllShared();
-			}
-			else if (type == FeedFilterType.FAVORITES)
-			{
-				listOfFeeds = socialReader.getAllFavorites();
-			}
-			else if (type == FeedFilterType.ALL_FEEDS || App.getInstance().m_activeFeed == null)
-			{
-				Log.v(LOGTAG, "RefreshFeedsTask: all subscribed");
-				listOfFeeds = new ArrayList<Feed>();
-				listOfFeeds.add(socialReader.getSubscribedFeedItems());
-			}
-			else
-			{
-				Log.v(LOGTAG, "RefreshFeedsTask: " + App.getInstance().m_activeFeed.getTitle());
-				listOfFeeds = new ArrayList<Feed>();
-				listOfFeeds.add(socialReader.getFeed(App.getInstance().m_activeFeed));
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result)
-		{
-			Log.v(LOGTAG, "RefreshFeedsTask: finished");
-			processFeed(type, listOfFeeds);
-		}
-	}
-
-	/**
-	 * Depending on if "All feeds" or a specific feed is selected in the feed
-	 * filter go ahead and call "getFeed" or "getAllFeeds" accordingly. Also,
-	 * make sure to show loading indicator.
-	 */
-	@SuppressLint("NewApi")
-	private void refreshSelectedFeedOrAll(boolean showProgressIndicator)
-	{
-		// If we are on a specific feed, make sure that it is still "valid",
-		// i.e. that we are still subscribing
-		// to it (we might have removed it since last time here)
-		if (mFeedFilterType == FeedFilterType.SINGLE_FEED && App.getInstance().m_activeFeed != null)
-		{
-			long activeFeed = App.getInstance().m_activeFeed.getDatabaseId();
-			boolean bFoundIt = false;
-
-			ArrayList<Feed> subscribedFeeds = App.getInstance().socialReader.getSubscribedFeedsList();
-			for (Feed feed : subscribedFeeds)
-			{
-				if (feed.getDatabaseId() == activeFeed)
-				{
-					bFoundIt = true;
-					break;
-				}
-			}
-			if (!bFoundIt)
-			{
-				// No longer subscribed. We'll fall back to "All items"
-				mFeedFilterType = FeedFilterType.ALL_FEEDS;
-				App.getInstance().m_activeFeed = null;
-				syncSpinnerToCurrentItem();
-			}
-		}
-
-		if (showProgressIndicator)
-			setIsLoading(true);
-
-		RefreshFeedsTask refreshTask = new RefreshFeedsTask();
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
-			refreshTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mFeedFilterType);
-		else
-			refreshTask.execute(mFeedFilterType);
-	}
-
 	private void setIsLoading(boolean isLoading)
 	{
 		mIsLoading = isLoading;
@@ -677,116 +544,49 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 				mStoryListView.showError(error);
 		}
 	}
-
-	private void showRecent(boolean isUpdate)
+	
+	private UpdateFeedListTask mUpdateListTask;
+	
+	@SuppressLint({ "InlinedApi", "NewApi" })
+	private void updateList(FeedFilterType feedFilterType, Feed optionalFeed)
 	{
-		Log.v(LOGTAG, "showRecent " + isUpdate);
-
-		if (App.getInstance().m_activeFeed != null)
-			mFeedFilterType = FeedFilterType.SINGLE_FEED;
+		boolean isUpdate = (feedFilterType == mFeedFilterType);
+		
+		mFeedFilterType = feedFilterType;
+		mFeed = optionalFeed;
+		
+		if (!isUpdate)
+			setIsLoading(true);
+		
+		if (mUpdateListTask != null)
+			mUpdateListTask.cancel(true);
+		mUpdateListTask = new UpdateFeedListTask(this, mFeedFilterType, optionalFeed, isUpdate);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			mUpdateListTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 		else
-			mFeedFilterType = FeedFilterType.ALL_FEEDS;
-		if (mStoryListView != null)
-		{
-			int headerViewId = 0;
-			if (mRecentItems == null || mRecentItems.size() == 0)
-			{
-				headerViewId = R.layout.story_list_hint_tor;
-			}
-			mStoryListView.updateItems(this, mRecentItems, headerViewId, isUpdate);
-		}
+			mUpdateListTask.execute();
+
+		syncSpinnerToCurrentItem();
 	}
 
-	public void showFavorites(boolean isUpdate)
+	private void refreshList()
 	{
-		mFeedFilterType = FeedFilterType.FAVORITES;
-		boolean shouldShowAddFavoriteHint = mFavoriteItemsAreFaked || mFavoriteItems == null || mFavoriteItems.size() == 0;
-		if (mStoryListView != null)
-			mStoryListView.updateItems(this, mFavoriteItems, shouldShowAddFavoriteHint ? R.layout.story_list_hint_add_favorite : 0, isUpdate);
+		updateList(mFeedFilterType, mFeed);
 	}
-
-	public void showPopular(boolean isUpdate)
+	
+	private void refreshListIfCurrent(Feed feed)
 	{
-		mFeedFilterType = FeedFilterType.POPULAR;
-		boolean shouldShowNoPopularHint = mPopularItemsAreFaked || mPopularItems == null || mPopularItems.size() == 0;
-		if (mStoryListView != null)
-			mStoryListView.updateItems(this, mPopularItems, shouldShowNoPopularHint ? R.layout.story_list_hint_no_popular : 0, isUpdate);
+		if (mFeedFilterType == FeedFilterType.ALL_FEEDS)
+		{
+			refreshList();
+		}
+		else if (mFeedFilterType == FeedFilterType.SINGLE_FEED && mFeed != null && mFeed.getDatabaseId() == feed.getDatabaseId())
+		{
+			mFeed = feed;
+			refreshList();
+		}
 	}
-
-	public void showShared(boolean isUpdate)
-	{
-		mFeedFilterType = FeedFilterType.SHARED;
-		boolean shouldShowNoSharedHint = mSharedItems == null || mSharedItems.size() == 0;
-		if (mStoryListView != null)
-			mStoryListView.updateItems(this, mSharedItems, shouldShowNoSharedHint ? R.layout.story_list_hint_no_shared : 0, isUpdate);
-	}
-
-	private void processFeed(FeedFilterType type, ArrayList<Feed> listOfFeeds)
-	{
-		Log.v(LOGTAG, "feedFetched");
-
-		if (type == FeedFilterType.ALL_FEEDS || type == FeedFilterType.SINGLE_FEED)
-		{
-			Feed _feed = listOfFeeds.get(0);
-			if (App.getInstance().m_activeFeed != null && App.getInstance().m_activeFeed.getDatabaseId() == _feed.getDatabaseId())
-				App.getInstance().m_activeFeed = _feed; // need to update to get
-														// NetworkPullDate
-
-			boolean isAllFeeds = (mFeedFilterType == FeedFilterType.ALL_FEEDS && type == FeedFilterType.ALL_FEEDS && _feed.getDatabaseId() == -1);
-			boolean isThisFeed = (type == FeedFilterType.SINGLE_FEED && App.getInstance().m_activeFeed != null && _feed.getDatabaseId() == App.getInstance().m_activeFeed
-					.getDatabaseId());
-
-			Log.v(LOGTAG, "processFeed - isAllFeeds:" + isAllFeeds + " isThisFeed:" + isThisFeed);
-			if (isAllFeeds || isThisFeed)
-			{
-				mRecentItems = _feed.getItems();
-				Log.v(LOGTAG, "have " + mRecentItems.size() + " items");
-				if (mFeedFilterType == FeedFilterType.ALL_FEEDS || mFeedFilterType == FeedFilterType.SINGLE_FEED)
-				{
-					showRecent(true);
-					checkShowStoryFullScreen(mRecentItems);
-					if (!isAllFeeds)
-					{
-						showErrorForFeed(_feed, !mIsLoading);
-					}
-					else
-					{
-						this.showError(null);
-						for (Feed feed : App.getInstance().socialReader.getSubscribedFeedsList())
-						{
-							if (showErrorForFeed(feed, !mIsLoading))
-								break;
-						}
-					}
-				}
-			}
-			else
-			{
-				// Ignore, we are not showing this feed right now!
-				Log.v(LOGTAG, "No ui update for feed");
-			}
-		}
-		else if (type == FeedFilterType.FAVORITES)
-		{
-			updateFavoriteItems();
-		}
-		else if (type == FeedFilterType.POPULAR)
-		{
-			updatePopularItems();
-		}
-		else if (type == FeedFilterType.SHARED)
-		{
-			this.mSharedItems = flattenFeedArray(listOfFeeds);
-			if (mFeedFilterType == FeedFilterType.SHARED)
-			{
-				showShared(true);
-				checkShowStoryFullScreen(mSharedItems);
-			}
-		}
-
-		setIsLoading(false);
-	}
-
+	
 	private void checkShowStoryFullScreen(ArrayList<Item> items)
 	{
 		if (mShowItemId != 0)
@@ -854,115 +654,11 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		public void feedFetched(Feed _feed)
 		{
 			Log.v(LOGTAG, "feedFetched Callback");
-			ArrayList<Feed> listOfFeeds = new ArrayList<Feed>();
-			listOfFeeds.add(_feed);
-			processFeed((_feed == null || _feed.getDatabaseId() == Feed.DEFAULT_DATABASE_ID) ? FeedFilterType.ALL_FEEDS : FeedFilterType.SINGLE_FEED,
-					listOfFeeds);
+			refreshListIfCurrent(_feed);
 		}
 	};
 	private StoryListHintTorView mTorView;
 
-	private void updateFavoriteItems()
-	{
-		ArrayList<Item> favoriteItems = new ArrayList<Item>();
-
-		// Get our favorites from the reader.
-		//
-		ArrayList<Feed> favItemsPerFeed = App.getInstance().socialReader.getAllFavorites();
-		if (favItemsPerFeed != null)
-		{
-			Iterator<Feed> itFeed = favItemsPerFeed.iterator();
-			while (itFeed.hasNext())
-			{
-				Feed feed = itFeed.next();
-				favoriteItems.addAll(feed.getItems());
-			}
-		}
-
-		boolean fakedItems = false;
-		if (favoriteItems.size() == 0)
-		{
-			// No real favorites, so we fake some by randomly picking Items from
-			// the "all items" feed
-			fakedItems = true;
-
-			Feed allSubscribed = App.getInstance().socialReader.getSubscribedFeedItems();
-			if (allSubscribed != null)
-			{
-				ArrayList<Item> allSubscribedItems = allSubscribed.getItems();
-
-				// Truncate to random 5 items
-				Collections.shuffle(allSubscribedItems);
-				favoriteItems.addAll(allSubscribedItems.subList(0, Math.min(5, allSubscribedItems.size())));
-			}
-		}
-
-		mFavoriteItems = favoriteItems;
-		mFavoriteItemsAreFaked = fakedItems;
-
-		if (mFeedFilterType == FeedFilterType.FAVORITES)
-			showFavorites(true);
-	}
-
-	private void updatePopularItems()
-	{
-		ArrayList<Item> items = null;
-
-		Feed allSubscribed = App.getInstance().socialReader.getSubscribedFeedItems();
-		if (allSubscribed != null)
-		{
-			items = allSubscribed.getItems();
-		}
-
-		ArrayList<Item> popularItems = new ArrayList<Item>(items);
-		Iterator<Item> it = popularItems.iterator();
-		while (it.hasNext())
-		{
-			Item item = it.next();
-			// TODO - implementing comments we need to fix this
-			// if (item.getComments().size() == 0)
-			it.remove();
-		}
-
-		boolean fakedPopular = false;
-
-		// TODO - how many popular should we show? Ordered by what, number of
-		// comments?
-
-		if (popularItems.size() == 0)
-		{
-			// No comments for any story. Let's add some dummies based on title
-			// length! =)
-			fakedPopular = true;
-
-			popularItems = (ArrayList<Item>) items.clone();
-			Collections.sort(popularItems, new Comparator<Item>()
-			{
-				@Override
-				public int compare(Item i1, Item i2)
-				{
-					if (i1.equals(i2))
-						return 0;
-					else if (i1.getTitle() == null && i2.getTitle() == null)
-						return 0;
-					else if (i1.getTitle() == null)
-						return 1;
-					else if (i2.getTitle() == null)
-						return -1;
-					return (i1.getTitle().length() >= i2.getTitle().length()) ? -1 : 0;
-				}
-			});
-
-			// Truncate to 5 items
-			for (int i = popularItems.size() - 1; i >= 5; i--)
-			{
-				popularItems.remove(i);
-			}
-		}
-
-		mPopularItems = popularItems;
-		mPopularItemsAreFaked = fakedPopular;
-	}
 
 	@Override
 	protected boolean onCommand(int command, Bundle commandParameters)
@@ -1010,7 +706,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			if (mCurrentSyncMode != App.getSettings().syncMode())
 			{
 				mCurrentSyncMode = App.getSettings().syncMode();
-				refreshSelectedFeedOrAll(false);
+				refreshList();
 			}
 		}
 	}
@@ -1072,7 +768,139 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		// socialReader.goOnline(this);
 
 		createFeedSpinner();
-		syncSpinnerToCurrentItem();
+		updateList(FeedFilterType.ALL_FEEDS, null);
 		// setActionBarTitle(getString(R.string.feed_filter_all_feeds));
+	}
+
+	class UpdateFeedListTask extends AsyncTask<Void, Void, ArrayList<Feed>>
+	{
+		private Context mContext;
+		private FeedFilterType mFeedFilterType;
+		private Feed mFeed;
+		private boolean mIsUpdate;
+
+		public UpdateFeedListTask(Context context, FeedFilterType feedFilterType, Feed feed, boolean isUpdate)
+		{
+			mContext = context;
+			mFeedFilterType = feedFilterType;
+			mFeed = feed;
+			mIsUpdate = isUpdate;
+		}
+
+		@Override
+		protected ArrayList<Feed> doInBackground(Void... values)
+		{
+			Log.v(LOGTAG, "UpdateFeedListTask: doInBackground");
+
+			ArrayList<Feed> listOfFeeds = null;
+
+			if (mFeedFilterType == FeedFilterType.SHARED)
+			{
+				listOfFeeds = socialReader.getAllShared();
+			}
+			else if (mFeedFilterType == FeedFilterType.FAVORITES)
+			{
+				listOfFeeds = socialReader.getAllFavorites();
+			}
+			else if (mFeedFilterType == FeedFilterType.ALL_FEEDS || mFeed == null)
+			{
+				Log.v(LOGTAG, "UpdateFeedsTask: all subscribed");
+				listOfFeeds = new ArrayList<Feed>();
+				listOfFeeds.add(socialReader.getSubscribedFeedItems());
+			}
+			else
+			{
+				Log.v(LOGTAG, "UpdateFeedsTask: " + mFeed.getTitle());
+				listOfFeeds = new ArrayList<Feed>();
+				listOfFeeds.add(socialReader.getFeed(mFeed));
+			}
+			return listOfFeeds;
+		}
+
+		@Override
+		protected void onPostExecute(ArrayList<Feed> result)
+		{
+			Log.v(LOGTAG, "RefreshFeedsTask: finished");
+
+			switch (mFeedFilterType)
+			{
+			case ALL_FEEDS:
+			case SINGLE_FEED:
+			{
+				Feed _feed = result.get(0);
+				if (mFeed != null && mFeed.getDatabaseId() == _feed.getDatabaseId())
+					mFeed = _feed; // need to update to get NetworkPullDate
+
+				// Any errors to show?
+				showError(null);
+				for (Feed feed : result)
+				{
+					if (showErrorForFeed(feed, !mIsLoading))
+						break;
+				}
+
+				int headerViewId = 0;
+				ArrayList<Item> items = result.get(0).getItems();
+				if (items == null || items.size() == 0)
+				{
+					headerViewId = R.layout.story_list_hint_tor;
+				}
+				mStoryListView.updateItems(mContext, items, headerViewId, mIsUpdate);
+				checkShowStoryFullScreen(items);
+			}
+				break;
+
+			case FAVORITES:
+			{
+				ArrayList<Item> favoriteItems = new ArrayList<Item>();
+				if (result != null)
+				{
+					Iterator<Feed> itFeed = result.iterator();
+					while (itFeed.hasNext())
+					{
+						Feed feed = itFeed.next();
+						favoriteItems.addAll(feed.getItems());
+					}
+				}
+
+				boolean fakedItems = false;
+				if (favoriteItems.size() == 0)
+				{
+					// No real favorites, so we fake some by randomly picking
+					// Items from
+					// the "all items" feed
+					fakedItems = true;
+
+					Feed allSubscribed = App.getInstance().socialReader.getSubscribedFeedItems();
+					if (allSubscribed != null)
+					{
+						ArrayList<Item> allSubscribedItems = allSubscribed.getItems();
+
+						// Truncate to random 5 items
+						Collections.shuffle(allSubscribedItems);
+						favoriteItems.addAll(allSubscribedItems.subList(0, Math.min(5, allSubscribedItems.size())));
+					}
+				}
+
+				boolean shouldShowAddFavoriteHint = fakedItems || favoriteItems == null || favoriteItems.size() == 0;
+				mStoryListView.updateItems(mContext, favoriteItems, shouldShowAddFavoriteHint ? R.layout.story_list_hint_add_favorite : 0, mIsUpdate);
+				break;
+			}
+
+			case POPULAR:
+				// TODO
+				break;
+
+			case SHARED:
+			{
+				ArrayList<Item> items = flattenFeedArray(result);
+				boolean shouldShowNoSharedHint = (items == null || items.size() == 0);
+				mStoryListView.updateItems(mContext, items, shouldShowNoSharedHint ? R.layout.story_list_hint_no_shared : 0, mIsUpdate);
+				checkShowStoryFullScreen(items);
+			}
+				break;
+			}
+			setIsLoading(false);
+		}
 	}
 }
