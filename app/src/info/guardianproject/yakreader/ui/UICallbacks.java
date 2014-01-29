@@ -275,6 +275,7 @@ public class UICallbacks
 					// "ask for installation"...
 					if (mediaContent.getDownloadedNonVFSFile() != null) {
 						Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.setDataAndType(Uri.fromFile(mediaContent.getDownloadedNonVFSFile()),mediaContent.getType());
 						context.startActivity(intent);
 					}
