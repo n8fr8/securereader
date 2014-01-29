@@ -835,8 +835,11 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 				showError(null);
 				for (Feed feed : result)
 				{
-					if (showErrorForFeed(feed, !mIsLoading))
-						break;
+					if (feed != null)
+					{
+						if (showErrorForFeed(feed, !mIsLoading))
+							break;
+					}
 				}
 
 				int headerViewId = 0;
