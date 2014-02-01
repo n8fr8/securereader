@@ -4,8 +4,10 @@
     android:id="@+id/svTags"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/grey_light_medium"
+    android:background="@drawable/story_item_tags_background"
     android:fillViewport="true"
+    android:paddingLeft="@dimen/card_left_margin"
+    android:paddingRight="@dimen/card_right_margin"
     android:paddingTop="1px"
     android:scrollbars="horizontal" >
 
@@ -13,8 +15,8 @@
         android:id="@+id/llTags"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:background="#ffffff"
         android:orientation="horizontal" >
+
     </LinearLayout>
 
 </HorizontalScrollView>

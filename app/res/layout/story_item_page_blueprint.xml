@@ -1,56 +1,79 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/story_item_background_selector"
     android:gravity="top"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp" >
 
-    <include
-        android:id="@+id/ivPhotos"
+    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+        android:id="@+id/layout_media"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        layout="@layout/story_media_content_view" />
+        android:layout_height="wrap_content"
+        app:height_limit="1.75" >
+        
+        <include
+            android:id="@+id/ivPhotos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/story_media_content_view" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+    
+    <include
+        android:id="@+id/layout_source"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/source_height"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/source_top_margin"
+        layout="@layout/story_item_page_source" />
+
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvTitle"
         style="@style/StoryItemTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/title_top_margin"
         android:text="@string/story_item_short_title" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
-        android:id="@+id/tvAuthor"
-        style="@style/StoryItemAuthorStyle"
+    <include
+        android:id="@+id/layout_author"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/story_item_short_author" />
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/author_top_margin"
+        layout="@layout/story_item_page_author" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvContent"
         style="@style/StoryItemContentStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/content_top_margin"
         android:text="TextView" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvReadMore"
         style="@style/StoryItemOrwebLinkStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
         android:background="#ffffff"
         android:drawableLeft="@drawable/ic_read_orweb"
         android:drawablePadding="10dp"
         android:gravity="center_vertical"
-        android:padding="10dp"
+        android:paddingTop="10dp"
         android:text="@string/story_item_read_with_orweb" />
 
 </LinearLayout>

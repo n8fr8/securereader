@@ -37,7 +37,7 @@
                     android:imeOptions="actionGo"
                     android:inputType="textPassword" />
 
-                    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+                    <info.guardianproject.yakreader.widgets.CustomFontTextView
                         android:id="@+id/tvError"
                         style="@style/LockScreenErrorStyle"
                         android:layout_width="match_parent"

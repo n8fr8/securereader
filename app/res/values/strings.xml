@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Courier</string>
-    <string name="app_description">Courier is a secure news reader and reporter app featuring group conversations around news.</string>
+    <string name="app_name">YakReader</string>
+    <string name="app_description">YakReader is a secure news reader and reporter app featuring group conversations around news.</string>
     
-    <string name="title_activity_main">Courier</string>
-    <string name="title_activity_help">Courier</string>
-    <string name="title_activity_downloads">Courier</string>
-    <string name="title_activity_add_feed">Courier</string>
+    <string name="title_activity_main">YakReader</string>
+    <string name="title_activity_help">YakReader</string>
+    <string name="title_activity_downloads">YakReader</string>
+    <string name="title_activity_add_feed">YakReader</string>
     <string name="title_activity_post">My Posts</string>
-    <string name="title_activity_add_post">Courier</string>
-    <string name="title_activity_panic">Courier</string>
-    <string name="title_activity_view_media">Courier</string>
-    <string name="title_activity_settings">Courier</string>
-    <string name="title_activity_lock_screen">Courier</string>
-    <string name="title_activity_create_account">Courier</string>
+    <string name="title_activity_add_post">YakReader</string>
+    <string name="title_activity_panic">YakReader</string>
+    <string name="title_activity_view_media">YakReader</string>
+    <string name="title_activity_settings">YakReader</string>
+    <string name="title_activity_lock_screen">YakReader</string>
+    <string name="title_activity_create_account">YakReader</string>
     <string name="title_activity_httpd_app_sender">SHARE APP</string>
     <string name="menu_tag">Search by Tag</string>
     <string name="menu_share">Share</string>
@@ -31,24 +31,24 @@
     <string name="story_list_hint_add_favorite_text2">Here are some favorites from fellow readers to hold you over:</string>
     <string name="story_list_hint_no_popular_text1">Stories get popular when comments are shared!</string>
     <string name="story_list_hint_no_popular_text2">These stories have long titles, perhaps they\'re worth talking about:</string>
-    <string name="story_list_hint_no_shared_text1">The stories shared with you using Courier’s Secure Share are listed here.</string>
+    <string name="story_list_hint_no_shared_text1">The stories shared with you using YakReader’s Secure Share are listed here.</string>
     <string name="story_list_hint_no_shared_text2">To receive a share from a friend, go to the ‘Receive a Share’ screen from the side menu.</string>
-    <string name="help_title">About Courier</string>
-    <string name="help_tor_title">Go Online with Tor</string>
-    <string name="help_tor_content">Tor is an open network that helps keep you safe online. It defends against network surveillance that threatens your personal freedom and privacy. You will use the Orbot app to connect to the Tor network.</string>
+    <string name="help_title">About YakReader</string>
+    <string name="help_tor_title">Go Online with Tor?</string>
+    <string name="help_tor_content">Tor is an open network that helps keep you safe online. It defends against network surveillance that threatens your personal freedom and privacy. You must use the Orbot app to connect to the Tor network.</string>
     <string name="help_tor_button">Go Online with Tor</string>
     <string name="help_wipe_title">Wipe the App</string>
-    <string name="help_wipe_content">Tap the panic button to delete your personal data within Courier. You can set the panic action to delete the entire app in your preferences.</string>
+    <string name="help_wipe_content">Tap the panic button to delete your personal data within YakReader. You can set the panic action to delete the entire app in your preferences.</string>
     <string name="help_wipe_button">Test panic button</string>
     <string name="help_share_title">Share locally, without Internet</string>
-    <string name="help_share_content">Share stories, feeds and the entire app using the Courier Secure Share. It\'s safe, easy and only requires a friend nearby with Bluetooth. App sharing requires a WiFi network or hotspot.</string>
+    <string name="help_share_content">Share stories, feeds and the entire app using the YakReader Secure Share. It\'s safe, easy and only requires a friend nearby with Bluetooth. App sharing requires a WiFi network or hotspot.</string>
     <string name="help_data_title">Minimize Data Use</string>
-    <string name="help_data_content">Tips to reduce your data consumption:\n\n1. Sync only the feeds that matter to you most. Courier allows you to sync individual feeds.\n\n2. Choose Bit Wise syncing mode in your preferences. This syncs only text, with the ability to load photos on a story by story basis.\n\n3. Expire your articles in a timely manner. Choose your time frame in your preferences.</string>
+    <string name="help_data_content">Tips to reduce your data consumption:\n\n1. Sync only the feeds that matter to you most. YakReader allows you to sync individual feeds.\n\n2. Choose Bit Wise syncing mode in your preferences. This syncs only text, with the ability to load photos on a story by story basis.\n\n3. Expire your articles in a timely manner. Choose your time frame in your preferences.</string>
 	<string name="about_guardian_title">About Guardian Project</string>
     <string name="about_guardian_content">The Guardian Project creates easy to use apps, open-source software libraries, operating system modifications, and customized mobile devices useful to any person looking to protect their communications and personal data from unjust intrusion and monitoring. Visit us at https://guardianproject.info</string>
     <string name="help_terms_group_title">Terms and Software Licenses</string>
     <string name="help_terms_title">Terms and Software Licenses</string>
-    <string name="help_terms_content">User-Submitted Materials\n\nBBG Websites may allow users to post, upload, transmit, or otherwise submit comments, messages, photos, images, story ideas, or other content or materials (collectively “User-Submitted Materials). You acknowledge that User-Submitted Materials may be routed through our servers, the servers of one or more third parties on our behalf, and the Internet. You acknowledge that BBG Websites are for public and not private communications.\n\nYou may only submit materials to BBG Websites for which you have the copyright or other necessary rights and permission to distribute electronically. You may not violate, plagiarize, or infringe on the rights of third parties, including copyright, patent, trademark, trade secret, privacy, personal, publicity, moral or proprietary rights. You agree and represent that you own or have all necessary rights and permissions to use, distribute, and authorize BBG to use and distribute any materials you submit.\n\nYou retain any copyright or other ownership rights you possess in any User-Submitted Materials that you submit on or through BBG Websites. However, by submitting any User-Submitted Materials on or through BBG Websites, you hereby grant BBG a non-exclusive, perpetual, royalty-free, fully paid up, worldwide, transferable license to use, copy, sublicense, modify, transmit, publicly perform, display, create derivative works of, host, index, cache, tag, encode, and/or adapt your User-Submitted Materials in any and all media formats or channels, whether now known or hereafter devised.\n\nAdditional user-submitted material Rules Specific to Posting Comments\n\nBBG will make every effort to review and post comments within 48 hours, although BBG is under no obligation to post comments within any deadline or to post the comments at all. BBG encourages thoughtful discussion and will not censor comments based on ideology or political points of view. BBG will not edit comments - we will either post them or refuse to post them. All comments must follow these rules:\n\n- Stay on topic.\n- No obscenity, profanity, vulgarity, hate language, SHOUTING, or other bad behavior.\n- No personal attacks. No inflammatory language or calls for violence.\n- No advocating or providing instruction on how to conduct any illegal activity\n- No advertising, promotional materials, "junk mail," "spam," "chain letters," "pyramid schemes," or any other form of solicitation\n- Simple text only, no html or other code.</string>
+    <string name="help_terms_content"></string>
     <string name="help_show_news">Got it. Show me the news!</string>
     <string name="downloads_title">Media Downloads</string>
     <string name="downloads_complete">COMPLETE</string>
@@ -72,7 +72,7 @@
     <string name="menu_post_new">Create a Post</string>
     <string name="menu_downloads">Downloads</string>
     <string name="menu_chat">Chat</string>
-    <string name="menu_help">About Courier</string>
+    <string name="menu_help">About YakReader</string>
     <string name="menu_share_app">Share App</string>
     <string name="menu_receive_share">Receive a Share</string>
     <string name="menu_tor_connected">Connected to Tor</string>
@@ -83,38 +83,20 @@
     <string name="menu_num_downloads">%1$d items</string>
     <string name="menu_preferences">Preferences</string>
     <string name="story_item_short_author">By %1s</string>
-    <string name="story_item_short_published_never">Never published</string>
-    <string name="story_item_short_published_recently">Less than a minute ago</string>
-    <string name="story_item_short_published_minutes">%1$d minutes ago</string>
-    <string name="story_item_short_published_minute">%1$d minute ago</string>
-    <string name="story_item_short_published_hours">%1$d hours ago</string>
-    <string name="story_item_short_published_hour">%1$d hour ago</string>
-    <string name="story_item_short_published_days">%1$d days ago</string>
-    <string name="story_item_short_published_day">%1$d day ago</string>
+    <string name="story_item_short_published_never"></string>
+    <string name="story_item_short_published_recently">Now</string>
+    <string name="story_item_short_published_minutes">%1$d m</string>
+    <string name="story_item_short_published_minute">%1$d m</string>
+    <string name="story_item_short_published_hours">%1$d hr</string>
+    <string name="story_item_short_published_hour">%1$d hr</string>
+    <string name="story_item_short_published_days">%1$d d</string>
+    <string name="story_item_short_published_day">%1$d d</string>
     <string name="story_item_short_tag_results">Showing results for ##%1s##</string>
     <string name="story_item_share_popup_title">Share story via</string>
     <string name="story_item_search_by_tag_hint">Search by #tag</string>
     <string name="story_item_swipe_hint_up">Up to close</string>
     <string name="story_item_swipe_hint_over">Over to read</string>
-    <string name="story_item_read_with_orweb">Read online with Orweb</string>
-    <string name="error_unknown">Error: Unknown error (see log)</string>
-    <string name="error_http_unauthorized">Error: 401 unauthorized</string>
-    <string name="error_http_forbidden">Error: 403 forbidden</string>
-    <string name="error_http_not_found">Error: 404 not found</string>
-    <string name="error_http_server_error">Error: 500 server error</string>
-    <string name="error_http_other_error">Error: other HTTP error (see log)</string>
-    <string name="error_ssl_rejected">Error: SSL certificate rejected</string>
-    <string name="error_parse_error">Error: JSON parse failed</string>
-    <string name="error_io_error">Error: I/O failure (server down?)</string>
-    <string name="error_other_error">Error: unknown error (see log)</string>
-    <string name="error_api_disabled">Error: Please enable external API access in tt-rss Preferences - Advanced</string>
-    <string name="error_api_unknown">Error: unknown API error (see log)</string>
-    <string name="error_api_incorrect_usage">Error: incorrect API usage</string>
-    <string name="error_login_failed">Error: username or password incorrect</string>
-    <string name="error_invalid_api_url">Error: invalid API URL</string>
-    <string name="error_ssl_hostname_rejected">Error: SSL hostname not verified</string>
-    <string name="error_network_unavailable">Error: network unavailable</string>
-    <string name="error_api_unknown_method">Error: unknown API method</string>
+    <string name="story_item_read_with_orweb">Read full article</string>
     <string name="error_feed_404">Feed was not found</string>
     <string name="error_feed_bad_url">Feed URL is not valid, please visit "manage feeds" to modify or delete it.</string>
     <string name="error_feed_unknown">Error syncing feed, please try again</string>
@@ -136,7 +118,7 @@
     <string name="add_feed_collapse">Close</string>
     <string name="add_feed_not_loaded">Feed data not loaded</string>
     <string name="add_feed_error_loading">We were unable to load this feed. Be sure that the RSS feed URL is correct.</string>
-    <string name="settings_tor_require">Require Tor</string>
+    <string name="settings_tor_require">Use Tor</string>
     <string name="settings_heading_chat">Chat</string>
     <string name="settings_gibberbot_connected">ChatSecure account connected</string>
     <string name="settings_heading_panic_action">Panic Action</string>
@@ -185,9 +167,12 @@
     <string name="settings_language_option_group_default">Default language</string>
     <string name="settings_language_english">English</string>
     <string name="settings_language_farsi">Farsi</string>
-    <string name="lock_screen_title1">Welcome to Paik</string>
+    <string name="settings_language_tibetan">Tibetan</string>
+    <string name="settings_language_chinese">Chinese</string>
+    <string name="lock_screen_title1">Welcome to YakReader</string>
     <string name="lock_screen_title2">Read, write and talk freely.</string>
-    <string name="lock_screen_set_passphrase">SET A PASSPHRASE</string>
+    <string name="lock_screen_choose_language">Choose a language</string>
+    <string name="lock_screen_set_passphrase">GET STARTED</string>
     <string name="lock_screen_open">Open</string>
     <string name="lock_screen_create_passphrase">OPEN APP</string>
     <string name="lock_screen_create_passphrase_label">Create a passphrase to protect your information:</string>
@@ -197,6 +182,8 @@
     <string name="lock_screen_passphrases_not_matching">Passphrases did not match, please try again</string>
     <string name="lock_screen_language_farsi">Farsi</string>
     <string name="lock_screen_language_english">English</string>
+    <string name="lock_screen_language_tibetan">Tibetan</string>
+    <string name="lock_screen_language_chinese">Chinese</string>
     <string name="lock_screen_wrong_password">Oops! Try again.</string>
     <string name="post_item_no_title">Untitled</string>
     <string name="add_post_menu_post">POST</string>
@@ -230,10 +217,10 @@
     <string name="post_no_drafts">No drafts</string>
     <string name="post_no_outgoing">No outgoing posts</string>
     <string name="post_sign_in_title">Share the news that’s happening around you</string>
-    <string name="post_sign_in_info">Paik provides a feed of noteworthy news to its community. Every post created with Paik will undergo a curation process before it is shared in the official Paik news feed. Please see the Terms &amp; Conditions ("About Paik" then "Terms &amp; Software Licenses) to understand the rights you grant when you share information with Paik.</string>
+    <string name="post_sign_in_info">YakReader provides a feed of noteworthy news to its community. Every post created with YakReader will undergo a curation process before it is shared in the official YakReader news feed. Please see the Terms &amp; Conditions ("About YakReader" then "Terms &amp; Software Licenses) to understand the rights you grant when you share information with YakReader.</string>
     <string name="post_sign_in_agree">I give my permission to use my content</string>
     <string name="post_sign_in_done">Done</string>
-    <string name="httpd_app_sender_instructions">To locally share the Paik app or the apps supported by it (Orbot and ChatSecure), please take the following steps:</string>
+    <string name="httpd_app_sender_instructions">To locally share the YakReader app or the apps supported by it (Orbot and ChatSecure), please take the following steps:</string>
     <string name="httpd_app_sender_sender">To Share</string>
     <string name="httpd_app_sender_sender_title">1. Enable a "Portable WiFi Hotspot"</string>
     <string name="httpd_app_sender_sender_part1">You can enable a hotspot in your phone settings. This is the most secure way to share the app.\n\nIf you cannot enable a hotspot, you can connect to a public wifi network that you trust.</string>
@@ -248,11 +235,11 @@
     <string name="title_activity_secure_blue_tooth_receiver">RECEIVE A SHARE</string>
 
     <string name="bluetooth_send_title">Choose your friend\'s device:</string>
-    <string name="bluetooth_send_info">Your friend must have the Paik app open to the \'Receive a Share\' screen from the side menu.</string>
+    <string name="bluetooth_send_info">Your friend must have the YakReader app open to the \'Receive a Share\' screen from the side menu.</string>
     <string name="bluetooth_send_scan">Search for more devices&#8230;</string>
     <string name="bluetooth_send_scanning">Searching for devices&#8230;</string>
     <string name="bluetooth_no_devices_found">No Devices Found</string>
-    <string name="bluetooth_receive_title">Receive a story or feed from a friend using Paik’s secure share.</string>
+    <string name="bluetooth_receive_title">Receive a story or feed from a friend using YakReader’s secure share.</string>
     <string name="bluetooth_receive_info">Bluetooth is listening.</string>
     <string name="bluetooth_receive_receive">TELL BLUETOOTH TO LISTEN</string>
     <string name="bluetooth_receive_connected">Connected</string>
@@ -266,19 +253,19 @@
     <string name="bluetooth_send_close">CLOSE</string>
     <string name="bluetooth_send_read_now">READ NOW</string>
     <string name="bluetooth_send_success_1_story">Success! 1 story shared.</string>
-    <string name="create_account_title">Create your Paik Nickname</string>
+    <string name="create_account_title">Create your YakReader Nickname</string>
     <string name="create_account_info">Your nickname will be used in group conversations and will be displayed with the reports you publish.</string>
     <string name="create_account_hint">Nickname</string>
     <string name="create_account_create">Create</string>
     
-    <string name="story_list_hint_tor_title">Welcome to your Paik news feed.</string>
+    <string name="story_list_hint_tor_title">Welcome to your YakReader news feed.</string>
     <string name="story_list_hint_tor_info">Before syncing the news, you need to go online with Tor. The Orbot app will connect you to the Tor network.</string>
     <string name="story_list_hint_tor_more">Learn more about using Tor</string>
     <string name="story_list_hint_tor_less">Less</string>
     <string name="story_list_hint_tor_no_net">No Internet. Try again later.</string>
     <string name="story_list_hint_tor_go_online">CONNECT TO TOR</string>
     <string name="story_list_hint_tor_more_title">Using Tor</string>
-    <string name="story_list_hint_tor_more_info">Tor is not required for the news reader, however, it is strongly recommended. You can opt out of using Tor for the news, in your preferences. Your privacy will not be protected in this case.\n\nTor is required for publishing reports on Paik.</string>
+    <string name="story_list_hint_tor_more_info">Tor is not required for the news reader, however, it is strongly recommended. You can opt out of using Tor for the news, in your preferences. Your privacy will not be protected in this case.\n\nTor is required for publishing reports on YakReader.</string>
     <string name="story_list_hint_tor_connected_title">You have successfully connected to Tor!</string>
     <string name="story_list_hint_tor_connected_info">Pull down to sync the news.</string>
     <string name="story_list_error_title">Oops! Your feeds are not refreshing.</string>
@@ -291,4 +278,22 @@
     <string name="install_orweb_prompt">Orweb is a privacy enhanced web browser. When used with Orbot, Orweb protects against network analysis, blocks cookies, keeps no local browsing history, and disables Flash to keep you safe. Do you want to download Orweb now?</string>
     	
     <string name="apps_feed_name">Applications</string>
+<<<<<<< HEAD
 </resources>
+=======
+    <string name="epubs_feed_name">Tibet Archive</string>
+    
+    <string name="cacheword_notification_cached_title">YakReader Unlocked</string>
+    <string name="cacheword_notification_cached">YakReader passcode stored in memory</string>
+    <string name="cacheword_notification_cached_message">YakReader passcode stored in memory</string>
+    <string name="download_epub_hint">Download ePub</string>
+    <string name="download_epub_reader_title">Download ePub Reader</string>
+    <string name="download_epub_reader_info">You need an ePub reader to see the story. We recommend FBReader. Get it on:</string>
+    <string name="download_epub_reader_play">Google Play</string>
+    <string name="download_epub_reader_web">FBReader Website</string>
+    <string name="download_epub_reader_close">Close</string>
+    
+    <string name="chatroom_name">Not being used</string>
+    
+</resources>
+>>>>>>> yakreader_sans_library

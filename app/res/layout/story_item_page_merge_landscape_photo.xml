@@ -1,71 +1,65 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-        <TableLayout
-        android:id="@+id/tlSource"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:stretchColumns="1">
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left" >
-
-        <TextView
-            android:id="@+id/tvSource"
-            style="@style/StoryItemShortSourceStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="1"
-            android:gravity="left|center_vertical"
-            android:padding="4dp"
-            android:text="@string/story_item_short_source"
-            android:textAllCaps="true" />
-
-        <TextView
-            android:id="@+id/tvTime"
-            style="@style/StoryItemShortTimeStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_weight="0"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:text="@string/story_item_short_time" />
-
-    </TableRow>
-    </TableLayout>
+    android:layout_height="match_parent"   
+    >
     
-
-    <include
-        android:id="@+id/ivPhotos"
+    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+        android:id="@+id/layout_media"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tlSource"
-        layout="@layout/story_media_content_view" />
+        app:height_limit="1.75" >
+        
+        <info.guardianproject.yakreader.widgets.NestedViewPager
+        	android:id="@+id/mediaPager"
+        	android:layout_width="match_parent"
+        	android:layout_height="match_parent" />
 
-    <info.guardianproject.bigbuffalo.widgets.CustomFontTextView
+    	<info.guardianproject.yakreader.widgets.DottedProgressView
+        	android:id="@+id/mediaPagerIndicator"
+        	android:layout_width="match_parent"
+        	android:layout_height="30dp"
+        	android:layout_gravity="bottom"
+        	android:background="#cdefefef"
+        	app:dot_color="@color/grey_light_medium"
+        	app:dot_color_current="@color/button_primary"
+        	app:dot_distance="25"
+        	app:dot_radius="6"
+        	app:dot_rim_color="@color/grey_light_medium"
+        	app:dot_rim_color_current="@color/button_primary" />
+        
+
+	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+
+    <include
+        android:id="@+id/layout_source"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/source_height"
+        android:layout_below="@id/layout_media"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/source_top_margin"
+        layout="@layout/story_item_page_source" />
+
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
         android:id="@+id/tvTitle"
         style="@style/StoryItemTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/ivPhotos"
-        android:background="#ffffff"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="10dp"
+        android:layout_below="@id/layout_source"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/title_top_margin"
+        android:ellipsize="end"
+        android:maxLines="4"
+        android:paddingBottom="@dimen/card_bottom_margin"
         android:text="@string/story_item_short_title" />
 
-    <ViewStub
-        android:id="@+id/viewStubTags"
+    <include
+        android:id="@+id/layout_tags"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvTitle"
-        android:inflatedId="@+id/svTags"
-        android:layout="@layout/story_item_page_tags" />
+        layout="@layout/story_item_page_tags" />
 
 </merge>

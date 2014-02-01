@@ -1,0 +1,37 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    
+    <include
+        android:id="@+id/layout_source"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/source_height"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/source_top_margin"
+        layout="@layout/story_item_page_source" />
+
+    <info.guardianproject.yakreader.widgets.CustomFontTextView
+        android:id="@+id/tvTitle"
+        style="@style/StoryItemTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_source"
+        android:layout_marginLeft="@dimen/card_left_margin"
+        android:layout_marginRight="@dimen/card_right_margin"
+        android:layout_marginTop="@dimen/title_top_margin"
+        android:ellipsize="end"
+        android:maxLines="4"
+        android:paddingBottom="@dimen/card_bottom_margin"
+        android:text="@string/story_item_short_title" />
+
+    <include
+        android:id="@+id/layout_tags"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        layout="@layout/story_item_page_tags" />
+
+</merge>

@@ -7,7 +7,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="10dp"
         android:baselineAligned="false" >
 
         <LinearLayout
@@ -15,8 +14,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="left"
+            android:layout_marginBottom="72dp"
             android:layout_weight="0.5"
             android:orientation="vertical" >
+
         </LinearLayout>
 
         <LinearLayout
@@ -24,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="72dp"
             android:layout_weight="0.5"
             android:orientation="vertical" >
 

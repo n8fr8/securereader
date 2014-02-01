@@ -1,5 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,18 +30,19 @@
         		android:layout_weight="1"
         		android:text="@string/settings_tor_require" />
 
-    		<info.guardianproject.bigbuffalo.widgets.CheckableImageView
-        		android:id="@+id/chkRequireTor"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:layout_gravity="right|center_vertical"
-        		android:src="@drawable/checkbox_yes_no_selector" />
+    		<info.guardianproject.yakreader.widgets.CheckableImageView
+    		    android:id="@+id/chkRequireTor"
+    		    android:layout_width="wrap_content"
+    		    android:layout_height="wrap_content"
+    		    android:layout_gravity="right|center_vertical"
+    		    android:src="@drawable/checkbox_selector" />
+
 		</LinearLayout> 
         
 
         <!-- Chat section -->
 
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupChat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -55,7 +56,7 @@
         
         <!-- Panic section -->
         
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupPanicAction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,11 +94,11 @@
                     android:text="@string/settings_panic_wipe_content" />
             </RadioGroup>
 		
-        </info.guardianproject.bigbuffalo.widgets.GroupView>
+        </info.guardianproject.yakreader.widgets.GroupView>
         
         <!-- Login section -->
 
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -237,11 +238,11 @@
             </LinearLayout>
             
 
-        </info.guardianproject.bigbuffalo.widgets.GroupView>
+        </info.guardianproject.yakreader.widgets.GroupView>
 
         <!-- Data & Syncing section -->
 
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupDataUse"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -395,9 +396,9 @@
                     android:text="@string/settings_data_sync_network_all" />
             </RadioGroup>
 
-        </info.guardianproject.bigbuffalo.widgets.GroupView>
+        </info.guardianproject.yakreader.widgets.GroupView>
 
-        <info.guardianproject.bigbuffalo.widgets.GroupView
+        <info.guardianproject.yakreader.widgets.GroupView
             android:id="@+id/groupLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -428,24 +429,33 @@
                     android:text="@string/settings_language_english" />
 
                 <RadioButton
-                    android:id="@+id/rbUiLanguageFarsi"
+                    android:id="@+id/rbUiLanguageChinese"
                     style="@style/SettingsRadioButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/settings_language_farsi" />
-
+                    android:text="@string/settings_language_chinese" />
+                
+                <RadioButton
+                    android:id="@+id/rbUiLanguageTibetan"
+                    style="@style/SettingsRadioButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_language_tibetan" />
+                
             </RadioGroup>
 
             <TextView
                 style="@style/SettingsOptionGroupStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/settings_reader_swipe_direction" />
+                android:text="@string/settings_reader_swipe_direction"
+                android:visibility="gone" />
 
             <RadioGroup
                 android:id="@+id/rgReaderSwipeDirection"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content"
+                android:visibility="gone" >
 
                 <RadioButton
                     android:id="@+id/rbSwipeDirectionRtl"
@@ -473,7 +483,7 @@
 
             </RadioGroup>
 
-        </info.guardianproject.bigbuffalo.widgets.GroupView>
+        </info.guardianproject.yakreader.widgets.GroupView>
     </LinearLayout>
 
 </ScrollView>

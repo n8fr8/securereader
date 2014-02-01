@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.bigbuffalo"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
     android:id="@+id/marginedRoot"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -13,27 +13,36 @@
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="3"
-        android:background="@drawable/background_news" />
+        android:background="@drawable/background_news"
+        android:visibility="gone" />
     
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/llRoot"
         android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_weight="26" >
 
-        <info.guardianproject.bigbuffalo.widgets.PagedView
+        <View
+            android:id="@+id/strut"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_centerHorizontal="true" />
+
+        <info.guardianproject.yakreader.widgets.PagedView
             android:id="@+id/horizontalPagerContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="40dp"
             android:scrollbars="none" >
-        </info.guardianproject.bigbuffalo.widgets.PagedView>
+
+        </info.guardianproject.yakreader.widgets.PagedView>
 
         <LinearLayout
             android:id="@+id/storyToolbar"
             style="@style/BottomToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_alignParentBottom="true"
             android:layout_gravity="bottom" >
 
             <ImageView
@@ -54,7 +63,7 @@
                 android:background="@drawable/bottom_bar_item_background_selector"
                 android:src="@drawable/ic_action2_chat" />
 
-            <info.guardianproject.bigbuffalo.widgets.NoSelectionSpinner
+            <info.guardianproject.yakreader.widgets.NoSelectionSpinner
                 android:id="@+id/spinnerTextSize"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -62,7 +71,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bottom_bar_item_background_selector" />
 
-            <info.guardianproject.bigbuffalo.widgets.CheckableImageView
+            <info.guardianproject.yakreader.widgets.CheckableImageView
                 android:id="@+id/chkFavorite"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -71,7 +80,7 @@
                 android:scaleType="center"
                 android:src="@drawable/favorite_checkbox" />
 
-            <info.guardianproject.bigbuffalo.widgets.NoSelectionSpinner
+            <info.guardianproject.yakreader.widgets.NoSelectionSpinner
                 android:id="@+id/spinnerShare"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -80,23 +89,27 @@
                 android:background="@drawable/bottom_bar_item_background_selector" />
         </LinearLayout>
 
-        <info.guardianproject.bigbuffalo.widgets.DottedProgressView
+        <info.guardianproject.yakreader.widgets.PageIndicatorView
             android:id="@+id/contentPageIndicator"
             android:layout_width="wrap_content"
-            android:layout_height="20dp"
+            android:layout_height="7dp"
+            android:layout_above="@id/storyToolbar"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="18dp"
+            android:layout_marginLeft="@dimen/card_left_margin"
+            android:layout_marginRight="@dimen/card_center_margin"
+            android:layout_toLeftOf="@id/strut"
             android:background="@drawable/bottom_bar_item_background_selector"
-            android:gravity="right"
-            app:dot_color_current="@color/grey_light_medium"
-            app:dot_radius="6" />
+            android:drawable="@drawable/page_indicator_dot_selector"
+            android:gravity="center_horizontal" />
     
-    </FrameLayout>
+    </RelativeLayout>
 
         <View
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="3"
-            android:background="@drawable/background_news" />
+            android:background="@drawable/background_news"
+            android:visibility="gone" />
         
 </LinearLayout>
