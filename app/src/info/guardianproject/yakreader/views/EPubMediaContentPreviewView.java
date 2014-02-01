@@ -3,7 +3,6 @@ package info.guardianproject.yakreader.views;
 import info.guardianproject.yakreader.R;
 import info.guardianproject.iocipher.File;
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -15,8 +14,6 @@ public class EPubMediaContentPreviewView extends FrameLayout implements MediaCon
 {
 	private MediaContent mMediaContent;
 	private java.io.File mMediaFile;
-	private Handler mHandler;
-	private boolean mUseThisThread;
 
 	public EPubMediaContentPreviewView(Context context, AttributeSet attrs, int defStyle)
 	{
@@ -47,31 +44,11 @@ public class EPubMediaContentPreviewView extends FrameLayout implements MediaCon
 	{
 		mMediaContent = mediaContent;
 		mMediaFile = mediaFileNonVFS;
-		mUseThisThread = useThisThread;
-		mMediaContent.setDownloadedNonVFSFile(mediaFile);
 		if (mMediaFile == null)
 		{
 			Log.v("EPubMediaContentPreviewView", "Failed to download media, no file.");
 			return;
 		}
-
-		if (mHandler == null && !mUseThisThread)
-			mHandler = new Handler();
-
-		Runnable reportRunnable = new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				Log.v("EPubMediaContentPreviewView", "reporting orientation");
-			}
-		};
-
-		if (mUseThisThread)
-			reportRunnable.run();
-		else
-			mHandler.post(reportRunnable);
-		
 	}
 
 	@Override

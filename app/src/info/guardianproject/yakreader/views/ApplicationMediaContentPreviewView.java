@@ -43,7 +43,6 @@ public class ApplicationMediaContentPreviewView extends FrameLayout implements M
 	{
 		mMediaContent = mediaContent;
 		mMediaFile = mediaFileNonVFS;
-		mMediaContent.setDownloadedNonVFSFile(mediaFile);
 		if (mMediaFile == null)
 		{
 			Log.v("ApplicationMediaContentPreviewView", "Failed to download media, no file.");
