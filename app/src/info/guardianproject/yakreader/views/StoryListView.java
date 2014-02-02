@@ -24,6 +24,7 @@ import java.util.Date;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.DataSetObserver;
 import android.graphics.Color;
 import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
@@ -73,6 +74,9 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 	private AppearingRelativeLayout mFrameError;
 	private View mIvLoading;
 
+	private long mOldItemId = Integer.MIN_VALUE;
+	private int mOldY;
+	
 	public StoryListView(Context context, AttributeSet attrs, int defStyle)
 	{
 		super(context, attrs, defStyle);
@@ -253,8 +257,7 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 		UICallbacks.setTagFilter(tag, null);
 	}
 
-	private int mHeaderState; // 0 = hidden, 1 = shown, 2 = fully shown, 3 = No
-								// net
+	private int mHeaderState; // 0 = hidden, 1 = shown, 2 = fully shown, 3 = No net
 
 	@Override
 	public void onListPulledDown(int heightVisible)
@@ -403,10 +406,19 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 			mAdapter = new StoryListAdapter(context, null);
 			mAdapter.setListener(mListener);
 			mAdapter.setOnTagClickedListener(this);
+			mAdapter.registerDataSetObserver(new DataSetObserver()
+			{
+				@Override
+				public void onChanged()
+				{
+					super.onChanged();
+					scrollToSavedPosition();
+				}
+			});
 		}
-		mAdapter.updateItems(sortItemsOnPublicationTime(items));
-		mAdapter.setHeaderView(headerView, false);
 		mAdapter.setOnHeaderCreatedListener(this);
+		mAdapter.setHeaderView(headerView, false);
+		mAdapter.updateItems(sortItemsOnPublicationTime(items));
 	}
 
 	public void updateItems(Context context, ArrayList<Item> items, int headerView, final boolean rememberPosition)
@@ -424,44 +436,35 @@ public class StoryListView extends FrameLayout implements OnTagClickedListener, 
 				oldY = child.getTop();
 			Log.v(MainActivity.LOGTAG, "Remember list position " + oldItemId + "," + oldY);
 		}
-
+		mOldItemId = oldItemId;
+		mOldY = oldY;
+		
 		createOrUpdateAdapter(context, items, headerView);
-
-		mListStories.post(new ScrollToItemRunnable(mListStories, oldItemId, oldY));
 	}
 
-	private class ScrollToItemRunnable implements Runnable
+	private void scrollToSavedPosition()
 	{
-		private final ListView mView;
-		private final long mItemId;
-		private final int mYOffset;
-
-		ScrollToItemRunnable(ListView view, long itemId, int yOffset)
+		if (mOldItemId != Integer.MIN_VALUE)
 		{
-			mView = view;
-			mItemId = itemId;
-			mYOffset = yOffset;
-		}
-
-		@Override
-		public void run()
-		{
-			Log.v(MainActivity.LOGTAG, "Scrolling list back to item " + mItemId + "," + mYOffset);
-
-			if (mItemId != -1 && mView != null && mView.getAdapter() != null)
+			int index = 0;
+			int offset = 0;
+			
+			Log.v(MainActivity.LOGTAG, "Scrolling list back to item " + mOldItemId + "," + mOldY);
+			if (mOldItemId != -1)
 			{
-				ListAdapter adapter = mView.getAdapter();
+				ListAdapter adapter = mListStories.getAdapter();
 				for (int iItem = 0; iItem < adapter.getCount(); iItem++)
 				{
-					if (adapter.getItemId(iItem) == mItemId)
+					if (adapter.getItemId(iItem) == mOldItemId)
 					{
-						mView.setSelectionFromTop(iItem, mYOffset);
-						return;
+						index = iItem;
+						offset = mOldY;
+						break;
 					}
 				}
 			}
-			if (mView.getCount() > 0)
-				mView.setSelectionFromTop(0, 0);
+			mListStories.setSelectionFromTop(index, offset);
+			mOldItemId = Integer.MIN_VALUE;
 		}
 	}
 

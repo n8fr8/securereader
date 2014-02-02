@@ -735,7 +735,6 @@ public class LeftSideMenu
 			if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP)
 			{
 				// Release the drag.
-				Log.v("LeftSideMenu", "Intercept done!");
 				mIsBeingDragged = false;
 				mIsUnableToDrag = false;
 				mActivePointerId = -1;
@@ -747,12 +746,10 @@ public class LeftSideMenu
 			{
 				if (mIsBeingDragged)
 				{
-					Log.v("LeftSideMenu", "Intercept returning true!");
 					return true;
 				}
 				if (mIsUnableToDrag)
 				{
-					Log.v("LeftSideMenu", "Intercept returning false!");
 					return false;
 				}
 			}
@@ -782,7 +779,6 @@ public class LeftSideMenu
 				final float xDiff = Math.abs(dx);
 				final float y = MotionEventCompat.getY(ev, pointerIndex);
 				final float yDiff = Math.abs(y - mInitialMotionY);
-				Log.v("LeftSideMenu", "Moved x to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
 				if (dx != 0 && canScroll(this, false, (int) dx, (int) x, (int) y))
 				{
 					// Nested view has scrollable area under this point. Let it
@@ -794,7 +790,6 @@ public class LeftSideMenu
 				}
 				if (xDiff > mTouchSlop && xDiff * 0.5f > yDiff)
 				{
-					Log.v("LeftSideMenu", "Starting drag!");
 					mLastMotionX = dx > 0 ? mInitialMotionX + mTouchSlop : mInitialMotionX - mTouchSlop;
 					mLastMotionY = y;
 					startDrag();
@@ -805,7 +800,6 @@ public class LeftSideMenu
 					// direction to be counted as a drag... abort
 					// any attempt to drag horizontally, to work correctly
 					// with children that have scrolling containers.
-					Log.v("LeftSideMenu", "Starting unable to drag!");
 					mIsUnableToDrag = true;
 				}
 				if (mIsBeingDragged)
@@ -826,8 +820,6 @@ public class LeftSideMenu
 				mActivePointerId = MotionEventCompat.getPointerId(ev, 0);
 				mIsUnableToDrag = false;
 				mIsBeingDragged = false;
-				Log.v("LeftSideMenu", "Down at " + mLastMotionX + "," + mLastMotionY + " mIsBeingDragged=" + mIsBeingDragged + "mIsUnableToDrag="
-						+ mIsUnableToDrag);
 
 				// If we clicked in the drag handle (and drag enabled),
 				// intercept the event!
@@ -896,10 +888,8 @@ public class LeftSideMenu
 					final float xDiff = Math.abs(x - mLastMotionX);
 					final float y = MotionEventCompat.getY(ev, pointerIndex);
 					final float yDiff = Math.abs(y - mLastMotionY);
-					Log.v("LeftSideMenu", "Moved x to " + x + "," + y + " diff=" + xDiff + "," + yDiff);
 					if (xDiff > mTouchSlop && xDiff > yDiff)
 					{
-						Log.v("LeftSideMenu", "Starting drag!");
 						mLastMotionX = x - mInitialMotionX > 0 ? mInitialMotionX + mTouchSlop : mInitialMotionX - mTouchSlop;
 						mLastMotionY = y;
 						startDrag();
