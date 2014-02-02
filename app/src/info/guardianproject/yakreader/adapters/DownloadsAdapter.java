@@ -29,7 +29,7 @@ public class DownloadsAdapter extends BaseAdapter
 	private static final int VIEW_TYPE_ITEM_IN_PROGRESS = 3;
 
 	private static final ArrayList<Long> gComplete = new ArrayList<Long>();
-	private static final HashMap<Long, Integer> gInProgress = new HashMap<Long, Integer>();
+	private static final HashMap<Long, MediaViewCollection> gInProgress = new HashMap<Long, MediaViewCollection>();
 	private static DownloadsAdapter gInstance;
 
 	private final Context mContext;
@@ -37,7 +37,9 @@ public class DownloadsAdapter extends BaseAdapter
 	public static DownloadsAdapter getInstance(Context context)
 	{
 		if (gInstance == null)
+		{
 			gInstance = new DownloadsAdapter(context);
+		}
 		return gInstance;
 	}
 
@@ -221,6 +223,12 @@ public class DownloadsAdapter extends BaseAdapter
 		operationButtons.setVisibility(View.GONE);
 		AnimationHelpers.fadeOut(operationButtons, 0, 0, false);
 
+		View btnCancel = operationButtons.findViewById(R.id.btnCancel);
+		btnCancel.setOnClickListener(new ItemCancelListener(item));
+		View btnRetry = operationButtons.findViewById(R.id.btnRefresh);
+		btnRetry.setOnClickListener(new ItemRetryListener(item, operationButtons));
+		
+		
 		View menuView = view.findViewById(R.id.ivMenu);
 		menuView.setOnClickListener(new View.OnClickListener()
 		{
@@ -270,42 +278,57 @@ public class DownloadsAdapter extends BaseAdapter
 		return App.getInstance().socialReader.getItemFromId(l.longValue());
 	}
 
-	public static void downloading(long itemId)
+	public static void downloading(MediaViewCollection mvc)
 	{
-		Long itemLong = Long.valueOf(itemId);
+		Long itemLong = Long.valueOf(mvc.getItem().getDatabaseId());
 		if (gComplete.contains(itemLong))
 			gComplete.remove(itemLong);
-		Integer current = gInProgress.get(itemLong);
-		if (current == null)
-			gInProgress.put(itemLong, Integer.valueOf(1));
-		else
-			gInProgress.put(itemLong, Integer.valueOf(current.intValue() + 1));
+		gInProgress.put(itemLong, mvc);
 		if (gInstance != null)
 			gInstance.notifyDataSetChanged();
 	}
 
-	public static void downloaded(long itemId)
+	public static void downloaded(MediaViewCollection mvc)
 	{
-		Long itemLong = Long.valueOf(itemId);
-		Integer current = gInProgress.get(itemLong);
-		if (current != null)
+		Long itemLong = Long.valueOf(mvc.getItem().getDatabaseId());
+		if (mvc.getCountLoaded() == mvc.getCount())
 		{
-			int i = current.intValue();
-			if (i == 1)
+			// Done
+			if (gInProgress.containsKey(itemLong))
 			{
-				// Done!
 				gInProgress.remove(itemLong);
 				gComplete.add(itemLong);
 				if (gInstance != null)
 					gInstance.notifyDataSetChanged();
 			}
-			else
-			{
-				gInProgress.put(itemLong, Integer.valueOf(i - 1));
-			}
 		}
 	}
 
+	public static void cancel(long itemId)
+	{
+		Long itemLong = Long.valueOf(itemId);
+		if (gInProgress.containsKey(itemLong))
+		{
+			Log.v(MainActivity.LOGTAG, "Cancel media load for item id " + itemId);
+			MediaViewCollection mvc = gInProgress.get(itemLong);
+			mvc.recycle();
+			gInProgress.remove(itemLong);
+			if (gInstance != null)
+				gInstance.notifyDataSetChanged();
+		}
+	}
+	
+	public static void retry(long itemId)
+	{
+		Long itemLong = Long.valueOf(itemId);
+		if (gInProgress.containsKey(itemLong))
+		{
+			Log.v(MainActivity.LOGTAG, "Retry media load for item id " + itemId);
+			MediaViewCollection mvc = gInProgress.get(itemLong);
+			mvc.load(true, false);
+		}
+	}
+	
 	public static void viewed(long itemId)
 	{
 		Long itemLong = Long.valueOf(itemId);
@@ -316,4 +339,40 @@ public class DownloadsAdapter extends BaseAdapter
 				gInstance.notifyDataSetChanged();
 		}
 	}
+	
+	private class ItemCancelListener implements View.OnClickListener
+	{
+		private Item mItem;
+
+		public ItemCancelListener(Item item)
+		{
+			mItem = item;
+		}
+		
+		@Override
+		public void onClick(View v)
+		{
+			DownloadsAdapter.cancel(mItem.getDatabaseId());
+		}
+	}
+	
+	private class ItemRetryListener implements View.OnClickListener
+	{
+		private Item mItem;
+		private View mOperationView;
+
+		public ItemRetryListener(Item item, View operationView)
+		{
+			mItem = item;
+			mOperationView = operationView;
+		}
+		
+		@Override
+		public void onClick(View v)
+		{
+			AnimationHelpers.fadeOut(mOperationView, 500, 0, false);
+			DownloadsAdapter.retry(mItem.getDatabaseId());
+		}
+	}
+
 }

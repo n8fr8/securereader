@@ -65,6 +65,11 @@ public class MediaViewCollection
 		}
 	}
 	
+	public Item getItem()
+	{
+		return mStory;
+	}
+	
 	public void addListener(OnMediaLoadedListener listener)
 	{
 		synchronized(this)
@@ -224,9 +229,14 @@ public class MediaViewCollection
 		{
 			synchronized (this)
 			{
+				if (forceBitwiseDownloads)
+					mNotifyDownloadsAdapter = true;
+
 				if (mFile != null || mFileNonVFS != null)
 				{
 					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
+					if (mNotifyDownloadsAdapter)
+						DownloadsAdapter.downloaded(MediaViewCollection.this);
 				}
 				else
 				{
@@ -235,11 +245,8 @@ public class MediaViewCollection
 						mIsLoading = true;
 						if (!App.getInstance().socialReader.loadMediaContent(mContent, this, forceBitwiseDownloads))
 							mIsLoading = false; // Already loaded
-						else if (forceBitwiseDownloads)
-						{
-							DownloadsAdapter.downloading(mContent.getItemDatabaseId());
-							mNotifyDownloadsAdapter = true;
-						}
+						else if (mNotifyDownloadsAdapter)
+							DownloadsAdapter.downloading(MediaViewCollection.this);
 					}
 				}
 			}
@@ -286,7 +293,7 @@ public class MediaViewCollection
 				if (!mInConstructor)
 					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
 				if (mNotifyDownloadsAdapter)
-					DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
+					DownloadsAdapter.downloaded(MediaViewCollection.this);
 			}
 		}
 
@@ -295,13 +302,15 @@ public class MediaViewCollection
 		{
 			synchronized (this)
 			{
+				mContent.setDownloadedNonVFSFile(mediaFile);
+				
 				mFileNonVFS = mediaFile;
 				mIsLoading = false;
 				mIsLoaded = true;
 				if (!mInConstructor)
 					onMediaAvailable(mContent, mIndex, mWasCached, mFileNonVFS, mFile);
 				if (mNotifyDownloadsAdapter)
-					DownloadsAdapter.downloaded(mContent.getItemDatabaseId());
+					DownloadsAdapter.downloaded(MediaViewCollection.this);
 			};
 		}
 
@@ -405,5 +414,4 @@ public class MediaViewCollection
 			}
 		}
 	}
-
 }

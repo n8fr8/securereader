@@ -73,7 +73,6 @@ public class StoryItemPageView extends RelativeLayout
 	private void init(AttributeSet attrs)
 	{
 		mCurrentViewType = null;
-		setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 		setBackgroundResource(R.drawable.story_item_background_selector);
 //		if (attrs != null && !this.isInEditMode())
 //		{

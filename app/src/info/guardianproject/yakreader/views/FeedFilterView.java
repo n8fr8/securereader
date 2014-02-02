@@ -48,14 +48,17 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 
 	private class ViewTag
 	{
-		public ViewTag(int type, View.OnClickListener listener)
+		public ViewTag()
 		{
-			this.type = type;
-			this.clickListener = listener;
 		}
 
-		public int type;
 		public View.OnClickListener clickListener;
+		
+		public CheckableImageView checkView;
+		public TextView tvName;
+		public TextView tvCount;
+		public ImageView ivFeedImage;
+		public View ivRefresh;
 	}
 
 	private FeedFilterViewCallbacks mCallbacks;
@@ -63,6 +66,9 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 	private ArrayList<Feed> mListFeeds;
 	private boolean mIsOnline; // Save this so we don't have to call it for
 								// every view!
+	private String mCountFavorites;
+	private String mCountShared;
+	private String mCountNumInProgress;
 
 	public FeedFilterView(Context context)
 	{
@@ -119,6 +125,10 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 			}
 		});
 		mListFeeds = App.getInstance().socialReader.getSubscribedFeedsList();
+		
+		mCountFavorites = String.valueOf(App.getInstance().socialReader.getAllFavoritesCount());
+		mCountShared = String.valueOf(App.getInstance().socialReader.getAllSharedCount());
+		mCountNumInProgress = String.valueOf(DownloadsAdapter.getNumInProgress());
 	}
 
 	private class RefreshFeed implements View.OnClickListener
@@ -202,9 +212,6 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 	public View getView(int position, View convertView, ViewGroup parent)
 	{
 		int type = this.getItemViewType(position);
-		if (convertView != null
-				&& (convertView.getTag() == null || !(convertView.getTag() instanceof ViewTag) || ((ViewTag) convertView.getTag()).type != type))
-			convertView = null;
 
 		View returnView = null;
 		View.OnClickListener listener = null;
@@ -215,15 +222,16 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		{
 			if (convertView == null)
 				convertView = createDisplayPhotosView();
-
-			CheckableImageView cb = (CheckableImageView) convertView.findViewById(R.id.chkShowImages);
-			cb.setChecked(App.getSettings().syncMode() == SyncMode.LetItFlow);
+			ViewTag holder = (ViewTag) convertView.getTag();
+			
+			holder.checkView.setChecked(App.getSettings().syncMode() == SyncMode.LetItFlow);
 			listener = new OnClickListener()
 			{
 				@Override
 				public void onClick(View v)
 				{
-					CheckableImageView view = (CheckableImageView) v.findViewById(R.id.chkShowImages);
+					ViewTag holder = (ViewTag) v.getTag();
+					CheckableImageView view = holder.checkView;
 					if (view != null)
 						view.toggle();
 					App.getSettings().setSyncMode(view.isChecked() ? SyncMode.LetItFlow : SyncMode.BitWise);
@@ -236,9 +244,9 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		{
 			if (convertView == null)
 				convertView = createFavoritesView();
+			ViewTag holder = (ViewTag) convertView.getTag();
 
-			TextView tvCount = (TextView) convertView.findViewById(R.id.tvCount);
-			tvCount.setText(String.valueOf(App.getInstance().socialReader.getAllFavoritesCount()));
+			holder.tvCount.setText(mCountFavorites);
 			listener = new View.OnClickListener()
 			{
 				@Override
@@ -256,13 +264,11 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		{
 			if (convertView == null)
 				convertView = createSharedView();
-
-			ImageView ivFeedImage = (ImageView) convertView.findViewById(R.id.ivFeedImage);
-			ivFeedImage.setImageResource(R.drawable.ic_share_receiver);
-			TextView tvCount = (TextView) convertView.findViewById(R.id.tvCount);
-			tvCount.setText(String.valueOf(App.getInstance().socialReader.getAllSharedCount()));
-			TextView tvName = (TextView) convertView.findViewById(R.id.tvFeedName);
-			tvName.setText(R.string.feed_filter_shared_stories);
+			ViewTag holder = (ViewTag) convertView.getTag();
+			
+			holder.ivFeedImage.setImageResource(R.drawable.ic_share_receiver);
+			holder.tvCount.setText(mCountShared);
+			holder.tvName.setText(R.string.feed_filter_shared_stories);
 			listener = new View.OnClickListener()
 			{
 				@Override
@@ -282,16 +288,14 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 			//
 			if (convertView == null)
 				convertView = createFavoritesView();
-
+			ViewTag holder = (ViewTag) convertView.getTag();
+			
 			// Set image
 			//
-			ImageView ivFeedImage = (ImageView) convertView.findViewById(R.id.ivFeedImage);
-			ivFeedImage.setVisibility(View.VISIBLE);
-			ivFeedImage.setImageResource(R.drawable.ic_menu_downloads);
-			TextView tvName = (TextView) convertView.findViewById(R.id.tvFeedName);
-			tvName.setText(R.string.downloads_title);
-			TextView tvCount = (TextView) convertView.findViewById(R.id.tvCount);
-			tvCount.setText(String.valueOf(DownloadsAdapter.getNumInProgress()));
+			holder.ivFeedImage.setVisibility(View.VISIBLE);
+			holder.ivFeedImage.setImageResource(R.drawable.ic_menu_downloads);
+			holder.tvName.setText(R.string.downloads_title);
+			holder.tvCount.setText(mCountNumInProgress);
 			listener = new View.OnClickListener()
 			{
 				@Override
@@ -308,21 +312,19 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		{
 			if (convertView == null)
 				convertView = createAllFeedsView();
+			ViewTag holder = (ViewTag) convertView.getTag();
 
-			ImageView ivFeedImage = (ImageView) convertView.findViewById(R.id.ivFeedImage);
-			ivFeedImage.setImageResource(R.drawable.ic_menu_news);
+			holder.ivFeedImage.setImageResource(R.drawable.ic_menu_news);
 			// ivFeedImage.setVisibility(View.GONE);
-			View ivRefresh = convertView.findViewById(R.id.ivRefresh);
 
-			ivRefresh.setVisibility(App.getSettings().syncFrequency() == SyncFrequency.Manual ? View.VISIBLE : View.GONE);
-			ivRefresh.setEnabled(mIsOnline);
-			ivRefresh.setOnClickListener(new RefreshFeed(null));
-			if (ivRefresh.getVisibility() == View.VISIBLE && App.getInstance().socialReader.manualSyncInProgress())
-				ivRefresh.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
+			holder.ivRefresh.setVisibility(App.getSettings().syncFrequency() == SyncFrequency.Manual ? View.VISIBLE : View.GONE);
+			holder.ivRefresh.setEnabled(mIsOnline);
+			holder.ivRefresh.setOnClickListener(new RefreshFeed(null));
+			if (holder.ivRefresh.getVisibility() == View.VISIBLE && App.getInstance().socialReader.manualSyncInProgress())
+				holder.ivRefresh.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
 			else
-				ivRefresh.clearAnimation();
-			TextView tvName = (TextView) convertView.findViewById(R.id.tvFeedName);
-			tvName.setText(R.string.feed_filter_all_feeds);
+				holder.ivRefresh.clearAnimation();
+			holder.tvName.setText(R.string.feed_filter_all_feeds);
 			listener = new View.OnClickListener()
 			{
 				@Override
@@ -342,27 +344,25 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 
 			if (convertView == null)
 				convertView = createAllFeedsView();
+			ViewTag holder = (ViewTag) convertView.getTag();
 
 			// Set image
 			//
-			ImageView ivFeedImage = (ImageView) convertView.findViewById(R.id.ivFeedImage);
-			ivFeedImage.setVisibility(View.VISIBLE);
+			holder.ivFeedImage.setVisibility(View.VISIBLE);
 
 			// TODO - feed images
 
-			TextView tvName = (TextView) convertView.findViewById(R.id.tvFeedName);
-			tvName.setText(feed.getTitle());
+			holder.tvName.setText(feed.getTitle());
 			if (TextUtils.isEmpty(feed.getTitle()))
-				tvName.setText(R.string.add_feed_not_loaded);
+				holder.tvName.setText(R.string.add_feed_not_loaded);
 
-			View ivRefresh = convertView.findViewById(R.id.ivRefresh);
-			ivRefresh.setVisibility(App.getSettings().syncFrequency() == SyncFrequency.Manual ? View.VISIBLE : View.GONE);
-			ivRefresh.setEnabled(mIsOnline);
-			ivRefresh.setOnClickListener(new RefreshFeed(feed));
-			if (ivRefresh.getVisibility() == View.VISIBLE && feed.getStatus() == Feed.STATUS_SYNC_IN_PROGRESS)
-				ivRefresh.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
+			holder.ivRefresh.setVisibility(App.getSettings().syncFrequency() == SyncFrequency.Manual ? View.VISIBLE : View.GONE);
+			holder.ivRefresh.setEnabled(mIsOnline);
+			holder.ivRefresh.setOnClickListener(new RefreshFeed(feed));
+			if (holder.ivRefresh.getVisibility() == View.VISIBLE && feed.getStatus() == Feed.STATUS_SYNC_IN_PROGRESS)
+				holder.ivRefresh.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.rotate));
 			else
-				ivRefresh.clearAnimation();
+				holder.ivRefresh.clearAnimation();
 			listener = new ViewFeed(feed);
 
 			returnView = convertView;
@@ -372,15 +372,11 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		{
 			if (convertView == null)
 				convertView = createFavoritesView();
+			ViewTag holder = (ViewTag) convertView.getTag();
 
-			ImageView ivFeedImage = (ImageView) convertView.findViewById(R.id.ivFeedImage);
-			ivFeedImage.setImageResource(R.drawable.ic_filter_popular);
-
-			TextView tvName = (TextView) convertView.findViewById(R.id.tvFeedName);
-			tvName.setText(R.string.feed_filter_popular);
-
-			TextView tvCount = (TextView) convertView.findViewById(R.id.tvCount);
-			tvCount.setText("0");
+			holder.ivFeedImage.setImageResource(R.drawable.ic_filter_popular);
+			holder.tvName.setText(R.string.feed_filter_popular);
+			holder.tvCount.setText("0");
 			listener = new View.OnClickListener()
 			{
 				@Override
@@ -397,7 +393,7 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 		}
 
 		if (returnView != null)
-			returnView.setTag(new ViewTag(type, listener));
+			((ViewTag)returnView.getTag()).clickListener = listener;
 		return returnView;
 	}
 
@@ -455,24 +451,39 @@ public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemC
 	{
 		// Display photos
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_display_photos, mListView, false);
+		createViewHolder(view);
 		return view;
 	}
 
 	public View createFavoritesView()
 	{
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_favorites, mListView, false);
+		createViewHolder(view);
 		return view;
 	}
 
 	public View createSharedView()
 	{
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_favorites, mListView, false);
+		createViewHolder(view);
 		return view;
 	}
 
 	public View createAllFeedsView()
 	{
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.feed_list_item, mListView, false);
+		createViewHolder(view);
 		return view;
+	}
+	
+	private void createViewHolder(View view)
+	{
+		ViewTag holder = new ViewTag();
+		holder.ivFeedImage = (ImageView) view.findViewById(R.id.ivFeedImage);
+		holder.tvName = (TextView) view.findViewById(R.id.tvFeedName);
+		holder.tvCount = (TextView) view.findViewById(R.id.tvCount);
+		holder.ivRefresh = view.findViewById(R.id.ivRefresh);
+		holder.checkView = (CheckableImageView) view.findViewById(R.id.chkShowImages);
+		view.setTag(holder);
 	}
 }

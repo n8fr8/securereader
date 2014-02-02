@@ -48,23 +48,25 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	private boolean mHeaderOnlyIfNoItems;
 	private String mTagFilter;
 	private boolean mDeferMediaLoading;
+	private Filter mFilter;
 
 	public StoryListAdapter(Context context, ArrayList<Item> stories)
 	{
 		mContext = context;
 		mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mStories = stories;
+		mStories = mFilteredStories = stories;
 		mShowTags = false;
 		mOnTagClickedListener = null;
 		mHeaderOnlyIfNoItems = false;
-		applyFilters();
 	}
 
 	public void setHeaderView(int resIdHeaderView, boolean onlyIfNoItems)
 	{
-		mResIdHeaderView = resIdHeaderView;
-		mHeaderOnlyIfNoItems = onlyIfNoItems;
-		this.notifyDataSetChanged();
+		if (resIdHeaderView != mResIdHeaderView)
+		{
+			mResIdHeaderView = resIdHeaderView;
+			mHeaderOnlyIfNoItems = onlyIfNoItems;
+		}
 	}
 
 	public void updateItems(ArrayList<Item> items)
@@ -75,8 +77,11 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 
 	public void setTagFilter(String tagFilter)
 	{
-		mTagFilter = tagFilter;
-		applyFilters();
+		if (!TextUtils.equals(mTagFilter, tagFilter))
+		{
+			mTagFilter = tagFilter;
+			applyFilters();
+		}
 	}
 
 	private void applyFilters()
@@ -184,9 +189,9 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	public long getItemId(int position)
 	{
 		if (position == 0 && hasHeaderView())
-			return 0;
+			return -1;
 		if (mFilteredStories == null)
-			return 0;
+			return -1;
 		return mFilteredStories.get(position - (hasHeaderView() ? 1 : 0)).getDatabaseId();
 	}
 
@@ -283,58 +288,62 @@ public class StoryListAdapter extends BaseAdapter implements OnMediaLoadedListen
 	@Override
 	public Filter getFilter()
 	{
-		Filter filter = new Filter()
+		if (mFilter == null)
 		{
-			@Override
-			protected FilterResults performFiltering(CharSequence constraint)
+			mFilter = new Filter()
 			{
-				ArrayList<Item> filteredStories = null;
-				if (mStories != null)
+				@Override
+				protected FilterResults performFiltering(CharSequence constraint)
 				{
-					filteredStories = new ArrayList<Item>();
-					for (Item item : mStories)
+					ArrayList<Item> filteredStories = null;
+					if (mStories != null)
 					{
-						if (constraint != null)
+						filteredStories = new ArrayList<Item>();
+						for (Item item : mStories)
 						{
-							if (item.getTags() != null)
+							if (constraint != null)
 							{
-								boolean bFoundTag = false;
-								for (String tag : item.getTags())
+								if (item.getTags() != null)
 								{
-									if (tag.contains(constraint))
+									boolean bFoundTag = false;
+									for (String tag : item.getTags())
 									{
-										bFoundTag = true;
-										break;
+										if (tag.contains(constraint))
+										{
+											bFoundTag = true;
+											break;
+										}
 									}
+									if (!bFoundTag)
+										continue; // Don't add this, i.e. filter
+													// it
 								}
-								if (!bFoundTag)
-									continue; // Don't add this, i.e. filter it
 							}
+							filteredStories.add(item);
 						}
-						filteredStories.add(item);
 					}
+					FilterResults results = new FilterResults();
+					results.count = (filteredStories != null) ? filteredStories.size() : 0;
+					results.values = filteredStories;
+					return results;
 				}
-				FilterResults results = new FilterResults();
-				results.count = (filteredStories != null) ? filteredStories.size() : 0;
-				results.values = filteredStories;
-				return results;
-			}
 
-			@SuppressWarnings("unchecked")
-			@Override
-			protected void publishResults(CharSequence constraint, FilterResults results)
-			{
-				if (TextUtils.isEmpty(constraint))
-					mFilteredStories = mStories;
-				else if (results.count > 0)
-					mFilteredStories = (ArrayList<Item>) results.values;
-				else
-					mFilteredStories = null;
-				notifyDataSetChanged();
-			}
-		};
-		
-		return filter;
+				@SuppressWarnings("unchecked")
+				@Override
+				protected void publishResults(CharSequence constraint, FilterResults results)
+				{
+					if (TextUtils.isEmpty(constraint))
+						mFilteredStories = mStories;
+					else if (results.count > 0)
+						mFilteredStories = (ArrayList<Item>) results.values;
+					else
+						mFilteredStories = null;
+					notifyDataSetChanged();
+				}
+			};
+		}
+
+		return mFilter;
 	}
 	
 	@Override
