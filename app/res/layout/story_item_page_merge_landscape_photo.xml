@@ -1,21 +1,21 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.securereaderinterface"
     android:layout_width="match_parent"
     android:layout_height="match_parent"   
     >
     
-    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+    <info.guardianproject.securereaderinterface.widgets.HeightLimitedRelativeLayout
         android:id="@+id/layout_media"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:height_limit="1.75" >
         
-        <info.guardianproject.yakreader.widgets.NestedViewPager
+        <info.guardianproject.securereaderinterface.widgets.NestedViewPager
         	android:id="@+id/mediaPager"
         	android:layout_width="match_parent"
         	android:layout_height="match_parent" />
 
-    	<info.guardianproject.yakreader.widgets.DottedProgressView
+    	<info.guardianproject.securereaderinterface.widgets.DottedProgressView
         	android:id="@+id/mediaPagerIndicator"
         	android:layout_width="match_parent"
         	android:layout_height="30dp"
@@ -29,7 +29,7 @@
         	app:dot_rim_color_current="@color/button_primary" />
         
 
-	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+	</info.guardianproject.securereaderinterface.widgets.HeightLimitedRelativeLayout>
 
     <include
         android:id="@+id/layout_source"
@@ -41,7 +41,7 @@
         android:layout_marginTop="@dimen/source_top_margin"
         layout="@layout/story_item_page_source" />
 
-    <info.guardianproject.yakreader.widgets.CustomFontTextView
+    <info.guardianproject.securereaderinterface.widgets.CustomFontTextView
         android:id="@+id/tvTitle"
         style="@style/StoryItemTitleStyle"
         android:layout_width="match_parent"

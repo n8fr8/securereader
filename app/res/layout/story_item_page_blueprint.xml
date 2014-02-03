@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.securereaderinterface"
     android:id="@+id/llRoot"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
@@ -9,7 +9,7 @@
     android:paddingBottom="10dp"
     android:paddingTop="10dp" >
 
-    <info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout
+    <info.guardianproject.securereaderinterface.widgets.HeightLimitedRelativeLayout
         android:id="@+id/layout_media"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             layout="@layout/story_media_content_view" />
 
-	</info.guardianproject.yakreader.widgets.HeightLimitedRelativeLayout>
+	</info.guardianproject.securereaderinterface.widgets.HeightLimitedRelativeLayout>
     
     <include
         android:id="@+id/layout_source"
@@ -32,7 +32,7 @@
         android:layout_marginTop="@dimen/source_top_margin"
         layout="@layout/story_item_page_source" />
 
-    <info.guardianproject.yakreader.widgets.CustomFontTextView
+    <info.guardianproject.securereaderinterface.widgets.CustomFontTextView
         android:id="@+id/tvTitle"
         style="@style/StoryItemTitleStyle"
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
         android:layout_marginTop="@dimen/author_top_margin"
         layout="@layout/story_item_page_author" />
 
-    <info.guardianproject.yakreader.widgets.CustomFontTextView
+    <info.guardianproject.securereaderinterface.widgets.CustomFontTextView
         android:id="@+id/tvContent"
         style="@style/StoryItemContentStyle"
         android:layout_width="match_parent"
@@ -61,7 +61,7 @@
         android:layout_marginTop="@dimen/content_top_margin"
         android:text="TextView" />
 
-    <info.guardianproject.yakreader.widgets.CustomFontTextView
+    <info.guardianproject.securereaderinterface.widgets.CustomFontTextView
         android:id="@+id/tvReadMore"
         style="@style/StoryItemOrwebLinkStyle"
         android:layout_width="match_parent"

@@ -160,7 +160,7 @@
             android:text="@string/bluetooth_send_success_1_story"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <info.guardianproject.yakreader.views.StoryItemPageView
+            <info.guardianproject.securereaderinterface.views.StoryItemPageView
                 android:id="@+id/sharedItemView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -1,5 +1,5 @@
 
-    <info.guardianproject.yakreader.views.StoryListHintTorView 
+    <info.guardianproject.securereaderinterface.views.StoryListHintTorView 
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
@@ -12,8 +12,7 @@
             android:layout_margin="10dp"
             android:background="@drawable/white_with_bottom_shadow"
             android:orientation="vertical" >
-        
-        <info.guardianproject.yakreader.widgets.CustomFontTextView            
+      <info.guardianproject.securereaderinterface.widgets.CustomFontTextView            
             android:id="@+id/tvText1"
             style="@style/HelpTitleStyle"
             android:layout_width="match_parent"
@@ -141,7 +140,8 @@
             android:layout_height="1px"
             android:background="@color/grey_light_medium" />
                     
-                <info.guardianproject.yakreader.widgets.CustomFontTextView                    style="@style/HelpTitleStyle"
+     <info.guardianproject.securereaderinterface.widgets.CustomFontTextView
+                    style="@style/HelpTitleStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/story_list_hint_tor_more_title" />
@@ -164,8 +164,8 @@
                     android:background="@drawable/white_with_bottom_shadow"
                     android:orientation="vertical"
                     android:visibility="gone" >
-        
-        <info.guardianproject.yakreader.widgets.CustomFontTextView            style="@style/HelpTitleStyle"
+      <info.guardianproject.securereaderinterface.widgets.CustomFontTextView            
+          	style="@style/HelpTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -188,4 +188,4 @@
             android:src="@drawable/ic_context_sync_arrow_pull" />
 
 </LinearLayout>
-    </info.guardianproject.yakreader.views.StoryListHintTorView>
+    </info.guardianproject.securereaderinterface.views.StoryListHintTorView>

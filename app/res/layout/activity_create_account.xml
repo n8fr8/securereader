@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <info.guardianproject.yakreader.views.CreateAccountView
+    <info.guardianproject.securereaderinterface.views.CreateAccountView
         android:id="@+id/createAccount"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-    </info.guardianproject.yakreader.views.CreateAccountView>
+    </info.guardianproject.securereaderinterface.views.CreateAccountView>
 
 </FrameLayout>

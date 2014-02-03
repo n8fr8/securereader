@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.yakreader"
+    xmlns:app="http://schemas.android.com/apk/res/info.guardianproject.securereaderinterface"
     android:id="@+id/marginedRoot"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -28,14 +28,14 @@
             android:layout_height="0dp"
             android:layout_centerHorizontal="true" />
 
-        <info.guardianproject.yakreader.widgets.PagedView
+        <info.guardianproject.securereaderinterface.widgets.PagedView
             android:id="@+id/horizontalPagerContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="40dp"
             android:scrollbars="none" >
 
-        </info.guardianproject.yakreader.widgets.PagedView>
+        </info.guardianproject.securereaderinterface.widgets.PagedView>
 
         <LinearLayout
             android:id="@+id/storyToolbar"
@@ -63,7 +63,7 @@
                 android:background="@drawable/bottom_bar_item_background_selector"
                 android:src="@drawable/ic_action2_chat" />
 
-            <info.guardianproject.yakreader.widgets.NoSelectionSpinner
+            <info.guardianproject.securereaderinterface.widgets.NoSelectionSpinner
                 android:id="@+id/spinnerTextSize"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -71,7 +71,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/bottom_bar_item_background_selector" />
 
-            <info.guardianproject.yakreader.widgets.CheckableImageView
+            <info.guardianproject.securereaderinterface.widgets.CheckableImageView
                 android:id="@+id/chkFavorite"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -80,7 +80,7 @@
                 android:scaleType="center"
                 android:src="@drawable/favorite_checkbox" />
 
-            <info.guardianproject.yakreader.widgets.NoSelectionSpinner
+            <info.guardianproject.securereaderinterface.widgets.NoSelectionSpinner
                 android:id="@+id/spinnerShare"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -89,7 +89,7 @@
                 android:background="@drawable/bottom_bar_item_background_selector" />
         </LinearLayout>
 
-        <info.guardianproject.yakreader.widgets.PageIndicatorView
+        <info.guardianproject.securereaderinterface.widgets.PageIndicatorView
             android:id="@+id/contentPageIndicator"
             android:layout_width="wrap_content"
             android:layout_height="7dp"
