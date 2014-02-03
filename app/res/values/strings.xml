@@ -278,9 +278,6 @@
     <string name="install_orweb_prompt">Orweb is a privacy enhanced web browser. When used with Orbot, Orweb protects against network analysis, blocks cookies, keeps no local browsing history, and disables Flash to keep you safe. Do you want to download Orweb now?</string>
     	
     <string name="apps_feed_name">Applications</string>
-<<<<<<< HEAD
-</resources>
-=======
     <string name="epubs_feed_name">Tibet Archive</string>
     
     <string name="cacheword_notification_cached_title">YakReader Unlocked</string>
@@ -296,4 +293,3 @@
     <string name="chatroom_name">Not being used</string>
     
 </resources>
->>>>>>> yakreader_sans_library
