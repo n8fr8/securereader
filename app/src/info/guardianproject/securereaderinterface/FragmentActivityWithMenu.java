@@ -1,6 +1,6 @@
 package info.guardianproject.securereaderinterface;
 
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.securereaderinterface.models.LockScreenCallbacks;

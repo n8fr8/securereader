@@ -2,7 +2,7 @@ package info.guardianproject.securereaderinterface.adapters;
 
 import info.guardianproject.securereaderinterface.App;
 import info.guardianproject.securereaderinterface.uiutil.UIHelpers;
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

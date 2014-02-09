@@ -3,8 +3,8 @@ package info.guardianproject.securereaderinterface.ui;
 import android.os.Bundle;
 import android.view.View;
 
-import info.guardianproject.securereaderinterface.R;
-import info.guardianproject.securereaderinterface.R.integer;
+import info.guardianproject.yakreader.R;
+import info.guardianproject.yakreader.R.integer;
 
 import com.tinymission.rss.MediaContent;
 

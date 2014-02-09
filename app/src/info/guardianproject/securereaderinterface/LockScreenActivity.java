@@ -5,7 +5,7 @@ import info.guardianproject.securereaderinterface.models.LockScreenCallbacks;
 import info.guardianproject.securereaderinterface.ui.LayoutFactoryWrapper;
 import info.guardianproject.securereaderinterface.widgets.DropdownSpinner;
 import info.guardianproject.securereader.SocialReader;
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 import info.guardianproject.cacheword.CacheWordActivityHandler;
 import info.guardianproject.cacheword.ICacheWordSubscriber;
 import java.security.GeneralSecurityException;

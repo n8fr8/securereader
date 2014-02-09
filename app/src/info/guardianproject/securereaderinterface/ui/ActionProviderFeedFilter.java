@@ -3,10 +3,10 @@ package info.guardianproject.securereaderinterface.ui;
 import info.guardianproject.securereaderinterface.models.FeedFilterType;
 import info.guardianproject.securereaderinterface.views.FeedFilterView;
 import info.guardianproject.securereaderinterface.views.FeedFilterView.FeedFilterViewCallbacks;
-import info.guardianproject.securereaderinterface.R.integer;
-import info.guardianproject.securereaderinterface.R.layout;
-import info.guardianproject.securereaderinterface.R.style;
-import info.guardianproject.securereaderinterface.R.styleable;
+import info.guardianproject.yakreader.R.integer;
+import info.guardianproject.yakreader.R.layout;
+import info.guardianproject.yakreader.R.style;
+import info.guardianproject.yakreader.R.styleable;
 
 import org.holoeverywhere.drawable.ColorDrawable;
 import org.holoeverywhere.widget.PopupWindow;
@@ -24,7 +24,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.TextView;
 
 import com.actionbarsherlock.view.ActionProvider;
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 
 import com.tinymission.rss.Feed;
 

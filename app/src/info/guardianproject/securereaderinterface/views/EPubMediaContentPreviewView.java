@@ -1,6 +1,6 @@
 package info.guardianproject.securereaderinterface.views;
 
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 import info.guardianproject.iocipher.File;
 import android.content.Context;
 import android.util.AttributeSet;

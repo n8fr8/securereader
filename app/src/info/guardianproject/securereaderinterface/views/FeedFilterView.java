@@ -26,7 +26,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 import com.tinymission.rss.Feed;
 
 public class FeedFilterView extends LinearLayout implements ListAdapter, OnItemClickListener

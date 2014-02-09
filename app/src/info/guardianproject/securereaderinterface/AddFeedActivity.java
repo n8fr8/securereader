@@ -1,6 +1,6 @@
 package info.guardianproject.securereaderinterface;
 
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.yakreader.R;
 
 import android.os.Bundle;
 
