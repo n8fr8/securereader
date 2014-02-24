@@ -6,7 +6,6 @@ import info.guardianproject.onionkit.ui.OrbotHelper;
 import info.guardianproject.securereaderinterface.models.LockScreenCallbacks;
 import info.guardianproject.securereaderinterface.ui.ActionProviderShare;
 import info.guardianproject.securereaderinterface.ui.LayoutFactoryWrapper;
-import info.guardianproject.securereaderinterface.ui.PackageHelper;
 import info.guardianproject.securereaderinterface.ui.UICallbacks;
 import info.guardianproject.securereaderinterface.uiutil.ActivitySwitcher;
 import info.guardianproject.securereaderinterface.uiutil.UIHelpers;
@@ -14,7 +13,6 @@ import info.guardianproject.securereaderinterface.views.LeftSideMenu;
 import info.guardianproject.securereaderinterface.views.LeftSideMenu.LeftSideMenuListener;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -30,16 +28,14 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
-import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class FragmentActivityWithMenu extends SherlockFragmentActivity implements LockScreenCallbacks, LeftSideMenuListener, ICacheWordSubscriber
+public class FragmentActivityWithMenu extends LockableActivity implements LeftSideMenuListener
 {
 	private KillReceiver mKillReceiver;
 	private SetUiLanguageReceiver mSetUiLanguageReceiver;
@@ -47,7 +43,6 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 	private int mIdMenu;
 	private ActionProviderShare mShareActionProvider;
 	private Menu mOptionsMenu;
-	private boolean mInternalActivityOpened = false;
 	private boolean mDisplayHomeAsUp = false;
 
 	/**
@@ -97,20 +92,6 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setDisplayHomeAsUpEnabled(false);
 		actionBar.setHomeButtonEnabled(true);
-
-		// If passcode is required we don't want to show the app thumbnail (the
-		// screen shot might
-		// contain sensitive information). Since onCreateThumbnail is not called
-		// correctly for 4.0
-		// devices, flag the activity as secure instead.
-		if (App.getSettings().launchRequirePassphrase())
-		{
-			if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB)
-			{
-				 getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-				 WindowManager.LayoutParams.FLAG_SECURE);
-			}
-		}
 	}
 
 	public void setDisplayHomeAsUp(boolean displayHomeAsUp)
@@ -155,12 +136,11 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		}
 	}
 
-	private void launchLockScreen()
+	@Override
+	protected void onStart()
 	{
-		Intent intent = new Intent(this, LockScreenActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		intent.putExtra("originalIntent", getIntent());
-		startActivity(intent);
+		super.onStart();
+		LocalBroadcastManager.getInstance(this).registerReceiver(mMenuCommandReceiver, new IntentFilter("MenuCommand"));
 	}
 
 	@Override
@@ -168,14 +148,8 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 	{
 		super.onStop();
 		LocalBroadcastManager.getInstance(this).unregisterReceiver(mMenuCommandReceiver);
-		if (!isFinishing() && (getApplication() instanceof App))
-		{
-			((App) getApplication()).onActivityPause(this);
-			launchLockScreenIfInBackground();
-		}
 	}
 
-	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -188,7 +162,6 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 	{
 		super.onResume();
 		mResumed = true;
-		
 		if (mNeedToRecreate)
 		{
 			onUiLanguageChanged();
@@ -197,40 +170,8 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		
 		if (Build.VERSION.SDK_INT >= 11)
 			invalidateOptionsMenu();
-		LocalBroadcastManager.getInstance(this).registerReceiver(mMenuCommandReceiver, new IntentFilter("MenuCommand"));
-		if (launchLockScreenIfInBackground())
-			return;
-		((App) getApplication()).onActivityResume(this);
-		mInternalActivityOpened = false;
 		if (mLeftSideMenu != null)
 			mLeftSideMenu.checkMenuCreated();
-	}
-
-	private boolean launchLockScreenIfInBackground()
-	{
-		if (((App) getApplication()).isApplicationInBackground() && App.getSettings().launchRequirePassphrase())
-		{
-			launchLockScreen();
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void onCacheWordUninitialized()
-	{
-		//launchLockScreen();
-	}
-
-	@Override
-	public void onCacheWordLocked()
-	{
-		//launchLockScreen();
-	}
-
-	@Override
-	public void onCacheWordOpened()
-	{
 	}
 
 	private final class KillReceiver extends BroadcastReceiver
@@ -301,7 +242,7 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 			intentThis.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
 			finish();
 			overridePendingTransition(0, 0);
-			startActivityAsInternal(intentThis);
+			startActivity(intentThis);
 			overridePendingTransition(0, 0);
 		}
 	}
@@ -313,88 +254,6 @@ public class FragmentActivityWithMenu extends SherlockFragmentActivity implement
 		unregisterReceiver(mKillReceiver);
 		unregisterReceiver(mSetUiLanguageReceiver);
 		unregisterReceiver(mWipeReceiver);
-	}
-
-	@Override
-	public void startActivity(Intent intent)
-	{
-		checkIfInternalActivity(intent);
-		super.startActivity(intent);
-	}
-
-	public void startActivityAsInternal(Intent intent)
-	{
-		mInternalActivityOpened = true;
-		super.startActivity(intent);
-	}
-	
-	@Override
-	public void startActivityForResult(Intent intent, int request)
-	{
-		checkIfInternalActivity(intent);
-		super.startActivityForResult(intent, request);
-	}
-
-	public void startActivityForResultAsInternal(Intent intent, int request)
-	{
-		mInternalActivityOpened = true;
-		super.startActivityForResult(intent, request);
-	}
-
-	private void checkIfInternalActivity(Intent intent)
-	{
-		// Whenever we call our own activity, the component and it's package
-		// name is set.
-		// If we call an activity from another package, or an open intent
-		// (leaving android to resolve)
-		// component has a different package name or it is null.
-		ComponentName component = intent.getComponent();
-		mInternalActivityOpened = false;
-		if (component != null && component.getPackageName() != null && component.getPackageName().equals(App.getInstance().getPackageName()))
-		{
-			mInternalActivityOpened = true;
-		}
-		else if (OrbotHelper.ACTION_START_TOR.equals(intent.getAction()))
-		{
-			// Special case - when opening the Orbot UI, consider that part of
-			// the app (so the
-			// lock screen is not shown!)
-			mInternalActivityOpened = true;
-		}
-		else if (Intent.ACTION_VIEW.equals(intent.getAction()) && intent.getData() != null)
-		{
-			if (intent.getData().toString().equals(getString(R.string.market_orbot)))
-			{
-				// Install orbot
-				mInternalActivityOpened = true;
-			}
-			else if (intent.getData().toString().equals(PackageHelper.URI_ORWEB_PLAY))
-			{
-				// Install orweb
-				mInternalActivityOpened = true;
-			}
-			else if (intent.getComponent() != null && intent.getComponent().getPackageName() != null && intent.getComponent().getPackageName().equals(PackageHelper.URI_ORWEB))
-			{
-				// Read more with orweb
-				mInternalActivityOpened = true;
-			}
-			else if (intent.getData().toString().equals(PackageHelper.URI_CHATSECURE_PLAY))
-			{
-				// Install ChatSecure
-				mInternalActivityOpened = true;
-			}
-		}
-	}
-
-	@Override
-	public boolean isInternalActivityOpened()
-	{
-		return mInternalActivityOpened;
-	}
-
-	public boolean isApplicationInBackground()
-	{
-		return ((App) getApplication()).isApplicationInBackground();
 	}
 
 	@Override
