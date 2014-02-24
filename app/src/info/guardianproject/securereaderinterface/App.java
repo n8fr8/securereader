@@ -2,6 +2,7 @@ package info.guardianproject.securereaderinterface;
 		
 import info.guardianproject.securereader.Settings;
 import info.guardianproject.securereader.Settings.UiLanguage;
+import info.guardianproject.securereader.SocialReader.SocialReaderLockListener;
 import info.guardianproject.securereaderinterface.models.LockScreenCallbacks;
 import info.guardianproject.securereaderinterface.widgets.CustomFontButton;
 import info.guardianproject.securereaderinterface.widgets.CustomFontEditText;
@@ -23,13 +24,14 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import com.tinymission.rss.Feed;
 
-public class App extends Application implements OnSharedPreferenceChangeListener
+public class App extends Application implements OnSharedPreferenceChangeListener, SocialReaderLockListener
 {
 	public static final boolean UI_ENABLE_POPULAR_ITEMS = false;
 			
@@ -40,10 +42,12 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 	public static final boolean UI_ENABLE_CHAT = false;
 	public static final boolean UI_ENABLE_LANGUAGE_CHOICE = true;
 	
-	public static final String EXIT_BROADCAST_PERMISSION = "info.guardianproject.bigbuffalo.exit.permission";
-	public static final String EXIT_BROADCAST_ACTION = "info.guardianproject.bigbuffalo.exit.action";
-	public static final String SET_UI_LANGUAGE_BROADCAST_ACTION = "info.guardianproject.bigbuffalo.setuilanguage.action";
-	public static final String WIPE_BROADCAST_ACTION = "info.guardianproject.bigbuffalo.wipe.action";
+	public static final String EXIT_BROADCAST_PERMISSION = "info.guardianproject.securereaderinterface.exit.permission";
+	public static final String EXIT_BROADCAST_ACTION = "info.guardianproject.securereaderinterface.exit.action";
+	public static final String SET_UI_LANGUAGE_BROADCAST_ACTION = "info.guardianproject.securereaderinterface.setuilanguage.action";
+	public static final String WIPE_BROADCAST_ACTION = "info.guardianproject.securereaderinterface.wipe.action";
+	public static final String LOCKED_BROADCAST_ACTION = "info.guardianproject.securereaderinterface.lock.action";
+	public static final String UNLOCKED_BROADCAST_ACTION = "info.guardianproject.securereaderinterface.unlock.action";
 
 	private static App m_singleton;
 
@@ -73,8 +77,10 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		applyUiLanguage();
 
 		socialReader = SocialReader.getInstance(this.getApplicationContext());
+		socialReader.setLockListener(this);
 		socialReporter = new SocialReporter(socialReader);
-
+		applyPassphraseTimeout();
+		
 		m_settings.registerChangeListener(this);
 		
 		mCurrentLanguage = getBaseContext().getResources().getConfiguration().locale.getLanguage();
@@ -95,45 +101,9 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		return m_settings;
 	}
 
-	private boolean mInBackground = true;
-
-	// When any activity pauses with the new activity not being ours.
-	public void onActivityPause(LockScreenCallbacks activity)
-	{
-		Log.v("App", "onActivityPause");
-
-		if (activity.isInternalActivityOpened())
-			return;
-
-		if (!mInBackground)
-		{
-			mInBackground = true;
-			socialReader.onPause();
-		}
-	}
-
-	// When any activity resumes with a previous activity not being ours.
-	public void onActivityResume(LockScreenCallbacks activity)
-	{
-		Log.v("App", "onActivityResume");
-
-		if (activity.isInternalActivityOpened())
-			return;
-
-		boolean wasInBackground = mInBackground;
-		mInBackground = false;
-		if (wasInBackground) {
-			socialReader.onResume();
-		}
-	}
-
-	// Helper to find if the Application is in background from any activity.
-	public boolean isApplicationInBackground()
-	{
-		return mInBackground;
-	}
-
 	private Bitmap mTransitionBitmap;
+
+	private LockScreenActivity mLockScreen;
 
 	public Bitmap getTransitionBitmap()
 	{
@@ -151,6 +121,10 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		if (key.equals(Settings.KEY_UI_LANGUAGE))
 		{
 			applyUiLanguage();
+		}
+		else if (key.equals(Settings.KEY_PASSPHRASE_TIMEOUT))
+		{
+			applyPassphraseTimeout();
 		}
 	}
 		
@@ -200,6 +174,11 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 		}, null, Activity.RESULT_OK, null, null);
 	}
 
+	private void applyPassphraseTimeout()
+	{
+		socialReader.setCacheWordTimeout(m_settings.passphraseTimeout());
+	}
+
 	public void wipe(int wipeMethod)
 	{
 		socialReader.doWipe(wipeMethod);
@@ -234,5 +213,57 @@ public class App extends Application implements OnSharedPreferenceChangeListener
 			return new CustomFontEditText(context, attrs);
 		}
 		return null;
+	}
+
+	private int mnResumed = 0;
+	private Activity mLastResumed;
+
+	public void onActivityPause(Activity activity)
+	{
+		mnResumed--;
+		if (mnResumed == 0)
+			socialReader.onPause();
+	}
+
+	public void onActivityResume(Activity activity)
+	{
+		mLastResumed = activity;
+		mnResumed++;
+		if (mnResumed == 1)
+			socialReader.onResume();
+	}
+	
+	@Override
+	public void onLocked()
+	{
+		if (mLastResumed != null && mLockScreen == null)
+		{
+			Intent intent = new Intent(App.this, LockScreenActivity.class);
+			intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+			intent.putExtra("originalIntent", mLastResumed.getIntent());
+			mLastResumed.startActivity(intent);
+			mLastResumed.overridePendingTransition(0, 0);
+			mLastResumed = null;
+		}
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(LOCKED_BROADCAST_ACTION));
+	}
+
+	@Override
+	public void onUnlocked()
+	{
+		if (mLockScreen != null)
+			mLockScreen.onUnlocked();
+		mLockScreen = null;
+		LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(UNLOCKED_BROADCAST_ACTION));
+	}
+
+	public void onLockScreenResumed(LockScreenActivity lockScreenActivity)
+	{
+		mLockScreen = lockScreenActivity;
+	}
+
+	public void onLockScreenPaused(LockScreenActivity lockScreenActivity)
+	{
+		mLockScreen = null;
 	}
 }

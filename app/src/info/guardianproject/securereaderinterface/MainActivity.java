@@ -22,14 +22,17 @@ import java.util.Iterator;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.UpdateManager;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -54,9 +57,9 @@ import com.tinymission.rss.Item;
 
 public class MainActivity extends ItemExpandActivity implements OnSharedPreferenceChangeListener
 {
-	public static String INTENT_EXTRA_SHOW_THIS_TYPE = "info.guardianproject.bigbuffalo.showThisFeedType";
-	public static String INTENT_EXTRA_SHOW_THIS_FEED = "info.guardianproject.bigbuffalo.showThisFeedId";
-	public static String INTENT_EXTRA_SHOW_THIS_ITEM = "info.guardianproject.bigbuffalo.showThisItemId";
+	public static String INTENT_EXTRA_SHOW_THIS_TYPE = "info.guardianproject.securereaderinterface.showThisFeedType";
+	public static String INTENT_EXTRA_SHOW_THIS_FEED = "info.guardianproject.securereaderinterface.showThisFeedId";
+	public static String INTENT_EXTRA_SHOW_THIS_ITEM = "info.guardianproject.securereaderinterface.showThisItemId";
 
 	public static String LOGTAG = "MainActivity";
 
@@ -221,7 +224,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		super.onPause();
 		removeSettingsChangeListener();
 	}
-
+	
 	@Override
 	protected void onAfterResumeAnimation()
 	{
@@ -760,18 +763,6 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 		UICallbacks.setFeedFilter(FeedFilterType.SINGLE_FEED, -1, this);
 	}
 
-	@Override
-	public void onCacheWordOpened()
-	{
-		super.onCacheWordOpened();
-		socialReader = ((App) getApplicationContext()).socialReader;
-		// socialReader.goOnline(this);
-
-		createFeedSpinner();
-		updateList(FeedFilterType.ALL_FEEDS, null);
-		// setActionBarTitle(getString(R.string.feed_filter_all_feeds));
-	}
-
 	class UpdateFeedListTask extends AsyncTask<Void, Void, ArrayList<Feed>>
 	{
 		private Context mContext;
@@ -906,4 +897,14 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 			setIsLoading(false);
 		}
 	}
+
+	@Override
+	protected void onUnlocked() {
+		super.onUnlocked();
+		socialReader = ((App) getApplicationContext()).socialReader;
+		createFeedSpinner();
+		updateList(FeedFilterType.ALL_FEEDS, null);
+	}
+	
+	
 }
