@@ -19,7 +19,6 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -141,6 +140,8 @@ public class FragmentActivityWithMenu extends LockableActivity implements LeftSi
 	{
 		super.onStart();
 		LocalBroadcastManager.getInstance(this).registerReceiver(mMenuCommandReceiver, new IntentFilter("MenuCommand"));
+		if (mLeftSideMenu != null)
+			mLeftSideMenu.checkMenuCreated();
 	}
 
 	@Override
@@ -170,8 +171,6 @@ public class FragmentActivityWithMenu extends LockableActivity implements LeftSi
 		
 		if (Build.VERSION.SDK_INT >= 11)
 			invalidateOptionsMenu();
-		if (mLeftSideMenu != null)
-			mLeftSideMenu.checkMenuCreated();
 	}
 
 	private final class KillReceiver extends BroadcastReceiver
@@ -564,7 +563,7 @@ public class FragmentActivityWithMenu extends LockableActivity implements LeftSi
 		}
 	}
 
-	class UpdateMenuTask extends AsyncTask<Void, Void, Void>
+	class UpdateMenuTask extends ThreadedTask<Void, Void, Void>
 	{
 		private boolean isUsingTor;
 		private boolean isOnline;
@@ -690,9 +689,9 @@ public class FragmentActivityWithMenu extends LockableActivity implements LeftSi
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	protected void onUnlockedActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
+		super.onUnlockedActivityResult(requestCode, resultCode, data);
 		if (requestCode == UICallbacks.RequestCode.CREATE_CHAT_ACCOUNT.Value)
 		{
 			if (resultCode == RESULT_OK)
