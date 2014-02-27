@@ -687,9 +687,9 @@ public class FragmentActivityWithMenu extends LockableActivity implements LeftSi
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	protected void onUnlockedActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
+		super.onUnlockedActivityResult(requestCode, resultCode, data);
 		if (requestCode == UICallbacks.RequestCode.CREATE_CHAT_ACCOUNT.Value)
 		{
 			if (resultCode == RESULT_OK)

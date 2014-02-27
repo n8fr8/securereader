@@ -570,9 +570,9 @@ public class AddPostActivity extends FragmentActivityWithMenu implements OnActio
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent)
+	protected void onUnlockedActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent)
 	{
-		super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+		super.onUnlockedActivityResult(requestCode, resultCode, imageReturnedIntent);
 
 		switch (requestCode)
 		{
