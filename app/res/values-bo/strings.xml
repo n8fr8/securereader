@@ -117,9 +117,13 @@
   <string name="settings_panic_wipe_app">ཉེར་སྤྱོད་མ་ལག་ཆ་ཚང་ཕྱིས། </string>
   <string name="settings_panic_wipe_content">ངའི་དཀར་ཆག་ཕྱིས། </string>
   <string name="settings_heading_login">ནང་འཛུལ་བྱོས། </string>
-  <string name="settings_security_launch">དགོས་འདུན་ཁག་འགོ་ཚུགས།</string>
-  <string name="settings_security_launch_require_passphrase">གསང་ཚིག</string>
-  <string name="settings_security_launch_require_none">གང་ཡང་མེད།</string>
+  <string name="settings_security_passphrase_timeout">Lock Automatically</string>
+  <string name="settings_security_passphrase_timeout_info">Locking allows your information to be encrypted and stored safely on your device. Choose timeout.</string>
+  <string name="settings_security_passphrase_timeout1">5 seconds</string>
+  <string name="settings_security_passphrase_timeout2">20 seconds</string>
+  <string name="settings_security_passphrase_timeout3">5 minutes</string>
+  <string name="settings_security_passphrase_timeout4">1 week</string>
+  <string name="settings_security_passphrase_timeout5">11 days</string>
   <string name="settings_security_password_attempts">གསང་ཚིག་ནོར་བ་ནང་འཇུག་ཁག </string>
   <string name="settings_security_password_attempts_label">ཁྱེད་རང་སྒེར་གྱི་གནས་ཚུལ་ཁག་ཉེར་སྤྱོད་མ་ལག་ནས་མ་གསུབ་པའི་སྔོན་ལ། གསང་གྲངས་ནོར་བ་ཞིག་ནང་འཇུག་ཐེངས་ག་ཚོད་ལ་བྱེད་སྲིད་པའི་གྲངས་ཀ་དེ་འདེམས། </string>
   <string name="settings_security_password_attempts_1">༢</string>
