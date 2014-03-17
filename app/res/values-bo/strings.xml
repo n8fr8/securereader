@@ -117,9 +117,13 @@
   <string name="settings_panic_wipe_app">ཉེར་སྤྱོད་མ་ལག་ཆ་ཚང་ཕྱིས། </string>
   <string name="settings_panic_wipe_content">ངའི་དཀར་ཆག་ཕྱིས། </string>
   <string name="settings_heading_login">ནང་འཛུལ་བྱོས། </string>
-  <string name="settings_security_launch">དགོས་འདུན་ཁག་འགོ་ཚུགས།</string>
-  <string name="settings_security_launch_require_passphrase">གསང་ཚིག</string>
-  <string name="settings_security_launch_require_none">གང་ཡང་མེད།</string>
+  <string name="settings_security_passphrase_timeout">Lock Automatically</string>
+  <string name="settings_security_passphrase_timeout_info">Locking allows your information to be encrypted and stored safely on your device. Choose timeout.</string>
+  <string name="settings_security_passphrase_timeout1">5 seconds</string>
+  <string name="settings_security_passphrase_timeout2">20 seconds</string>
+  <string name="settings_security_passphrase_timeout3">5 minutes</string>
+  <string name="settings_security_passphrase_timeout4">1 week</string>
+  <string name="settings_security_passphrase_timeout5">11 days</string>
   <string name="settings_security_password_attempts">གསང་ཚིག་ནོར་བ་ནང་འཇུག་ཁག </string>
   <string name="settings_security_password_attempts_label">ཁྱེད་རང་སྒེར་གྱི་གནས་ཚུལ་ཁག་ཉེར་སྤྱོད་མ་ལག་ནས་མ་གསུབ་པའི་སྔོན་ལ། གསང་གྲངས་ནོར་བ་ཞིག་ནང་འཇུག་ཐེངས་ག་ཚོད་ལ་བྱེད་སྲིད་པའི་གྲངས་ཀ་དེ་འདེམས། </string>
   <string name="settings_security_password_attempts_1">༢</string>
@@ -158,6 +162,10 @@
   <string name="settings_language_option_group_default">གཏན་འཁེལ་བའི་སྐད་ཡིག</string>
   <string name="settings_language_english">དབྱིན་སྐད།</string>
   <string name="settings_language_farsi">པར་ཤི་ཡའི་སྐད་ཡིག</string>
+  <string name="settings_language_tibetan">Tibetan</string>
+  <string name="settings_language_chinese">Chinese</string>
+  <string name="settings_language_ukrainian">Ukrainian</string>
+  <string name="settings_language_russian">Russian</string>
   <string name="lock_screen_title1">གཡག་ཀློག་པ་པོ་བེད་སྤྱོད་བྱེད་པར་དགའ་བསུ་ཡོད།</string>
   <string name="lock_screen_title2">རང་དབང་ངང་ཀློག བྲིས། གཏམ་གླེང་བྱོས།</string>
   <string name="lock_screen_set_passphrase">གསང་ཚིག་སྒྲིག་སྦྱོར་བྱེད།</string>
@@ -168,8 +176,6 @@
   <string name="lock_screen_passphrase_not_set_enter">གསང་ཚིག་གསར་པ་ནང་འཇུག་བྱོས། </string>
   <string name="lock_screen_passphrase_not_set_confirm">གསང་ཚིག་གསར་པ་གཏན་འཇགས་བཟོས།</string>
   <string name="lock_screen_passphrases_not_matching">གསང་ཚིག་མི་མཚུངས། བསྐྱར་དུ་ནང་ཞུགས་བྱེད་རོགས།</string>
-  <string name="lock_screen_language_farsi">པར་ཤི་ཡའི་སྐད་ཡིག</string>
-  <string name="lock_screen_language_english">དབྱིན་སྐད།</string>
   <string name="lock_screen_wrong_password">བསྐྱར་དུ་ཚོད་ལྟ་བྱོས།</string>
   <string name="httpd_app_sender_instructions">ཉེ་འཁོར་དུ་གཡག་ཀློག་པ་པོའི་ཉེར་སྤྱོད་མ་ལག་གམ་ཡང་ན་ཨོར་སྦོ་ཁྲི་(Orbot)ལྟ་བུས་རོགས་འདེགས་བྱེད་པའི་ཉེར་སྤྱོད་མ་ལག་རིགས་བགོ་བཤའ་བྱེད་པ་ལ། གཤམ་གྱི་དོན་ཚན་འདི་དག་ངེས་པར་གྱིས། </string>
   <string name="httpd_app_sender_sender">འགྲེམས་སྤེལ་ཆེད།</string>

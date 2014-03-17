@@ -172,11 +172,17 @@ public class LockScreenActivity extends Activity implements LockScreenCallbacks,
 			mLanguageNames = new String[] { 
 					getString(R.string.settings_language_english),
 					getString(R.string.settings_language_tibetan),
-					getString(R.string.settings_language_chinese) };
+					getString(R.string.settings_language_chinese),
+					getString(R.string.settings_language_ukrainian),
+					getString(R.string.settings_language_russian)
+			};
 			mLanguageCodes = new UiLanguage[] { 
 					UiLanguage.English,
 					UiLanguage.Tibetan,
-					UiLanguage.Chinese };
+					UiLanguage.Chinese,
+					UiLanguage.Ukrainian,
+					UiLanguage.Russian
+			};
 			
 			ListAdapter adapter = new LanguageListAdapter(this, mLanguageNames);
 			mDropdownLanguage.setAdapter(adapter);
