@@ -177,7 +177,7 @@
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:src="@drawable/ic_context_password"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
             </LinearLayout>
 

@@ -4,6 +4,7 @@ import info.guardianproject.securereader.Settings;
 import info.guardianproject.securereaderinterface.uiutil.UIHelpers;
 import info.guardianproject.securereaderinterface.widgets.GroupView;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.GeneralSecurityException;
@@ -36,6 +37,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 import info.guardianproject.cacheword.CacheWordHandler;
+import info.guardianproject.cacheword.PassphraseSecrets;
 import info.guardianproject.securereaderinterface.R;
 
 public class SettingsActivity extends FragmentActivityWithMenu
@@ -449,23 +451,32 @@ public class SettingsActivity extends FragmentActivityWithMenu
 				if (editNewPassphrase.getText().length() == 0 && editConfirmNewPassphrase.getText().length() == 0)
 					return; // Both empty, ignore click
 
-				// Check old
-				if (!editEnterPassphrase.getText().toString().equals(App.getSettings().launchPassphrase())
-						|| !editNewPassphrase.getText().toString().equals(editConfirmNewPassphrase.getText().toString()))
-				{
-					editEnterPassphrase.setText("");
-					editNewPassphrase.setText("");
-					editConfirmNewPassphrase.setText("");
-					editEnterPassphrase.requestFocus();
-					Toast.makeText(SettingsActivity.this, getString(R.string.lock_screen_passphrases_not_matching), Toast.LENGTH_LONG).show();
+				if (!(editNewPassphrase.getText().toString().equals(editConfirmNewPassphrase.getText().toString()))) {
+					 Toast.makeText(SettingsActivity.this, getString(R.string.change_passphrase_not_matching), Toast.LENGTH_LONG).show();
+						alert.dismiss();
+						promptForNewPassphrase();
+						return; // Try again...					
+				}
+				
+				CacheWordHandler cwh = new CacheWordHandler((Context)SettingsActivity.this, null, null);
+				
+				char[] passwd = editEnterPassphrase.getText().toString().toCharArray();
+				PassphraseSecrets secrets;
+                try {
+                	secrets = PassphraseSecrets.fetchSecrets(SettingsActivity.this, passwd);
+					cwh.changePassphrase(secrets, editNewPassphrase.getText().toString().toCharArray());
+                    Toast.makeText(SettingsActivity.this, getString(R.string.change_passphrase_changed), Toast.LENGTH_LONG).show();
+
+                } catch (Exception e) {
+                    // Invalid password or the secret key has been
+                    Log.e(TAG, e.getMessage());
+
+                    Toast.makeText(SettingsActivity.this, getString(R.string.change_passphrase_incorrect), Toast.LENGTH_LONG).show();
 					alert.dismiss();
 					promptForNewPassphrase();
-					return; // Try again...
-				}
-
-				// Store
-				App.getSettings().setLaunchPassphrase(editNewPassphrase.getText().toString());
-
+					return; // Try again...                    
+                }
+                
 				alert.dismiss();
 			}
 		});
