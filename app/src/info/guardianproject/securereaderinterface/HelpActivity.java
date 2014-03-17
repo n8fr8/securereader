@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.actionbarsherlock.app.ActionBar;
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.courier.R;
 import com.tinymission.rss.Feed;
 
 public class HelpActivity extends FragmentActivityWithMenu

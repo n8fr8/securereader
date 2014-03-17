@@ -1,6 +1,6 @@
 package info.guardianproject.securereaderinterface;
 
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.courier.R;
 import info.guardianproject.securereaderinterface.ui.ActionProviderShare;
 import info.guardianproject.securereaderinterface.ui.LayoutFactoryWrapper;
 import info.guardianproject.securereaderinterface.ui.UICallbacks;

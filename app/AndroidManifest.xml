@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="info.guardianproject.securereaderinterface"
+    package="info.guardianproject.courier"
 	android:versionCode="7"
     android:versionName="1.1.1">
     <!-- Change package when branching into distinct app -->
@@ -188,7 +188,7 @@
         <!-- Change "authorities" when branching into distinct app -->
 		<provider 
    			android:name="info.guardianproject.securereader.SecureShareContentProvider"
-			android:authorities="info.guardianproject.securereader.secureshareprovider" 
+			android:authorities="info.guardianproject.courier.secureshareprovider" 
 			android:exported="true"
 			android:enabled="true"
 		/>

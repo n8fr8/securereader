@@ -13,7 +13,7 @@ import info.guardianproject.securereaderinterface.ui.UICallbacks.OnCallbackListe
 import info.guardianproject.securereaderinterface.views.StoryListHintTorView;
 import info.guardianproject.securereaderinterface.views.StoryListView;
 import info.guardianproject.securereaderinterface.views.StoryListHintTorView.OnButtonClickedListener;
-import info.guardianproject.securereaderinterface.R;
+import info.guardianproject.courier.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
