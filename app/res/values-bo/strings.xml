@@ -158,6 +158,10 @@
   <string name="settings_language_option_group_default">གཏན་འཁེལ་བའི་སྐད་ཡིག</string>
   <string name="settings_language_english">དབྱིན་སྐད།</string>
   <string name="settings_language_farsi">པར་ཤི་ཡའི་སྐད་ཡིག</string>
+  <string name="settings_language_tibetan">Tibetan</string>
+  <string name="settings_language_chinese">Chinese</string>
+  <string name="settings_language_ukrainian">Ukrainian</string>
+  <string name="settings_language_russian">Russian</string>
   <string name="lock_screen_title1">གཡག་ཀློག་པ་པོ་བེད་སྤྱོད་བྱེད་པར་དགའ་བསུ་ཡོད།</string>
   <string name="lock_screen_title2">རང་དབང་ངང་ཀློག བྲིས། གཏམ་གླེང་བྱོས།</string>
   <string name="lock_screen_set_passphrase">གསང་ཚིག་སྒྲིག་སྦྱོར་བྱེད།</string>

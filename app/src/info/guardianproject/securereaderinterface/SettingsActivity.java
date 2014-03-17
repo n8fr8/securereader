@@ -208,7 +208,9 @@ public class SettingsActivity extends FragmentActivityWithMenu
 			new ResourceValueMapping(R.id.rbUiLanguageEnglish, Settings.UiLanguage.English),
 			new ResourceValueMapping(R.id.rbUiLanguageTibetan, Settings.UiLanguage.Tibetan),
 			new ResourceValueMapping(R.id.rbUiLanguageChinese, Settings.UiLanguage.Chinese),
-			new ResourceValueMapping(R.id.rbUiLanguageUkrainian, Settings.UiLanguage.Ukrainian)});
+			new ResourceValueMapping(R.id.rbUiLanguageUkrainian, Settings.UiLanguage.Ukrainian),
+			new ResourceValueMapping(R.id.rbUiLanguageRussian, Settings.UiLanguage.Russian)
+			});
 
 		this.hookupRadioButtonWithArray(tabView, "numberOfPasswordAttempts", int.class, new ResourceValueMapping[] {
 				new ResourceValueMapping(R.id.rbNumberOfPasswordAttempts1, 2), new ResourceValueMapping(R.id.rbNumberOfPasswordAttempts2, 3),

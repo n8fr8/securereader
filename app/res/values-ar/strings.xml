@@ -167,6 +167,10 @@
     <string name="settings_language_option_group_default">Default language</string>
     <string name="settings_language_english">English</string>
     <string name="settings_language_farsi">Farsi</string>
+    <string name="settings_language_tibetan">Tibetan</string>
+    <string name="settings_language_chinese">Chinese</string>
+    <string name="settings_language_ukrainian">Ukrainian</string>
+    <string name="settings_language_russian">Russian</string>
     <string name="lock_screen_title1">Welcome to YakReader</string>
     <string name="lock_screen_title2">Read, write and talk freely.</string>
     <string name="lock_screen_set_passphrase">SET A PASSPHRASE</string>
