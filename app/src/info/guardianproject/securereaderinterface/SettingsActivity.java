@@ -58,6 +58,7 @@ public class SettingsActivity extends FragmentActivityWithMenu
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		setDisplayHomeAsUp(true);
 		setContentView(R.layout.activity_settings);
 		setMenuIdentifier(R.menu.activity_settings);
 
