@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import info.guardianproject.courier.R;
-import info.guardianproject.securereaderinterface.R.integer;
+import info.guardianproject.courier.R.integer;
 
 import com.tinymission.rss.MediaContent;
 
