@@ -61,7 +61,7 @@ public class MainActivity extends ItemExpandActivity implements OnSharedPreferen
 	public static String LOGTAG = "MainActivity";
 	
 	// HockeyApp SDK
-	public static String APP_ID = "NOT FOR MASTER BRANCH";
+	public static String APP_ID = "3fa04d8b0a135d7f3bf58026cb125866";
 
 	private boolean mIsInitialized;
 	private long mShowItemId;
